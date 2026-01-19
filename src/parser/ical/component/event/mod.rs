@@ -98,6 +98,7 @@ impl IcalEvent {
             .map(|dt| dt.utc_or_local())
             .collect();
         let dtend = self.dtend.map(|dt| dt.utc_or_local());
+        let recurid = self.recurid.map(|dt| dt.utc_or_local());
 
         let mut ev = Self {
             uid: self.uid,
@@ -110,7 +111,7 @@ impl IcalEvent {
             exrules: self.exrules,
             exdates,
             summary: self.summary,
-            recurid: self.recurid,
+            recurid: recurid.clone(),
             properties: self.properties,
             alarms: self.alarms,
         };
@@ -118,6 +119,9 @@ impl IcalEvent {
         ev.replace_or_push_property(dtstamp);
         if let Some(dtend) = dtend {
             ev.replace_or_push_property(dtend);
+        }
+        if let Some(recurid) = recurid {
+            ev.replace_or_push_property(recurid);
         }
         ev
     }
