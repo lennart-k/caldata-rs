@@ -1,9 +1,9 @@
 [package]
-authors = ["Peltoche <dev@halium.fr>"]
-categories = ["parsing"]
+authors = ["Lennart Kämmle", "Peltoche <dev@halium.fr>"]
+categories = ["parsing", "ical", "vcf", "calendar", "contacts"]
 description = "Ical/Vcard parser for Rust"
-documentation = "https://docs.rs/ical"
-homepage = "https://github.com/Peltoche/ical-rs"
+documentation = "https://docs.rs/caldata"
+homepage = "https://github.com/lennart-k/ical-rs"
 keywords = ["ical", "vcard", "parser"]
 license-file = "./LICENSE"
 name = "ical"
@@ -27,9 +27,14 @@ regex = { version = "1.11" }
 lazy_static = { version = "1.5" }
 itertools = "0.14"
 rkyv = { version = "0.8", optional = true }
-derive_more = { version = "2.1", features = ["display", "from", "deref", "into"] }
+derive_more = { version = "2.1", features = [
+  "display",
+  "from",
+  "deref",
+  "into",
+] }
 rrule = { version = "0.14", features = ["exrule"] }
-phf = {version = "0.13", features = ["macros"]}
+phf = { version = "0.13", features = ["macros"] }
 
 [dev-dependencies]
 insta = { version = "1.44", features = ["filters"] }
