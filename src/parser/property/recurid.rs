@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use crate::{
     generator::Emitter,
     parser::{ICalProperty, ParseProp, ParserError},
-    property::ContentLine,
-    types::CalDateOrDateTime,
+    property::{ContentLine, ContentLineParams},
+    types::{CalDateOrDateTime, Value},
 };
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -14,7 +14,11 @@ pub enum RecurIdRange {
     ThisAndFuture,
 }
 #[derive(Debug, Clone)]
-pub struct IcalRECURIDProperty(pub CalDateOrDateTime, pub RecurIdRange);
+pub struct IcalRECURIDProperty(
+    pub CalDateOrDateTime,
+    pub ContentLineParams,
+    pub RecurIdRange,
+);
 impl ICalProperty for IcalRECURIDProperty {
     const NAME: &'static str = "RECURRENCE-ID";
     const DEFAULT_TYPE: &'static str = "DATE-TIME";
@@ -29,11 +33,13 @@ impl ICalProperty for IcalRECURIDProperty {
             None => RecurIdRange::This,
             _ => return Err(ParserError::InvalidPropertyType(prop.generate())),
         };
-        Ok(Self(dt, range))
+        Ok(Self(dt, prop.params.clone(), range))
     }
 
     fn utc_or_local(self) -> Self {
-        self
+        let Self(dt, mut params, range) = self;
+        params.remove("TZID");
+        Self(dt.utc_or_local(), params, range)
     }
 }
 impl IcalRECURIDProperty {
@@ -49,17 +55,17 @@ impl IcalRECURIDProperty {
 
 impl From<IcalRECURIDProperty> for crate::property::ContentLine {
     fn from(value: IcalRECURIDProperty) -> Self {
-        let mut params = vec![];
+        let mut params = value.1;
         let value_type = value.0.value_type();
         if value_type != IcalRECURIDProperty::DEFAULT_TYPE {
-            params.push(("VALUE".to_owned(), vec![value_type.to_owned()]));
+            params.replace_param("VALUE".to_owned(), value_type.to_owned());
         }
-        if value.1 == RecurIdRange::ThisAndFuture {
-            params.push(("RANGE".to_owned(), vec!["THISANDFUTURE".to_owned()]));
+        if value.2 == RecurIdRange::ThisAndFuture {
+            params.replace_param("RANGE".to_owned(), "THISANDFUTURE".to_owned());
         }
         Self {
             name: IcalRECURIDProperty::NAME.to_owned(),
-            params: params.into(),
+            params,
             value: Some(value.0.format()),
         }
     }

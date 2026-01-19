@@ -215,7 +215,8 @@ impl IcalEvent {
             };
 
             for over in &overrides {
-                let IcalRECURIDProperty(override_recurid, range) = over.recurid.as_ref().unwrap();
+                let IcalRECURIDProperty(override_recurid, _, range) =
+                    over.recurid.as_ref().unwrap();
                 if override_recurid != &recurid {
                     continue;
                 }
@@ -241,7 +242,11 @@ impl IcalEvent {
                 dtstamp: template.dtstamp.clone(),
                 summary: template.summary.clone(),
                 dtstart: IcalDTSTARTProperty(recurid.clone(), Default::default()),
-                recurid: Some(IcalRECURIDProperty(recurid.clone(), RecurIdRange::This)),
+                recurid: Some(IcalRECURIDProperty(
+                    recurid.clone(),
+                    Default::default(),
+                    RecurIdRange::This,
+                )),
                 dtend: template.get_duration().map(|duration| {
                     IcalDTENDProperty((recurid.clone() + duration).into(), Default::default())
                 }),
@@ -254,7 +259,12 @@ impl IcalEvent {
                 properties,
             };
             ev.replace_or_push_property(IcalDTSTARTProperty(recurid.clone(), Default::default()));
-            ev.replace_or_push_property(IcalRECURIDProperty(recurid, RecurIdRange::This));
+            ev.replace_or_push_property(IcalRECURIDProperty(
+                recurid,
+                // This is fine since this is UTC anyway
+                Default::default(),
+                RecurIdRange::This,
+            ));
             if let Some(duration) = template.get_duration() {
                 ev.replace_or_push_property(IcalDURATIONProperty(duration, Default::default()));
             }
