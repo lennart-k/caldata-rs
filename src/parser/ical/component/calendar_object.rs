@@ -113,22 +113,20 @@ impl CalendarInnerData {
                 if main.has_rruleset() {
                     return None;
                 }
-                std::iter::once(&main.dtend)
-                    .chain(overrides.iter().map(|over| &over.dtend))
-                    .flat_map(|x| x.as_ref().map(|dt| &dt.0))
+                std::iter::once(main)
+                    .chain(overrides.iter())
+                    .flat_map(IcalEvent::get_last_occurence)
                     .max()
-                    .cloned()
                     .map(Into::into)
             }
             Self::Todo(main, overrides) => {
                 if main.has_rruleset() {
                     return None;
                 }
-                std::iter::once(&main.due)
-                    .chain(overrides.iter().map(|over| &over.due))
-                    .flat_map(|x| x.as_ref().map(|dt| &dt.0))
+                std::iter::once(main)
+                    .chain(overrides.iter())
+                    .flat_map(IcalTodo::get_last_occurence)
                     .max()
-                    .cloned()
                     .map(Into::into)
             }
             Self::Journal(_main, _overrides) => None,

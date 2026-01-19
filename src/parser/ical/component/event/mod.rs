@@ -67,6 +67,22 @@ impl IcalEvent {
             .collect()
     }
 
+    pub fn get_last_occurence(&self) -> Option<CalDateOrDateTime> {
+        if self.has_rruleset() {
+            // Non-trivial to handle
+            return None;
+        }
+        if let Some(dtend) = &self.dtend {
+            return Some(dtend.0.clone());
+        }
+
+        if let Some(duration) = &self.duration {
+            return Some((self.dtstart.0.clone() + duration.0).into());
+        }
+
+        None
+    }
+
     pub fn to_utc_or_local(self) -> Self {
         // Very naive way to replace known properties with UTC props
         let dtstart = self.dtstart.utc_or_local();

@@ -10,6 +10,7 @@ use crate::{
         ical::component::IcalAlarm,
     },
     property::ContentLine,
+    types::CalDateOrDateTime,
 };
 use std::{
     borrow::Cow,
@@ -21,6 +22,7 @@ pub struct IcalTodo {
     uid: String,
     pub dtstart: Option<IcalDTSTARTProperty>,
     pub due: Option<IcalDUEProperty>,
+    pub duration: Option<IcalDURATIONProperty>,
     pub dtstamp: IcalDTSTAMPProperty,
     pub properties: Vec<ContentLine>,
     pub alarms: Vec<IcalAlarm>,
@@ -51,6 +53,24 @@ impl IcalTodo {
 
     pub fn get_alarms(&self) -> &[IcalAlarm] {
         &self.alarms
+    }
+
+    pub fn get_last_occurence(&self) -> Option<CalDateOrDateTime> {
+        if self.has_rruleset() {
+            // Non-trivial to handle
+            return None;
+        }
+        if let Some(dtend) = &self.due {
+            return Some(dtend.0.clone());
+        }
+
+        if let Some(dtstart) = &self.dtstart
+            && let Some(duration) = &self.duration
+        {
+            return Some((dtstart.0.clone() + duration.0).into());
+        }
+
+        None
     }
 }
 
@@ -129,13 +149,13 @@ impl ComponentMut for IcalTodoBuilder {
             recurid.validate_dtstart(dtstart)?;
         }
         // OPTIONAL, but MUTUALLY EXCLUSIVE
-        if self.has_prop::<IcalDURATIONProperty>() && self.has_prop::<IcalDUEProperty>() {
+        let duration = self.safe_get_optional::<IcalDURATIONProperty>(timezones)?;
+        let due = self.safe_get_optional::<IcalDUEProperty>(timezones)?;
+        if duration.is_some() && due.is_some() {
             return Err(ParserError::PropertyConflict(
                 "both DUE and DURATION are defined",
             ));
         }
-        let _duration = self.safe_get_optional::<IcalDURATIONProperty>(timezones)?;
-        let due = self.safe_get_optional::<IcalDUEProperty>(timezones)?;
 
         // OPTIONAL, MULTIPLE ALLOWED: attach / attendee / categories / comment / contact / exdate / rstatus / related / resources / rdate / x-prop / iana-prop
         let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
@@ -162,6 +182,7 @@ impl ComponentMut for IcalTodoBuilder {
             dtstamp,
             dtstart,
             due,
+            duration,
             rdates,
             rrules,
             exdates,
