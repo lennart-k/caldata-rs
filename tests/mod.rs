@@ -7,12 +7,12 @@ macro_rules! set_snapshot_suffix {
 }
 
 pub mod property {
-    extern crate ical;
+    use caldata::PropertyParser;
 
     #[test]
     fn ical() {
         let input = include_str!("./resources/ical_multiple.ics");
-        let reader = ical::PropertyParser::from_slice(input.as_bytes());
+        let reader = PropertyParser::from_slice(input.as_bytes());
         for res in reader {
             let prop = res.unwrap();
             insta::assert_snapshot!(prop);
@@ -22,7 +22,7 @@ pub mod property {
     #[test]
     fn vcard() {
         let input = include_str!("./resources/vcard_input.vcf");
-        let reader = ical::PropertyParser::from_slice(input.as_bytes());
+        let reader = PropertyParser::from_slice(input.as_bytes());
         for res in reader {
             let prop = res.unwrap();
             insta::assert_snapshot!(prop);
@@ -32,7 +32,7 @@ pub mod property {
     #[test]
     fn errors() {
         let input = include_str!("./resources/property_error.vcf");
-        let reader = ical::PropertyParser::from_slice(input.as_bytes());
+        let reader = PropertyParser::from_slice(input.as_bytes());
         for res in reader {
             assert!(res.is_err());
         }
@@ -40,7 +40,7 @@ pub mod property {
 }
 
 pub mod line {
-    extern crate ical;
+    use caldata::LineReader;
 
     use insta::assert_snapshot;
     use itertools::Itertools;
@@ -49,7 +49,7 @@ pub mod line {
     #[test]
     fn multioctet_line_wrapping() {
         let input = b"\xc3\r\n \xbc";
-        let line = ical::LineReader::from_slice(input.as_slice())
+        let line = LineReader::from_slice(input.as_slice())
             .next()
             .unwrap()
             .unwrap();
@@ -62,13 +62,13 @@ pub mod line {
     #[case(b"\xc3 \r\n \xbc")]
     #[case(b"\xc3 \r\n \n\xbc")]
     fn invalid_lines(#[case] input: &[u8]) {
-        assert!(ical::LineReader::from_slice(input).next().unwrap().is_err());
+        assert!(LineReader::from_slice(input).next().unwrap().is_err());
     }
 
     #[test]
     fn ical() {
         let input = include_bytes!("./resources/ical_multiple.ics");
-        let lines = ical::LineReader::from_slice(input.as_slice())
+        let lines = LineReader::from_slice(input.as_slice())
             .collect::<Result<Vec<_>, _>>()
             .unwrap()
             .iter()
@@ -79,7 +79,7 @@ pub mod line {
     #[test]
     fn vcard() {
         let input = include_bytes!("./resources/vcard_input.vcf");
-        let lines = ical::LineReader::from_slice(input.as_slice())
+        let lines = LineReader::from_slice(input.as_slice())
             .collect::<Result<Vec<_>, _>>()
             .unwrap()
             .iter()
@@ -89,8 +89,7 @@ pub mod line {
 }
 
 pub mod calendar_object {
-    extern crate ical;
-    use ical::generator::Emitter;
+    use caldata::{IcalObjectParser, IcalParser, generator::Emitter};
     use itertools::Itertools;
 
     #[rstest::rstest]
@@ -104,8 +103,8 @@ pub mod calendar_object {
     #[case(7, include_str!("./resources/recurring_wholeday.ics"), "")]
     fn valid_objects(#[case] case: usize, #[case] input: &str, #[case] tzids: &str) {
         set_snapshot_suffix!("{case}");
-        let generic_reader = ical::IcalParser::from_slice(input.as_bytes());
-        let reader = ical::IcalObjectParser::from_slice(input.as_bytes());
+        let generic_reader = IcalParser::from_slice(input.as_bytes());
+        let reader = IcalObjectParser::from_slice(input.as_bytes());
         for (g_res, res) in generic_reader.zip(reader) {
             let g_cal = g_res.unwrap();
             let cal = res.unwrap();
@@ -118,7 +117,7 @@ pub mod calendar_object {
     #[case(0, include_str!("./resources/ical_freebusy.ics"))]
     fn invalid_objects(#[case] case: usize, #[case] input: &str) {
         set_snapshot_suffix!("{case}");
-        let reader = ical::IcalObjectParser::from_slice(input.as_bytes());
+        let reader = IcalObjectParser::from_slice(input.as_bytes());
         for res in reader {
             assert!(res.is_err());
         }
@@ -129,7 +128,7 @@ pub mod calendar_object {
     #[case(1, include_str!("./resources/recurring_wholeday.ics"))]
     fn rrule_expansion(#[case] case: usize, #[case] input: &str) {
         set_snapshot_suffix!("{case}");
-        let reader = ical::IcalObjectParser::from_slice(input.as_bytes());
+        let reader = IcalObjectParser::from_slice(input.as_bytes());
         for (i, res) in reader.enumerate() {
             let cal = res.unwrap();
             let recurrence = cal.expand_recurrence(None, None);
@@ -140,13 +139,14 @@ pub mod calendar_object {
 }
 
 pub mod parser {
-    extern crate ical;
-    use ical::{component::IcalCalendar, generator::Emitter};
+    use caldata::{
+        IcalObjectParser, IcalParser, VcardParser, component::IcalCalendar, generator::Emitter,
+    };
 
     #[test]
     fn ical_parse_everything() {
         let input = include_str!("./resources/ical_everything.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         let cal = reader.expect_one();
         cal.unwrap();
     }
@@ -154,7 +154,7 @@ pub mod parser {
     #[test]
     fn ical_multiple() {
         let input = include_str!("./resources/ical_multiple.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             insta::assert_debug_snapshot!(cal);
@@ -164,7 +164,7 @@ pub mod parser {
     #[test]
     fn ical_example_1() {
         let input = include_str!("./resources/ical_example_1.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             insta::assert_debug_snapshot!(cal);
@@ -174,7 +174,7 @@ pub mod parser {
     #[test]
     fn ical_example_2() {
         let input = include_str!("./resources/ical_example_2.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             insta::assert_debug_snapshot!(cal);
@@ -184,7 +184,7 @@ pub mod parser {
     #[test]
     fn ical_example_rrule() {
         let input = include_str!("./resources/ical_example_rrule.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             similar_asserts::assert_eq!(cal.generate(), input);
@@ -195,7 +195,7 @@ pub mod parser {
     #[test]
     fn ical_example_events() {
         let input = include_str!("./resources/ical_events.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             similar_asserts::assert_eq!(cal.generate(), input);
@@ -206,7 +206,7 @@ pub mod parser {
     #[test]
     fn ical_special_symbols() {
         let input = include_str!("./resources/ical_special_symbols.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             insta::assert_debug_snapshot!(cal);
@@ -216,7 +216,7 @@ pub mod parser {
     #[test]
     fn ical_example_todos() {
         let input = include_str!("./resources/ical_todos.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             similar_asserts::assert_eq!(cal.generate(), input);
@@ -227,7 +227,7 @@ pub mod parser {
     #[test]
     fn ical_example_journals() {
         let input = include_str!("./resources/ical_journals.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             similar_asserts::assert_eq!(cal.generate(), input);
@@ -238,7 +238,7 @@ pub mod parser {
     #[test]
     fn ical_example_freebusy() {
         let input = include_str!("./resources/ical_freebusy.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             similar_asserts::assert_eq!(cal.generate(), input);
@@ -249,7 +249,7 @@ pub mod parser {
     // #[test]
     // fn ical_expand() {
     //     let input = include_str!("./resources/ical_expand.ics");
-    //     let reader = ical::IcalParser::from_slice(input.as_bytes());
+    //     let reader = IcalParser::from_slice(input.as_bytes());
     //     for res in reader {
     //         let cal = res.unwrap();
     //         similar_asserts::assert_eq!(cal.generate(), input);
@@ -262,13 +262,13 @@ pub mod parser {
         let input1 = include_str!("./resources/ical_events.ics");
         let input2 = include_str!("./resources/ical_example_1.ics");
         let input3 = include_str!("./resources/ical_example_rrule.ics");
-        let cal1 = ical::IcalObjectParser::from_slice(input1.as_bytes())
+        let cal1 = IcalObjectParser::from_slice(input1.as_bytes())
             .expect_one()
             .unwrap();
-        let cal2 = ical::IcalObjectParser::from_slice(input2.as_bytes())
+        let cal2 = IcalObjectParser::from_slice(input2.as_bytes())
             .expect_one()
             .unwrap();
-        let cal3 = ical::IcalObjectParser::from_slice(input3.as_bytes())
+        let cal3 = IcalObjectParser::from_slice(input3.as_bytes())
             .expect_one()
             .unwrap();
         let export = IcalCalendar::from_objects(
@@ -279,7 +279,7 @@ pub mod parser {
         .generate();
         insta::assert_snapshot!(export);
         // Ensure that exported calendar is valid
-        let roundtrip_cal = ical::IcalParser::from_slice(export.as_bytes())
+        let roundtrip_cal = IcalParser::from_slice(export.as_bytes())
             .expect_one()
             .unwrap();
 
@@ -299,7 +299,7 @@ pub mod parser {
     #[test]
     fn vcard() {
         let input = include_str!("./resources/vcard_input.vcf");
-        let reader = ical::VcardParser::from_slice(input.as_bytes());
+        let reader = VcardParser::from_slice(input.as_bytes());
         for res in reader {
             let card = res.unwrap();
             insta::assert_debug_snapshot!(card);
@@ -309,7 +309,7 @@ pub mod parser {
     #[test]
     fn vcard_lowercase() {
         let input = include_str!("./resources/vcard_lowercase.vcf");
-        let reader = ical::VcardParser::from_slice(input.as_bytes());
+        let reader = VcardParser::from_slice(input.as_bytes());
         for res in reader {
             let card = res.unwrap();
             insta::assert_debug_snapshot!(card);
@@ -320,7 +320,7 @@ pub mod parser {
     #[test]
     fn vcard_invalid() {
         let input = include_str!("./resources/vcard_invalid.vcf");
-        let reader = ical::VcardParser::from_slice(input.as_bytes());
+        let reader = VcardParser::from_slice(input.as_bytes());
         for res in reader {
             assert!(res.is_err());
         }
@@ -328,13 +328,13 @@ pub mod parser {
 }
 
 pub mod generator {
-    extern crate ical;
-    use self::ical::generator::Emitter;
+    use caldata::IcalParser;
+    use caldata::generator::Emitter;
 
     #[test]
     fn generate_o365_test() {
         let input = include_str!("./resources/o365_meeting.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             similar_asserts::assert_eq!(cal.generate(), input);
@@ -345,7 +345,7 @@ pub mod generator {
     #[test]
     fn generate_sabre_test() {
         let input = include_str!("./resources/sabre_test.ics");
-        let reader = ical::IcalParser::from_slice(input.as_bytes());
+        let reader = IcalParser::from_slice(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();
             similar_asserts::assert_eq!(cal.generate(), input);
@@ -356,8 +356,7 @@ pub mod generator {
 
 #[cfg(feature = "chrono-tz")]
 pub mod chrono_tz {
-    extern crate ical;
-    use ical::component::{ComponentParser, IcalTimeZone};
+    use caldata::component::{ComponentParser, IcalTimeZone};
     use rstest::rstest;
     const VTIMEZONE_DIFFERENT_TZID_BERLIN: &str = r#"
 BEGIN:VTIMEZONE

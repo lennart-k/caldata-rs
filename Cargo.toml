@@ -3,21 +3,17 @@ authors = ["Lennart Kämmle", "Peltoche <dev@halium.fr>"]
 categories = ["parsing", "ical", "vcf", "calendar", "contacts"]
 description = "Ical/Vcard parser for Rust"
 documentation = "https://docs.rs/caldata"
-homepage = "https://github.com/lennart-k/ical-rs"
+homepage = "https://github.com/lennart-k/caldata-rs"
 keywords = ["ical", "vcard", "parser"]
 license-file = "./LICENSE"
-name = "ical"
+name = "caldata-rs"
 readme = "./README.md"
-repository = "https://github.com/Peltoche/ical-rs"
+repository = "https://github.com/lennart-k/caldata-rs"
 version = "0.12.0-dev"
 edition = "2024"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin_include)'] }
-
-[badges.travis-ci]
-branch = "master"
-repository = "https://travis-ci.org/Peltoche/ical-rs"
 
 [dependencies]
 thiserror = "2.0"
@@ -55,6 +51,6 @@ bench = []
 
 [lib]
 doc = true
-name = "ical"
+name = "caldata"
 path = "src/lib.rs"
 test = true

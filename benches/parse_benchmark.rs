@@ -1,14 +1,15 @@
-use criterion::{Criterion, criterion_group, criterion_main};
-use ical::{
+use caldata::{
+    IcalParser, LineReader,
     generator::{Emitter, IcalCalendar},
     parser::{ContentLine, ICalProperty},
     property::IcalDTSTARTProperty,
     types::{CalDate, CalDateTime, PartialDate},
 };
+use criterion::{Criterion, criterion_group, criterion_main};
 
 fn parse_ical() -> IcalCalendar {
     let input = include_str!("../tests/resources/ical_everything.ics");
-    let reader = ical::IcalParser::from_slice(input.as_bytes());
+    let reader = IcalParser::from_slice(input.as_bytes());
     reader.into_iter().next().unwrap().unwrap()
 }
 
@@ -48,7 +49,7 @@ fn benchmark(c: &mut Criterion) {
     c.bench_function("line parse ical_everything.ics", |b| {
         b.iter(|| {
             let input = include_str!("../tests/resources/ical_everything.ics");
-            let reader = ical::LineReader::from_slice(input.as_bytes());
+            let reader = LineReader::from_slice(input.as_bytes());
             // Consume reader
             for _ in reader {}
         })
