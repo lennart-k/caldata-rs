@@ -14,22 +14,13 @@
 //!
 //! # Examples
 //!
-//! ```toml
-//! [dependencies.ical]
-//! version = "0.3.*"
-//! default-features = false
-//! features = ["property"]
-//! ```
-//!
 //! ```rust
-//! extern crate ical;
-//!
 //! use std::fs::read_to_string;
 //!
 //! let buf = read_to_string("./tests/resources/vcard_input.vcf")
 //!     .unwrap();
 //!
-//! let reader = ical::PropertyParser::from_slice(buf.as_bytes());
+//! let reader = caldata::PropertyParser::from_slice(buf.as_bytes());
 //!
 //! for line in reader {
 //!     println!("{:?}", line);

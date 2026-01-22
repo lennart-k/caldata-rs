@@ -32,7 +32,7 @@ mod helper {
     ///
     /// # Example
     /// ```
-    /// # #[macro_use] extern crate ical;
+    /// # #[macro_use] extern crate caldata;
     /// let param : (String, Vec<String>) = ical_param!("param2", "pvalue1", "pvalue2");
     /// assert_eq!(format!("{:?}", param), "(\"param2\", [\"pvalue1\", \"pvalue2\"])");
     /// ```
@@ -51,8 +51,8 @@ mod helper {
     ///
     /// # Example
     /// ```
-    /// # #[macro_use] extern crate ical;
-    /// # use ical::parser::ContentLine;
+    /// # #[macro_use] extern crate caldata;
+    /// # use caldata::parser::ContentLine;
     /// let prop = ical_property!(
     ///             "NAME",
     ///             "value",

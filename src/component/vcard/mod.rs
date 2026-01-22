@@ -16,14 +16,12 @@
 //! ```
 //!
 //! ```rust
-//! extern crate ical;
-//!
 //! use std::fs::read_to_string;
 //!
 //! let buf = read_to_string("./tests/resources/vcard_input.vcf")
 //! .unwrap();
 //!
-//! let reader = ical::VcardParser::from_slice(buf.as_bytes());
+//! let reader = caldata::VcardParser::from_slice(buf.as_bytes());
 //!
 //! for contact in reader {
 //!     println!("{:?}", contact);

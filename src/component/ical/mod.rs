@@ -8,23 +8,13 @@
 //!
 //! # Examples
 //!
-//!
-//! ```toml
-//! [dependencies.ical]
-//! version = "0.3.*"
-//! default-features = false
-//! features = ["ical-parser"]
-//! ```
-//!
 //! ```rust
-//! extern crate ical;
-//!
 //! use std::fs::read_to_string;
 //!
 //! let buf = read_to_string("./tests/resources/ical_multiple.ics")
 //! .unwrap();
 //!
-//! let reader = ical::IcalParser::from_slice(buf.as_bytes());
+//! let reader = caldata::IcalParser::from_slice(buf.as_bytes());
 //!
 //! for line in reader {
 //!     println!("{:?}", line);
