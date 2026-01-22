@@ -1,17 +1,15 @@
 use crate::{
     PropertyParser,
     component::{
-        CalendarInnerData, IcalAlarmBuilder, IcalCalendarObject, IcalEventBuilder,
-        IcalFreeBusyBuilder, IcalJournalBuilder, IcalTodoBuilder,
+        CalendarInnerData, Component, ComponentMut, IcalAlarm, IcalAlarmBuilder,
+        IcalCalendarObject, IcalEvent, IcalEventBuilder, IcalFreeBusy, IcalFreeBusyBuilder,
+        IcalJournal, IcalJournalBuilder, IcalTimeZone, IcalTodo, IcalTodoBuilder, ParserError,
     },
-    parser::{
-        Calscale, Component, ComponentMut, GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty,
-        IcalVERSIONProperty, IcalVersion, ParserError,
-        ical::component::{
-            IcalAlarm, IcalEvent, IcalFreeBusy, IcalJournal, IcalTimeZone, IcalTodo,
-        },
+    parser::ContentLine,
+    property::{
+        Calscale, GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty,
+        IcalVersion,
     },
-    property::ContentLine,
 };
 use std::{
     borrow::Cow,

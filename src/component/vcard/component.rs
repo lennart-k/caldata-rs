@@ -1,8 +1,9 @@
-use crate::parser::{
-    Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError, VcardANNIVERSARYProperty,
-    VcardBDAYProperty, VcardFNProperty, VcardNProperty,
+use crate::component::{Component, ComponentMut};
+use crate::parser::{ContentLine, ParserError, PropertyParser};
+use crate::property::{
+    GetProperty, IcalUIDProperty, VcardANNIVERSARYProperty, VcardBDAYProperty, VcardFNProperty,
+    VcardNProperty,
 };
-use crate::property::{ContentLine, PropertyParser};
 use std::borrow::Cow;
 use std::collections::HashMap;
 

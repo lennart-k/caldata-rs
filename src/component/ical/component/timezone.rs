@@ -1,7 +1,7 @@
 use crate::{
     PropertyParser,
-    parser::{Component, ComponentMut, ParserError},
-    property::ContentLine,
+    component::{Component, ComponentMut},
+    parser::{ContentLine, ParserError},
 };
 #[cfg(not(tarpaulin_include))]
 use std::borrow::Cow;

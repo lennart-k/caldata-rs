@@ -1,16 +1,15 @@
-use std::collections::HashSet;
-
 use crate::{
-    component::IcalAlarm,
-    parser::{
-        Component, ICalProperty, IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
-        IcalDURATIONProperty, IcalEXDATEProperty, IcalRDATEProperty, IcalRECURIDProperty,
-        IcalSUMMARYProperty, RecurIdRange,
+    component::{Component, IcalAlarm},
+    parser::{ContentLine, ICalProperty},
+    property::{
+        IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDURATIONProperty,
+        IcalEXDATEProperty, IcalRDATEProperty, IcalRECURIDProperty, IcalSUMMARYProperty,
+        RecurIdRange,
     },
-    property::ContentLine,
     types::{CalDate, CalDateOrDateTime, CalDateTime, Timezone},
 };
 use chrono::{DateTime, Duration, Utc};
+use std::collections::HashSet;
 
 pub use builder::IcalEventBuilder;
 use rrule::{RRule, RRuleSet};

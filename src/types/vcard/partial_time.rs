@@ -169,7 +169,7 @@ impl Value for PartialTime {
 
 impl ParseProp for PartialTime {
     fn parse_prop(
-        prop: &crate::property::ContentLine,
+        prop: &crate::parser::ContentLine,
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {

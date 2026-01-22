@@ -120,7 +120,7 @@ pub enum LineError {
     FromUtf8Error(#[from] FromUtf8Error),
 }
 
-/// Take a `BufRead` and return the unfolded `Line`.
+/// Take an iterator over `Cow<'a, [u8]>` and return the unfolded `Line`.
 pub struct LineReader<'a, I: Iterator<Item = Cow<'a, [u8]>>> {
     lines: Peekable<I>,
     number: usize,

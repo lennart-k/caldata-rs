@@ -1,6 +1,6 @@
-use crate::parser::ParserError;
+use crate::parser::{ContentLine, ParserError};
+use crate::types::CalDateTimeError;
 use crate::types::{Timezone, Value};
-use crate::{property::ContentLine, types::CalDateTimeError};
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, Utc};
 use chrono_tz::Tz;
 use std::{collections::HashMap, ops::Add};

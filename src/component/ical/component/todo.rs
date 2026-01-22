@@ -2,14 +2,13 @@ use rrule::RRule;
 
 use crate::{
     PropertyParser,
-    component::IcalAlarmBuilder,
-    parser::{
-        Component, ComponentMut, GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
-        IcalDUEProperty, IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty,
-        IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty, IcalUIDProperty, ParserError,
-        ical::component::IcalAlarm,
+    component::{Component, ComponentMut, IcalAlarm, IcalAlarmBuilder},
+    parser::{ContentLine, ParserError},
+    property::{
+        GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDUEProperty,
+        IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty,
+        IcalRECURIDProperty, IcalRRULEProperty, IcalUIDProperty,
     },
-    property::ContentLine,
     types::CalDateOrDateTime,
 };
 use std::{

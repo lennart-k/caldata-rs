@@ -1,13 +1,12 @@
 use crate::{
     PropertyParser,
-    component::{IcalAlarmBuilder, IcalEvent},
-    parser::{
-        Component, ComponentMut, GetProperty, IcalDTENDProperty, IcalDTSTARTProperty,
-        IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty, IcalMETHODProperty,
-        IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty, IcalSUMMARYProperty,
-        IcalUIDProperty, ParserError,
+    component::{Component, ComponentMut, IcalAlarmBuilder, IcalEvent},
+    parser::{ContentLine, ParserError},
+    property::{
+        GetProperty, IcalDTENDProperty, IcalDTSTARTProperty, IcalDURATIONProperty,
+        IcalEXDATEProperty, IcalEXRULEProperty, IcalMETHODProperty, IcalRDATEProperty,
+        IcalRECURIDProperty, IcalRRULEProperty, IcalSUMMARYProperty, IcalUIDProperty,
     },
-    property::ContentLine,
 };
 use std::{borrow::Cow, collections::HashMap};
 

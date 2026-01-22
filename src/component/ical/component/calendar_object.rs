@@ -1,13 +1,12 @@
 use crate::{
     PropertyParser,
-    component::{IcalCalendar, IcalEventBuilder, IcalJournalBuilder, IcalTodoBuilder},
-    generator::Emitter,
-    parser::{
-        Component, ComponentMut, GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty,
-        IcalVERSIONProperty, ParserError,
-        ical::component::{IcalEvent, IcalJournal, IcalTimeZone, IcalTodo},
+    component::{
+        Component, ComponentMut, IcalCalendar, IcalEvent, IcalEventBuilder, IcalJournal,
+        IcalJournalBuilder, IcalTimeZone, IcalTodo, IcalTodoBuilder,
     },
-    property::ContentLine,
+    generator::Emitter,
+    parser::{ContentLine, ParserError},
+    property::{GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
     types::CalDateTime,
 };
 use chrono::{DateTime, Utc};

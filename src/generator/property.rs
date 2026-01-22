@@ -1,5 +1,5 @@
 use crate::generator::Emitter;
-use crate::property::{ContentLine, ContentLineParams};
+use crate::parser::{ContentLine, ContentLineParams};
 use crate::{PARAM_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_DELIMITER};
 use itertools::Itertools;
 

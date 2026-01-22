@@ -2,9 +2,9 @@ mod ical;
 mod property;
 use std::collections::BTreeMap;
 
-pub use crate::parser::ical::component::{IcalCalendar, IcalEvent};
-pub use crate::parser::vcard::component::VcardContact;
-pub use crate::property::ContentLine;
+pub use crate::component::ical::component::{IcalCalendar, IcalEvent};
+pub use crate::component::vcard::component::VcardContact;
+pub use crate::parser::ContentLine;
 
 ///
 /// Emits the content of the Component in ical-format.
@@ -52,7 +52,7 @@ mod helper {
     /// # Example
     /// ```
     /// # #[macro_use] extern crate ical;
-    /// # use ical::property::ContentLine;
+    /// # use ical::parser::ContentLine;
     /// let prop = ical_property!(
     ///             "NAME",
     ///             "value",

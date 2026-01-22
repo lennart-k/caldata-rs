@@ -357,8 +357,7 @@ pub mod generator {
 #[cfg(feature = "chrono-tz")]
 pub mod chrono_tz {
     extern crate ical;
-    use self::ical::parser::ical::component::IcalTimeZone;
-    use ical::parser::ComponentParser;
+    use ical::component::{ComponentParser, IcalTimeZone};
     use rstest::rstest;
     const VTIMEZONE_DIFFERENT_TZID_BERLIN: &str = r#"
 BEGIN:VTIMEZONE

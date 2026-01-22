@@ -2,8 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     generator::Emitter,
-    parser::{ICalProperty, ParseProp, ParserError},
-    property::{ContentLine, ContentLineParams},
+    parser::{ContentLine, ContentLineParams, ICalProperty, ParseProp, ParserError},
     types::{CalDateOrDateTime, Value},
 };
 

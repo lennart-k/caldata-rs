@@ -1,10 +1,10 @@
 use crate::{
     PropertyParser,
-    parser::{
-        Component, ComponentMut, GetProperty, IcalDTENDProperty, IcalDTSTAMPProperty,
-        IcalDTSTARTProperty, IcalUIDProperty, ParserError,
+    component::{Component, ComponentMut},
+    parser::{ContentLine, ParserError},
+    property::{
+        GetProperty, IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalUIDProperty,
     },
-    property::ContentLine,
 };
 #[cfg(not(tarpaulin_include))]
 use std::borrow::Cow;

@@ -1,4 +1,4 @@
-use crate::{property::ContentLine, types::Value};
+use crate::{parser::ContentLine, types::Value};
 use chrono::Duration;
 use lazy_static::lazy_static;
 

@@ -37,13 +37,15 @@ const PARAM_DELIMITER: char = ';';
 const PARAM_NAME_DELIMITER: char = '=';
 const PARAM_QUOTE: char = '"';
 
+pub mod component;
+pub use component::ical::*;
+pub use component::vcard::VcardParser;
+
 pub mod parser;
-pub use crate::parser::ical::*;
-pub use crate::parser::vcard::VcardParser;
+pub use parser::{LineReader, ParserError, PropertyParser};
+
 pub mod property;
-pub use crate::property::PropertyParser;
-pub mod line;
-pub use crate::line::LineReader;
+
 pub mod generator;
 
 pub mod types;

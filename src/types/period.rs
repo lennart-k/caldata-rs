@@ -4,8 +4,7 @@ use std::collections::HashMap;
 
 use crate::{
     generator::Emitter,
-    parser::ParserError,
-    property::ContentLine,
+    parser::{ContentLine, ParserError},
     types::{CalDateOrDateTime, CalDateTime, CalDateTimeError, Value, parse_duration},
 };
 

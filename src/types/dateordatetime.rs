@@ -8,8 +8,7 @@ use derive_more::From;
 
 use crate::{
     generator::Emitter,
-    parser::ParserError,
-    property::ContentLine,
+    parser::{ContentLine, ParserError},
     types::{CalDate, CalDateTime, Timezone, Value},
 };
 

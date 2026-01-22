@@ -1,11 +1,12 @@
 use crate::{
     PropertyParser,
-    parser::{
-        Component, ComponentMut, GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
-        IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty,
-        IcalRRULEProperty, IcalUIDProperty, ParserError,
+    component::{Component, ComponentMut},
+    parser::{ContentLine, ParserError},
+    property::{
+        GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalEXDATEProperty,
+        IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty,
+        IcalUIDProperty,
     },
-    property::ContentLine,
 };
 use rrule::RRule;
 use std::{

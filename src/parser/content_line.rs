@@ -41,10 +41,9 @@ use std::borrow::Cow;
 use std::fmt;
 use std::iter::Iterator;
 
-use crate::line::{BytesLines, LineError};
+use super::{BytesLines, Line, LineError, LineReader};
 use crate::{
     PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_QUOTE, PARAM_VALUE_DELIMITER, VALUE_DELIMITER,
-    line::{Line, LineReader},
 };
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]

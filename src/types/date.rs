@@ -1,5 +1,5 @@
 use crate::types::{CalDateTimeError, Timezone, Value};
-use crate::{property::ContentLine, types::CalDateTime};
+use crate::{parser::ContentLine, types::CalDateTime};
 use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveTime};
 use chrono_tz::Tz;
 use std::{collections::HashMap, ops::Add};

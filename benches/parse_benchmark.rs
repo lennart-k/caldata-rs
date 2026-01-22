@@ -1,8 +1,8 @@
 use criterion::{Criterion, criterion_group, criterion_main};
 use ical::{
     generator::{Emitter, IcalCalendar},
-    parser::{ICalProperty, IcalDTSTARTProperty},
-    property::ContentLine,
+    parser::{ContentLine, ICalProperty},
+    property::IcalDTSTARTProperty,
     types::{CalDate, CalDateTime, PartialDate},
 };
 

@@ -1,13 +1,13 @@
 use crate::component::IcalCalendarObject;
-use crate::generator::Emitter;
-use crate::parser::ical::component::{
+use crate::component::{
     IcalAlarm, IcalCalendar, IcalEvent, IcalFreeBusy, IcalJournal, IcalTimeZone,
     IcalTimeZoneTransition, IcalTodo,
 };
+use crate::generator::Emitter;
 
 impl Emitter for IcalTimeZoneTransition {
     fn generate(&self) -> String {
-        use crate::parser::ical::component::IcalTimeZoneTransitionType::{DAYLIGHT, STANDARD};
+        use crate::component::IcalTimeZoneTransitionType::{DAYLIGHT, STANDARD};
         let key = match &self.transition {
             STANDARD => "STANDARD",
             DAYLIGHT => "DAYLIGHT",
@@ -28,7 +28,7 @@ macro_rules! generate_emitter {
         impl Emitter for $struct {
             fn generate(&self) -> String {
                 let mut text = format!("BEGIN:{key}\r\n", key = $key);
-                text += &crate::parser::Component::get_properties(self).generate();
+                text += &crate::component::Component::get_properties(self).generate();
                 $(text += &self.$prop.generate();)*
                 text + "END:" + $key + "\r\n"
             }
@@ -36,7 +36,7 @@ macro_rules! generate_emitter {
     };
 }
 
-use crate::parser::vcard::component::VcardContact;
+use crate::component::VcardContact;
 generate_emitter!(VcardContact, "VCARD",);
 
 generate_emitter!(IcalAlarm, "VALARM",);
