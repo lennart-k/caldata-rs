@@ -4,7 +4,7 @@ expression: export
 ---
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:ical-rs test
+PRODID:caldata-rs test
 CALSCALE:GREGORIAN
 BEGIN:VTIMEZONE
 TZID:Europe/Berlin

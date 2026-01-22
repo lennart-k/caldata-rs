@@ -272,7 +272,7 @@ pub mod parser {
             .expect_one()
             .unwrap();
         let export = IcalCalendar::from_objects(
-            "ical-rs test".to_owned(),
+            "caldata-rs test".to_owned(),
             vec![cal1.to_owned(), cal2.to_owned(), cal3.to_owned()],
             vec![],
         )
