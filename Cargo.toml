@@ -1,6 +1,6 @@
 [package]
 authors = ["Lennart Kämmle", "Peltoche <dev@halium.fr>"]
-categories = ["parsing", "ical", "vcf", "calendar", "contacts"]
+categories = ["parsing"]
 description = "Ical/Vcard parser for Rust"
 documentation = "https://docs.rs/caldata"
 homepage = "https://github.com/lennart-k/caldata-rs"
