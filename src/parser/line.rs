@@ -44,6 +44,15 @@ use std::iter::{Iterator, Peekable};
 use std::str::Utf8Error;
 use std::string::FromUtf8Error;
 
+/// Errors arising from line unfolding
+#[derive(thiserror::Error, Debug, PartialEq, Eq)]
+pub enum LineError {
+    #[error(transparent)]
+    Utf8Error(#[from] Utf8Error),
+    #[error(transparent)]
+    FromUtf8Error(#[from] FromUtf8Error),
+}
+
 /// An unfolded raw line.
 ///
 /// Its inner is only a raw line from the file. No parsing or checking have
@@ -108,14 +117,6 @@ impl<'a> Iterator for BytesLines<'a> {
             None => None,
         }
     }
-}
-
-#[derive(thiserror::Error, Debug, PartialEq, Eq)]
-pub enum LineError {
-    #[error(transparent)]
-    Utf8Error(#[from] Utf8Error),
-    #[error(transparent)]
-    FromUtf8Error(#[from] FromUtf8Error),
 }
 
 /// Take an iterator over `Cow<'a, [u8]>` and return the unfolded `Line`.

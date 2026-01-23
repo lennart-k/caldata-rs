@@ -1,5 +1,5 @@
 use crate::{
-    PropertyParser,
+    ContentLineParser,
     component::{
         CalendarInnerData, Component, ComponentMut, IcalAlarm, IcalAlarmBuilder,
         IcalCalendarObject, IcalEvent, IcalEventBuilder, IcalFreeBusy, IcalFreeBusyBuilder,
@@ -94,7 +94,7 @@ impl ComponentMut for IcalCalendarBuilder {
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        line_parser: &mut PropertyParser<'a, I>,
+        line_parser: &mut ContentLineParser<'a, I>,
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {

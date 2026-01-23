@@ -29,7 +29,7 @@
 //! ```
 
 pub mod component;
-use super::ComponentParser;
+use crate::parser::ComponentParser;
 use component::VcardContact;
 
 pub type VcardParser<'a, I> = ComponentParser<'a, VcardContact, I>;

@@ -9,7 +9,7 @@ pub use component::ical::*;
 pub use component::vcard::VcardParser;
 
 pub mod parser;
-pub use parser::{LineReader, ParserError, PropertyParser};
+pub use parser::{ComponentParser, ContentLineParser, LineReader, ParserError};
 
 pub mod property;
 

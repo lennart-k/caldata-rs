@@ -9,7 +9,7 @@
 //! It work for both the Vcard and Ical format.
 //!
 //! #### Warning
-//!   The parsers `PropertyParser` only parse the content and set to uppercase the case-insensitive
+//!   The parsers `ContentLineParser` only parse the content and set to uppercase the case-insensitive
 //!   fields. No checks are made on the fields validity.
 //!
 //! # Examples
@@ -20,7 +20,7 @@
 //! let buf = read_to_string("./tests/resources/vcard_input.vcf")
 //!     .unwrap();
 //!
-//! let reader = caldata::PropertyParser::from_slice(buf.as_bytes());
+//! let reader = caldata::ContentLineParser::from_slice(buf.as_bytes());
 //!
 //! for line in reader {
 //!     println!("{:?}", line);
@@ -37,8 +37,9 @@ use crate::{
     PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_QUOTE, PARAM_VALUE_DELIMITER, VALUE_DELIMITER,
 };
 
+/// Error arising when trying to parse a content line
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
-pub enum PropertyError {
+pub enum ContentLineError {
     #[error("Line {0}: Missing property name.")]
     MissingName(usize),
     #[error("Line {0}: Missing a closing quote.")]
@@ -117,29 +118,29 @@ impl fmt::Display for ContentLine {
     }
 }
 
-pub struct PropertyParser<'a, T: Iterator<Item = Cow<'a, [u8]>>>(LineReader<'a, T>);
+pub struct ContentLineParser<'a, T: Iterator<Item = Cow<'a, [u8]>>>(LineReader<'a, T>);
 
-impl<'a> PropertyParser<'a, BytesLines<'a>> {
+impl<'a> ContentLineParser<'a, BytesLines<'a>> {
     pub fn from_slice(slice: &'a [u8]) -> Self {
-        PropertyParser(LineReader::from_slice(slice))
+        ContentLineParser(LineReader::from_slice(slice))
     }
 }
 
-impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> PropertyParser<'a, T> {
+impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
     pub fn new(line_reader: LineReader<'a, T>) -> Self {
-        PropertyParser(line_reader)
+        ContentLineParser(line_reader)
     }
 
-    fn parse(&self, line: Line) -> Result<ContentLine, PropertyError> {
+    fn parse(&self, line: Line) -> Result<ContentLine, ContentLineError> {
         let to_parse = line.as_str();
 
         // Find end of parameter name
         let Some(end_name_index) = to_parse.find([PARAM_DELIMITER, VALUE_DELIMITER]) else {
-            return Err(PropertyError::MissingName(line.number()));
+            return Err(ContentLineError::MissingName(line.number()));
         };
         let (prop_name, mut to_parse) = to_parse.split_at(end_name_index);
         if prop_name.is_empty() {
-            return Err(PropertyError::MissingName(line.number()));
+            return Err(ContentLineError::MissingName(line.number()));
         }
 
         // remainder either starts with ; or :
@@ -150,13 +151,13 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> PropertyParser<'a, T> {
 
             // Split the param key and the rest of the line
             let Some((key, remainder)) = to_parse.split_once(PARAM_NAME_DELIMITER) else {
-                return Err(PropertyError::MissingDelimiter(
+                return Err(ContentLineError::MissingDelimiter(
                     line.number(),
                     PARAM_NAME_DELIMITER,
                 ));
             };
             if key.is_empty() {
-                return Err(PropertyError::MissingParamKey(line.number()));
+                return Err(ContentLineError::MissingParamKey(line.number()));
             }
             to_parse = remainder;
 
@@ -171,20 +172,20 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> PropertyParser<'a, T> {
                     values.push(
                         elements
                             .next()
-                            .ok_or_else(|| PropertyError::MissingClosingQuote(line.number()))?
+                            .ok_or_else(|| ContentLineError::MissingClosingQuote(line.number()))?
                             .to_string(),
                     );
 
                     to_parse = elements
                         .next()
-                        .ok_or_else(|| PropertyError::MissingClosingQuote(line.number()))?
+                        .ok_or_else(|| ContentLineError::MissingClosingQuote(line.number()))?
                 } else {
                     // This is a 'raw' value. (NAME;Foo=Bar:value)
                     // Try to find the next param separator.
                     let Some(end_param_value) =
                         to_parse.find([PARAM_DELIMITER, VALUE_DELIMITER, PARAM_VALUE_DELIMITER])
                     else {
-                        return Err(PropertyError::MissingContentAfter(
+                        return Err(ContentLineError::MissingContentAfter(
                             line.number(),
                             PARAM_NAME_DELIMITER,
                         ));
@@ -207,7 +208,7 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> PropertyParser<'a, T> {
 
         // Parse value
         if !to_parse.starts_with(VALUE_DELIMITER) {
-            return Err(PropertyError::MissingValue(line.number()));
+            return Err(ContentLineError::MissingValue(line.number()));
         }
         to_parse = to_parse.split_at(1).1;
         Ok(ContentLine {
@@ -218,10 +219,10 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> PropertyParser<'a, T> {
     }
 }
 
-impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> Iterator for PropertyParser<'a, T> {
-    type Item = Result<ContentLine, PropertyError>;
+impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> Iterator for ContentLineParser<'a, T> {
+    type Item = Result<ContentLine, ContentLineError>;
 
-    fn next(&mut self) -> Option<Result<ContentLine, PropertyError>> {
+    fn next(&mut self) -> Option<Result<ContentLine, ContentLineError>> {
         match self.0.next() {
             Some(Ok(line)) => Some(self.parse(line)),
             Some(Err(err)) => Some(Err(err.into())),

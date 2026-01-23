@@ -1,7 +1,7 @@
 use rrule::RRule;
 
 use crate::{
-    PropertyParser,
+    ContentLineParser,
     component::{Component, ComponentMut, IcalAlarm, IcalAlarmBuilder},
     parser::{ContentLine, ParserError},
     property::{
@@ -117,7 +117,7 @@ impl ComponentMut for IcalTodoBuilder {
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        line_parser: &mut PropertyParser<'a, I>,
+        line_parser: &mut ContentLineParser<'a, I>,
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {

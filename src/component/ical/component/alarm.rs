@@ -1,6 +1,6 @@
 use crate::{
     component::{Component, ComponentMut},
-    parser::{ContentLine, ParserError, PropertyParser},
+    parser::{ContentLine, ContentLineParser, ParserError},
 };
 #[cfg(not(tarpaulin_include))]
 use std::borrow::Cow;
@@ -63,7 +63,7 @@ impl ComponentMut for IcalAlarmBuilder {
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        _: &mut PropertyParser<'a, I>,
+        _: &mut ContentLineParser<'a, I>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }

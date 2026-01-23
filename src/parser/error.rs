@@ -1,5 +1,5 @@
 use crate::{
-    parser::PropertyError,
+    parser::ContentLineError,
     types::{CalDateTimeError, InvalidDuration},
 };
 
@@ -15,8 +15,8 @@ pub enum ParserError {
     NotComplete,
     #[error("missing header")]
     MissingHeader,
-    #[error("property error: {0}")]
-    PropertyError(#[from] PropertyError),
+    #[error("content line error: {0}")]
+    ContentLineError(#[from] ContentLineError),
     #[error("missing property: {0}")]
     MissingProperty(&'static str),
     #[error("missing property: UID")]

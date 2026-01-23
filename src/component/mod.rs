@@ -1,20 +1,12 @@
-//! Wrapper around `PropertyParser`
-//!
-//! #### Warning
-//!   The parsers (`VcardParser` / `IcalParser`) only parse the content and set to uppercase
-//!   the case-insensitive fields.  No checks are made on the fields validity.
-//!
-//!
 pub mod ical;
 pub use ical::{IcalObjectParser, IcalParser, component::*};
 pub mod vcard;
 pub use vcard::component::*;
 
 use crate::ParserError;
-use crate::parser::{BytesLines, ContentLine, LineReader, PropertyParser};
+use crate::parser::{ContentLine, ContentLineParser};
 use std::borrow::Cow;
 use std::collections::HashMap;
-use std::marker::PhantomData;
 
 /// An immutable interface for an Ical/Vcard component.
 /// This is also implemented by verified components
@@ -46,7 +38,7 @@ pub trait Component: Clone {
 
 /// A mutable interface for an Ical/Vcard component.
 ///
-/// It takes a `PropertyParser` and fills the component with. It's also able to create
+/// It takes a `ContentLineParser` and fills the component with. It's also able to create
 /// sub-component used by event and alarms.
 pub trait ComponentMut: Component + Default {
     type Verified: Component<Unverified = Self>;
@@ -55,7 +47,7 @@ pub trait ComponentMut: Component + Default {
     fn add_sub_component<'a, T: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        line_parser: &mut PropertyParser<'a, T>,
+        line_parser: &mut ContentLineParser<'a, T>,
     ) -> Result<(), ParserError>;
 
     fn get_properties_mut(&mut self) -> &mut Vec<ContentLine>;
@@ -78,7 +70,7 @@ pub trait ComponentMut: Component + Default {
     /// Parse the content from `line_parser` and fill the component with.
     fn parse<'a, T: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
-        line_parser: &mut PropertyParser<'a, T>,
+        line_parser: &mut ContentLineParser<'a, T>,
     ) -> Result<(), ParserError> {
         loop {
             let line = line_parser.next().ok_or(ParserError::NotComplete)??;
@@ -97,85 +89,10 @@ pub trait ComponentMut: Component + Default {
     }
 
     fn from_parser<'a, T: Iterator<Item = Cow<'a, [u8]>>>(
-        line_parser: &mut PropertyParser<'a, T>,
+        line_parser: &mut ContentLineParser<'a, T>,
     ) -> Result<Self, ParserError> {
         let mut out = Self::default();
         out.parse(line_parser)?;
         Ok(out)
-    }
-}
-
-pub struct ComponentParser<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> {
-    line_parser: PropertyParser<'a, I>,
-    _t: PhantomData<C>,
-}
-
-impl<'a, C: Component> ComponentParser<'a, C, BytesLines<'a>> {
-    /// Return a new `IcalParser` from a `Reader`.
-    pub fn from_slice(slice: &'a [u8]) -> Self {
-        let line_reader = LineReader::from_slice(slice);
-        let line_parser = PropertyParser::new(line_reader);
-
-        ComponentParser {
-            line_parser,
-            _t: Default::default(),
-        }
-    }
-}
-
-impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> ComponentParser<'a, C, I> {
-    /// Read the next line and check if it's a valid VCALENDAR start.
-    #[inline]
-    fn check_header(&mut self) -> Result<Option<()>, ParserError> {
-        let line = match self.line_parser.next() {
-            Some(val) => val.map_err(ParserError::PropertyError)?,
-            None => return Ok(None),
-        };
-
-        if line.name != "BEGIN"
-            || line.value.is_none()
-            || !C::NAMES.contains(&line.value.as_ref().unwrap().to_uppercase().as_str())
-            || !line.params.is_empty()
-        {
-            return Err(ParserError::MissingHeader);
-        }
-
-        Ok(Some(()))
-    }
-
-    pub fn expect_one(mut self) -> Result<<C::Unverified as ComponentMut>::Verified, ParserError> {
-        let item = self.next().ok_or(ParserError::EmptyInput)??;
-        if self.next().is_some() {
-            return Err(ParserError::TooManyComponents);
-        }
-        Ok(item)
-    }
-}
-
-impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> Iterator for ComponentParser<'a, C, I> {
-    type Item = Result<<C::Unverified as ComponentMut>::Verified, ParserError>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        match self.check_header() {
-            Ok(res) => res?,
-            Err(err) => return Some(Err(err)),
-        };
-
-        let mut comp = C::Unverified::default();
-        let result = match comp.parse(&mut self.line_parser) {
-            Ok(_) => comp.build(None),
-            Err(err) => Err(err),
-        };
-
-        #[cfg(all(feature = "test", not(feature = "bench")))]
-        {
-            // Run this for more test coverage
-            if let Ok(comp) = result.as_ref() {
-                let mutable = comp.clone().mutable();
-                mutable.get_properties();
-            }
-        }
-
-        Some(result)
     }
 }

@@ -7,12 +7,12 @@ macro_rules! set_snapshot_suffix {
 }
 
 pub mod property {
-    use caldata::PropertyParser;
+    use caldata::ContentLineParser;
 
     #[test]
     fn ical() {
         let input = include_str!("./resources/ical_multiple.ics");
-        let reader = PropertyParser::from_slice(input.as_bytes());
+        let reader = ContentLineParser::from_slice(input.as_bytes());
         for res in reader {
             let prop = res.unwrap();
             insta::assert_snapshot!(prop);
@@ -22,7 +22,7 @@ pub mod property {
     #[test]
     fn vcard() {
         let input = include_str!("./resources/vcard_input.vcf");
-        let reader = PropertyParser::from_slice(input.as_bytes());
+        let reader = ContentLineParser::from_slice(input.as_bytes());
         for res in reader {
             let prop = res.unwrap();
             insta::assert_snapshot!(prop);
@@ -32,7 +32,7 @@ pub mod property {
     #[test]
     fn errors() {
         let input = include_str!("./resources/property_error.vcf");
-        let reader = PropertyParser::from_slice(input.as_bytes());
+        let reader = ContentLineParser::from_slice(input.as_bytes());
         for res in reader {
             assert!(res.is_err());
         }
@@ -356,7 +356,8 @@ pub mod generator {
 
 #[cfg(feature = "chrono-tz")]
 pub mod chrono_tz {
-    use caldata::component::{ComponentParser, IcalTimeZone};
+    use caldata::component::IcalTimeZone;
+    use caldata::parser::ComponentParser;
     use rstest::rstest;
     const VTIMEZONE_DIFFERENT_TZID_BERLIN: &str = r#"
 BEGIN:VTIMEZONE

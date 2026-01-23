@@ -1,5 +1,5 @@
 use crate::{
-    PropertyParser,
+    ContentLineParser,
     component::{Component, ComponentMut},
     parser::{ContentLine, ParserError},
     property::{
@@ -92,7 +92,7 @@ impl ComponentMut for IcalJournalBuilder {
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        _: &mut PropertyParser<'a, I>,
+        _: &mut ContentLineParser<'a, I>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }

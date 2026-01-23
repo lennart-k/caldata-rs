@@ -1,5 +1,5 @@
 use crate::component::{Component, ComponentMut};
-use crate::parser::{ContentLine, ParserError, PropertyParser};
+use crate::parser::{ContentLine, ContentLineParser, ParserError};
 use crate::property::{
     GetProperty, IcalUIDProperty, VcardANNIVERSARYProperty, VcardBDAYProperty, VcardFNProperty,
     VcardNProperty,
@@ -66,7 +66,7 @@ impl ComponentMut for VcardContactBuilder {
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         name: &str,
-        _line_parser: &mut PropertyParser<'a, I>,
+        _line_parser: &mut ContentLineParser<'a, I>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(name.to_owned()))
     }

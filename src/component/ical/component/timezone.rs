@@ -1,5 +1,5 @@
 use crate::{
-    PropertyParser,
+    ContentLineParser,
     component::{Component, ComponentMut},
     parser::{ContentLine, ParserError},
 };
@@ -85,7 +85,7 @@ impl ComponentMut for IcalTimeZone<false> {
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        line_parser: &mut PropertyParser<'a, I>,
+        line_parser: &mut ContentLineParser<'a, I>,
     ) -> Result<(), ParserError> {
         use self::IcalTimeZoneTransitionType::{DAYLIGHT, STANDARD};
 
@@ -193,7 +193,7 @@ impl ComponentMut for IcalTimeZoneTransition<false> {
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        _: &mut PropertyParser<'a, I>,
+        _: &mut ContentLineParser<'a, I>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }
