@@ -164,6 +164,15 @@ pub mod rfc7809 {
         let cal2 = reader.expect_one().unwrap();
         assert_eq!(cal.generate(), cal2.generate());
     }
+
+    #[cfg(feature = "chrono-tz")]
+    #[test]
+    fn test_tzdb_version() {
+        assert_eq!(
+            chrono_tz::IANA_TZDB_VERSION,
+            vtimezones_rs::IANA_TZDB_VERSION
+        );
+    }
 }
 
 pub mod parser {
