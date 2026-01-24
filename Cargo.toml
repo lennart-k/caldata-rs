@@ -9,7 +9,7 @@ license-file = "./LICENSE"
 name = "caldata"
 readme = "./README.md"
 repository = "https://github.com/lennart-k/caldata-rs"
-version = "0.12.1"
+version = "0.13.0"
 edition = "2024"
 
 [lints.rust]
@@ -44,7 +44,7 @@ name = "parse_benchmark"
 harness = false
 
 [features]
-default = ["chrono-tz", "vtimezones-rs"]
+default = ["chrono-tz"]
 vtimezones-rs = ["dep:vtimezones-rs"]
 chrono-tz = ["dep:chrono-tz"]
 test = []
