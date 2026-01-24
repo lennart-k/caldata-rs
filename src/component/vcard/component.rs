@@ -74,6 +74,7 @@ impl ComponentMut for VcardContactBuilder {
 
     fn build(
         self,
+        _options: &ParserOptions,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self::Verified, ParserError> {
         let uid = self

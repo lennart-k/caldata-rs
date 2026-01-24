@@ -107,6 +107,7 @@ impl ComponentMut for IcalJournalBuilder {
 
     fn build(
         self,
+        _options: &ParserOptions,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalJournal, ParserError> {
         // REQUIRED, ONLY ONCE

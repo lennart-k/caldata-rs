@@ -71,7 +71,7 @@ impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> Iterator for Component
 
         let mut comp = C::Unverified::default();
         let result = match comp.parse(&mut self.line_parser, &self.options) {
-            Ok(_) => comp.build(None),
+            Ok(_) => comp.build(&self.options, None),
             Err(err) => Err(err),
         };
 

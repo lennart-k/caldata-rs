@@ -1,3 +1,4 @@
+use crate::types::CalDateTime;
 use crate::types::DateOrDateTimeOrPeriod;
 
 super::property!(
@@ -6,6 +7,8 @@ super::property!(
     IcalRDATEProperty,
     Vec<DateOrDateTimeOrPeriod>
 );
+
+super::property!("RDATE", "DATE-TIME", IcalTZRDATEProperty, Vec<CalDateTime>);
 
 #[cfg(test)]
 mod tests {

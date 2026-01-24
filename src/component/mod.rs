@@ -65,6 +65,7 @@ pub trait ComponentMut: Component + Default {
 
     fn build(
         self,
+        options: &ParserOptions,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self::Verified, ParserError>;
 

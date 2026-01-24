@@ -76,6 +76,7 @@ impl ComponentMut for IcalEventBuilder {
 
     fn build(
         self,
+        options: &ParserOptions,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalEvent, ParserError> {
         // The following are REQUIRED, but MUST NOT occur more than once: dtstamp / uid
@@ -136,7 +137,7 @@ impl ComponentMut for IcalEventBuilder {
             alarms: self
                 .alarms
                 .into_iter()
-                .map(|alarm| alarm.build(timezones))
+                .map(|alarm| alarm.build(options, timezones))
                 .collect::<Result<Vec<_>, _>>()?,
         })
     }

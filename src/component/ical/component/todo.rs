@@ -134,6 +134,7 @@ impl ComponentMut for IcalTodoBuilder {
 
     fn build(
         self,
+        options: &ParserOptions,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalTodo, ParserError> {
         // REQUIRED, but ONLY ONCE
@@ -192,7 +193,7 @@ impl ComponentMut for IcalTodoBuilder {
             alarms: self
                 .alarms
                 .into_iter()
-                .map(|alarm| alarm.build(timezones))
+                .map(|alarm| alarm.build(options, timezones))
                 .collect::<Result<Vec<_>, _>>()?,
         };
 

@@ -284,6 +284,16 @@ IcalCalendar {
                             ),
                         },
                     ],
+                    dtstart: IcalDTSTARTProperty(
+                        DateTime(
+                            CalDateTime(
+                                1981-03-29T02:00:00Local,
+                            ),
+                        ),
+                        ContentLineParams(
+                            [],
+                        ),
+                    ),
                 },
                 IcalTimeZoneTransition {
                     transition: STANDARD,
@@ -334,6 +344,16 @@ IcalCalendar {
                             ),
                         },
                     ],
+                    dtstart: IcalDTSTARTProperty(
+                        DateTime(
+                            CalDateTime(
+                                1996-10-27T03:00:00Local,
+                            ),
+                        ),
+                        ContentLineParams(
+                            [],
+                        ),
+                    ),
                 },
             ],
         },

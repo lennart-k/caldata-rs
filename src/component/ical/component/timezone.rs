@@ -1,8 +1,10 @@
 use crate::{
     ContentLineParser,
     component::{Component, ComponentMut},
-    parser::{ContentLine, ParserError, ParserOptions},
+    parser::{ContentLine, ICalProperty, ParserError, ParserOptions},
+    property::{GetProperty, IcalDTSTARTProperty, IcalRRULEProperty, IcalTZRDATEProperty},
 };
+use chrono::{DateTime, Utc};
 #[cfg(not(tarpaulin_include))]
 use std::borrow::Cow;
 use std::collections::HashMap;
@@ -16,7 +18,7 @@ static TIMEZONES_CACHE: OnceLock<HashMap<String, OnceLock<IcalTimeZone>>> = Once
 #[derive(Debug, Clone, Default)]
 pub struct IcalTimeZone<const VERIFIED: bool = true> {
     pub properties: Vec<ContentLine>,
-    pub transitions: Vec<IcalTimeZoneTransition<true>>,
+    pub transitions: Vec<IcalTimeZoneTransition>,
 }
 
 impl IcalTimeZone {
@@ -55,6 +57,17 @@ impl IcalTimeZone {
             cal.vtimezones.into_values().next().unwrap()
         }))
     }
+
+    pub fn truncate(self, start: DateTime<Utc>) -> Self {
+        Self {
+            properties: self.properties,
+            transitions: self
+                .transitions
+                .into_iter()
+                .filter_map(|trans| trans.truncate(start))
+                .collect(),
+        }
+    }
 }
 
 #[cfg(feature = "chrono-tz")]
@@ -80,15 +93,6 @@ impl From<&IcalTimeZone> for Option<chrono_tz::Tz> {
     }
 }
 
-impl IcalTimeZone<false> {
-    pub fn new() -> IcalTimeZone<false> {
-        IcalTimeZone {
-            properties: Vec::new(),
-            transitions: Vec::new(),
-        }
-    }
-}
-
 impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
     const NAMES: &[&str] = &["VTIMEZONE"];
     type Unverified = IcalTimeZone<false>;
@@ -98,7 +102,7 @@ impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
     }
 
     fn mutable(self) -> Self::Unverified {
-        IcalTimeZone {
+        IcalTimeZone::<false> {
             properties: self.properties,
             transitions: self.transitions,
         }
@@ -106,7 +110,7 @@ impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
 }
 
 impl ComponentMut for IcalTimeZone<false> {
-    type Verified = IcalTimeZone<true>;
+    type Verified = IcalTimeZone;
 
     fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
@@ -122,14 +126,14 @@ impl ComponentMut for IcalTimeZone<false> {
 
         match value {
             "STANDARD" => {
-                let mut transition = IcalTimeZoneTransition::new(STANDARD);
+                let mut transition = IcalTimeZoneTransitionBuilder::new(STANDARD);
                 transition.parse(line_parser, options)?;
-                self.transitions.push(transition.build(None)?);
+                self.transitions.push(transition.build(options, None)?);
             }
             "DAYLIGHT" => {
-                let mut transition = IcalTimeZoneTransition::new(DAYLIGHT);
+                let mut transition = IcalTimeZoneTransitionBuilder::new(DAYLIGHT);
                 transition.parse(line_parser, options)?;
-                self.transitions.push(transition.build(None)?);
+                self.transitions.push(transition.build(options, None)?);
             }
             _ => return Err(ParserError::InvalidComponent(value.to_owned())),
         };
@@ -139,8 +143,9 @@ impl ComponentMut for IcalTimeZone<false> {
 
     fn build(
         self,
+        _options: &ParserOptions,
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
-    ) -> Result<IcalTimeZone<true>, ParserError> {
+    ) -> Result<IcalTimeZone, ParserError> {
         if !matches!(
             self.get_property("TZID"),
             Some(&ContentLine { value: Some(_), .. }),
@@ -175,13 +180,20 @@ pub enum IcalTimeZoneTransitionType {
     DAYLIGHT,
 }
 
+#[derive(Debug, Clone)]
+pub struct IcalTimeZoneTransition {
+    pub transition: IcalTimeZoneTransitionType,
+    pub properties: Vec<ContentLine>,
+    pub dtstart: IcalDTSTARTProperty,
+}
+
 #[derive(Debug, Clone, Default)]
-pub struct IcalTimeZoneTransition<const VERIFIED: bool = true> {
+pub struct IcalTimeZoneTransitionBuilder {
     pub transition: IcalTimeZoneTransitionType,
     pub properties: Vec<ContentLine>,
 }
 
-impl IcalTimeZoneTransition<false> {
+impl IcalTimeZoneTransitionBuilder {
     pub fn new(transition: IcalTimeZoneTransitionType) -> Self {
         Self {
             transition,
@@ -190,9 +202,9 @@ impl IcalTimeZoneTransition<false> {
     }
 }
 
-impl<const VERIFIED: bool> Component for IcalTimeZoneTransition<VERIFIED> {
+impl Component for IcalTimeZoneTransition {
     const NAMES: &[&str] = &["STANDARD", "DAYLIGHT"];
-    type Unverified = IcalTimeZoneTransition<false>;
+    type Unverified = IcalTimeZoneTransitionBuilder;
 
     fn get_comp_name(&self) -> &'static str {
         match self.transition {
@@ -206,15 +218,35 @@ impl<const VERIFIED: bool> Component for IcalTimeZoneTransition<VERIFIED> {
     }
 
     fn mutable(self) -> Self::Unverified {
-        IcalTimeZoneTransition {
+        IcalTimeZoneTransitionBuilder {
             transition: self.transition,
             properties: self.properties,
         }
     }
 }
 
-impl ComponentMut for IcalTimeZoneTransition<false> {
-    type Verified = IcalTimeZoneTransition<true>;
+impl Component for IcalTimeZoneTransitionBuilder {
+    const NAMES: &[&str] = &["STANDARD", "DAYLIGHT"];
+    type Unverified = IcalTimeZoneTransitionBuilder;
+
+    fn get_comp_name(&self) -> &'static str {
+        match self.transition {
+            IcalTimeZoneTransitionType::STANDARD => "STANDARD",
+            IcalTimeZoneTransitionType::DAYLIGHT => "DAYLIGHT",
+        }
+    }
+
+    fn get_properties(&self) -> &Vec<ContentLine> {
+        &self.properties
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        self
+    }
+}
+
+impl ComponentMut for IcalTimeZoneTransitionBuilder {
+    type Verified = IcalTimeZoneTransition;
 
     fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
@@ -232,20 +264,98 @@ impl ComponentMut for IcalTimeZoneTransition<false> {
 
     fn build(
         self,
+        _options: &ParserOptions,
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
-    ) -> Result<IcalTimeZoneTransition<true>, ParserError> {
+    ) -> Result<IcalTimeZoneTransition, ParserError> {
+        // Make sure that they are valid
+        self.safe_get_all::<IcalRRULEProperty>(None)?;
+        self.safe_get_all::<IcalTZRDATEProperty>(None)?;
         Ok(IcalTimeZoneTransition {
+            dtstart: self.safe_get_required(None)?,
             transition: self.transition,
             properties: self.properties,
         })
     }
 }
 
+impl IcalTimeZoneTransition {
+    pub fn truncate(self, start: DateTime<Utc>) -> Option<Self> {
+        let dtstart = self.dtstart.0.utc().with_timezone(&rrule::Tz::UTC);
+        let mut rrules = vec![];
+        let mut rdates = vec![];
+        let mut other_properties = vec![];
+        let mut dtstart_prop = &ContentLine::default();
+        for property in &self.properties {
+            match property.name.as_str() {
+                "RRULE" => rrules.push((
+                    property,
+                    IcalRRULEProperty::parse_prop(property, None)
+                        .expect("validated in build")
+                        .0
+                        .validate(dtstart)
+                        .ok()?,
+                )),
+                "RDATE" => {
+                    let prop = IcalTZRDATEProperty::parse_prop(property, None)
+                        .expect("validated in build");
+                    if prop.0.is_empty() {
+                        continue;
+                    }
+                    let Some(min_rdate) = prop.0.iter().min().cloned() else {
+                        continue;
+                    };
+                    rdates.push((property, min_rdate));
+                }
+                "DTSTART" => {
+                    dtstart_prop = property;
+                }
+                prop => other_properties.push(prop),
+            }
+        }
+
+        rrules.retain(|(_content_line, rrule)| {
+            if let Some(until) = rrule.get_until()
+                && until < &start
+            {
+                return false;
+            }
+            true
+        });
+        rdates.retain(|(_content_line, min_rdate)| min_rdate.utc() >= start);
+
+        if rrules.is_empty() && rdates.is_empty() && dtstart < start {
+            return None;
+        }
+
+        Some(Self {
+            properties: std::iter::once(dtstart_prop.clone())
+                .chain(rdates.into_iter().map(|(line, _)| line.clone()))
+                .chain(rrules.into_iter().map(|(line, _)| line.clone()))
+                .collect(),
+            transition: self.transition,
+            ..self
+        })
+    }
+}
+
 #[cfg(all(test, feature = "vtimezones-rs"))]
 mod tests {
+    use chrono::{TimeZone, Utc};
+    use insta::assert_snapshot;
     use rstest::rstest;
 
     use crate::{component::IcalTimeZone, generator::Emitter};
+
+    #[rstest]
+    #[case(0, "Europe/Bratislava")]
+    #[case(1, "Europe/Berlin")]
+    fn test_truncation(#[case] case: usize, #[case] tzid: &str) {
+        let tz = IcalTimeZone::from_tzid(tzid)
+            .unwrap()
+            .clone()
+            .truncate(Utc.with_ymd_and_hms(1970, 1, 1, 0, 0, 0).unwrap());
+        assert_snapshot!(format!("{case}_trunc"), tz.generate());
+    }
 
     #[rstest]
     #[case("Europe/Berlin")]

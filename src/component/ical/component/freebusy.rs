@@ -80,6 +80,7 @@ impl ComponentMut for IcalFreeBusyBuilder {
 
     fn build(
         self,
+        _options: &ParserOptions,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalFreeBusy, ParserError> {
         // REQUIRED, but NOT MORE THAN ONCE

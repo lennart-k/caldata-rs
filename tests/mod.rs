@@ -162,7 +162,7 @@ pub mod rfc7809 {
             IcalParser::from_slice(input.as_bytes()).with_options(ParserOptions { rfc7809: true });
 
         let cal2 = reader.expect_one().unwrap();
-        assert_eq!(cal.generate(), cal2.generate());
+        insta::assert_snapshot!("fullcal", cal2.generate());
     }
 
     #[cfg(feature = "chrono-tz")]

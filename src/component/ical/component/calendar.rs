@@ -99,77 +99,28 @@ impl ComponentMut for IcalCalendarBuilder {
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {
-                let alarm = IcalAlarmBuilder::from_parser(line_parser, options)?;
-                #[cfg(feature = "vtimezones-rs")]
-                if options.rfc7809 {
-                    for tzid in alarm.get_tzids() {
-                        if !self.vtimezones.contains_key(tzid)
-                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
-                        {
-                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
-                        }
-                    }
-                }
-                self.alarms.push(alarm);
+                self.alarms
+                    .push(IcalAlarmBuilder::from_parser(line_parser, options)?);
             }
             "VEVENT" => {
-                let event = IcalEventBuilder::from_parser(line_parser, options)?;
-                #[cfg(feature = "vtimezones-rs")]
-                if options.rfc7809 {
-                    for tzid in event.get_tzids() {
-                        if !self.vtimezones.contains_key(tzid)
-                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
-                        {
-                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
-                        }
-                    }
-                }
-                self.events.push(event);
+                self.events
+                    .push(IcalEventBuilder::from_parser(line_parser, options)?);
             }
             "VTODO" => {
-                let todo = IcalTodoBuilder::from_parser(line_parser, options)?;
-                #[cfg(feature = "vtimezones-rs")]
-                if options.rfc7809 {
-                    for tzid in todo.get_tzids() {
-                        if !self.vtimezones.contains_key(tzid)
-                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
-                        {
-                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
-                        }
-                    }
-                }
-                self.todos.push(todo);
+                self.todos
+                    .push(IcalTodoBuilder::from_parser(line_parser, options)?);
             }
             "VJOURNAL" => {
-                let journal = IcalJournalBuilder::from_parser(line_parser, options)?;
-                #[cfg(feature = "vtimezones-rs")]
-                if options.rfc7809 {
-                    for tzid in journal.get_tzids() {
-                        if !self.vtimezones.contains_key(tzid)
-                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
-                        {
-                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
-                        }
-                    }
-                }
-                self.journals.push(journal);
+                self.journals
+                    .push(IcalJournalBuilder::from_parser(line_parser, options)?);
             }
             "VFREEBUSY" => {
-                let free_busy = IcalFreeBusyBuilder::from_parser(line_parser, options)?;
-                #[cfg(feature = "vtimezones-rs")]
-                if options.rfc7809 {
-                    for tzid in free_busy.get_tzids() {
-                        if !self.vtimezones.contains_key(tzid)
-                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
-                        {
-                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
-                        }
-                    }
-                }
-                self.free_busys.push(free_busy);
+                self.free_busys
+                    .push(IcalFreeBusyBuilder::from_parser(line_parser, options)?);
             }
             "VTIMEZONE" => {
-                let timezone = IcalTimeZone::from_parser(line_parser, options)?.build(None)?;
+                let timezone =
+                    IcalTimeZone::from_parser(line_parser, options)?.build(options, None)?;
                 self.vtimezones
                     .insert(timezone.get_tzid().to_owned(), timezone);
             }
@@ -181,46 +132,72 @@ impl ComponentMut for IcalCalendarBuilder {
 
     fn build(
         self,
+        options: &ParserOptions,
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self::Verified, ParserError> {
         let _version: IcalVERSIONProperty = self.safe_get_required(None)?;
         let _prodid: IcalPRODIDProperty = self.safe_get_required(None)?;
         let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(None)?;
 
-        let timezones = HashMap::from_iter(
+        let mut timezones = HashMap::from_iter(
             self.vtimezones
                 .iter()
                 .map(|(tzid, tz)| (tzid.to_owned(), tz.into())),
         );
+
+        #[cfg(feature = "vtimezones-rs")]
+        let used_tzids: HashSet<&str> = self
+            .events
+            .iter()
+            .flat_map(|object| object.get_tzids())
+            .chain(self.alarms.iter().flat_map(|object| object.get_tzids()))
+            .chain(self.todos.iter().flat_map(|object| object.get_tzids()))
+            .chain(self.journals.iter().flat_map(|object| object.get_tzids()))
+            .chain(self.free_busys.iter().flat_map(|object| object.get_tzids()))
+            .collect();
+        let mut vtimezones = self.vtimezones;
+        #[cfg(feature = "vtimezones-rs")]
+        if options.rfc7809 {
+            // Populate our map of chrono timezones with those we can populate ourselves
+            use std::str::FromStr;
+            for tzid in used_tzids {
+                if let Ok(tz) = chrono_tz::Tz::from_str(tzid)
+                    && let Some(ical_tz) = IcalTimeZone::from_tzid(tzid)
+                {
+                    timezones.insert(tzid.to_owned(), Some(tz));
+                    vtimezones.insert(tzid.to_owned(), ical_tz.clone());
+                }
+            }
+        }
 
         Ok(IcalCalendar {
             properties: self.properties,
             events: self
                 .events
                 .into_iter()
-                .map(|builder| builder.build(Some(&timezones)))
+                .map(|builder| builder.build(options, Some(&timezones)))
                 .collect::<Result<_, _>>()?,
             alarms: self
                 .alarms
                 .into_iter()
-                .map(|builder| builder.build(Some(&timezones)))
+                .map(|builder| builder.build(options, Some(&timezones)))
                 .collect::<Result<_, _>>()?,
             todos: self
                 .todos
                 .into_iter()
-                .map(|builder| builder.build(Some(&timezones)))
+                .map(|builder| builder.build(options, Some(&timezones)))
                 .collect::<Result<_, _>>()?,
             journals: self
                 .journals
                 .into_iter()
-                .map(|builder| builder.build(Some(&timezones)))
+                .map(|builder| builder.build(options, Some(&timezones)))
                 .collect::<Result<_, _>>()?,
             free_busys: self
                 .free_busys
                 .into_iter()
-                .map(|builder| builder.build(Some(&timezones)))
+                .map(|builder| builder.build(options, Some(&timezones)))
                 .collect::<Result<_, _>>()?,
-            vtimezones: self.vtimezones,
+            vtimezones,
             timezones,
         })
     }

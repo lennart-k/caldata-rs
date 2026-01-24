@@ -375,6 +375,16 @@ IcalCalendar {
                             ),
                         },
                     ],
+                    dtstart: IcalDTSTARTProperty(
+                        DateTime(
+                            CalDateTime(
+                                1601-10-28T03:00:00Local,
+                            ),
+                        ),
+                        ContentLineParams(
+                            [],
+                        ),
+                    ),
                 },
                 IcalTimeZoneTransition {
                     transition: DAYLIGHT,
@@ -416,6 +426,16 @@ IcalCalendar {
                             ),
                         },
                     ],
+                    dtstart: IcalDTSTARTProperty(
+                        DateTime(
+                            CalDateTime(
+                                1601-03-25T02:00:00Local,
+                            ),
+                        ),
+                        ContentLineParams(
+                            [],
+                        ),
+                    ),
                 },
             ],
         },
