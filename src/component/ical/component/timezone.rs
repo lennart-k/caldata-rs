@@ -309,7 +309,7 @@ impl IcalTimeZoneTransition {
                 "DTSTART" => {
                     dtstart_prop = property;
                 }
-                prop => other_properties.push(prop),
+                _ => other_properties.push(property),
             }
         }
 
@@ -331,6 +331,7 @@ impl IcalTimeZoneTransition {
             properties: std::iter::once(dtstart_prop.clone())
                 .chain(rdates.into_iter().map(|(line, _)| line.clone()))
                 .chain(rrules.into_iter().map(|(line, _)| line.clone()))
+                .chain(other_properties.into_iter().cloned())
                 .collect(),
             transition: self.transition,
             ..self
