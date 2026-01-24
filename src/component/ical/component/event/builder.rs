@@ -1,14 +1,17 @@
 use crate::{
     ContentLineParser,
     component::{Component, ComponentMut, IcalAlarmBuilder, IcalEvent},
-    parser::{ContentLine, ParserError},
+    parser::{ContentLine, ParserError, ParserOptions},
     property::{
         GetProperty, IcalDTENDProperty, IcalDTSTARTProperty, IcalDURATIONProperty,
         IcalEXDATEProperty, IcalEXRULEProperty, IcalMETHODProperty, IcalRDATEProperty,
         IcalRECURIDProperty, IcalRRULEProperty, IcalSUMMARYProperty, IcalUIDProperty,
     },
 };
-use std::{borrow::Cow, collections::HashMap};
+use std::{
+    borrow::Cow,
+    collections::{HashMap, HashSet},
+};
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalEventBuilder {
@@ -22,6 +25,13 @@ impl IcalEventBuilder {
             properties: Vec::new(),
             alarms: Vec::new(),
         }
+    }
+
+    pub fn get_tzids(&self) -> HashSet<&str> {
+        self.properties
+            .iter()
+            .filter_map(|prop| prop.params.get_tzid())
+            .collect()
     }
 }
 
@@ -50,11 +60,12 @@ impl ComponentMut for IcalEventBuilder {
         &mut self,
         value: &str,
         line_parser: &mut ContentLineParser<'a, I>,
+        options: &ParserOptions,
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {
                 let mut alarm = IcalAlarmBuilder::new();
-                alarm.parse(line_parser)?;
+                alarm.parse(line_parser, options)?;
                 self.alarms.push(alarm);
             }
             _ => return Err(ParserError::InvalidComponent(value.to_owned())),

@@ -3,12 +3,13 @@ use std::{borrow::Cow, marker::PhantomData};
 use crate::{
     ContentLineParser, LineReader, ParserError,
     component::{Component, ComponentMut},
-    parser::BytesLines,
+    parser::{BytesLines, ParserOptions},
 };
 
 pub struct ComponentParser<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> {
     line_parser: ContentLineParser<'a, I>,
     _t: PhantomData<C>,
+    options: ParserOptions,
 }
 
 impl<'a, C: Component> ComponentParser<'a, C, BytesLines<'a>> {
@@ -20,7 +21,13 @@ impl<'a, C: Component> ComponentParser<'a, C, BytesLines<'a>> {
         ComponentParser {
             line_parser,
             _t: Default::default(),
+            options: Default::default(),
         }
+    }
+
+    pub fn with_options(mut self, options: ParserOptions) -> Self {
+        self.options = options;
+        self
     }
 }
 
@@ -63,7 +70,7 @@ impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> Iterator for Component
         };
 
         let mut comp = C::Unverified::default();
-        let result = match comp.parse(&mut self.line_parser) {
+        let result = match comp.parse(&mut self.line_parser, &self.options) {
             Ok(_) => comp.build(None),
             Err(err) => Err(err),
         };

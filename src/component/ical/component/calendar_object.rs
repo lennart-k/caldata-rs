@@ -5,7 +5,7 @@ use crate::{
         IcalJournalBuilder, IcalTimeZone, IcalTodo, IcalTodoBuilder,
     },
     generator::Emitter,
-    parser::{ContentLine, ParserError},
+    parser::{ContentLine, ParserError, ParserOptions},
     property::{GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
     types::CalDateTime,
 };
@@ -305,14 +305,14 @@ impl IcalCalendarObject {
 pub struct IcalCalendarObjectBuilder {
     pub properties: Vec<ContentLine>,
     pub inner: Option<CalendarInnerDataBuilder>,
-    pub vtimezones: HashMap<String, IcalTimeZone<false>>,
+    pub vtimezones: BTreeMap<String, IcalTimeZone>,
 }
 
 impl IcalCalendarObjectBuilder {
     pub fn new() -> Self {
         Self {
             properties: Vec::new(),
-            vtimezones: HashMap::new(),
+            vtimezones: BTreeMap::new(),
             inner: None,
         }
     }
@@ -329,11 +329,7 @@ impl Component for IcalCalendarObject {
     fn mutable(self) -> Self::Unverified {
         IcalCalendarObjectBuilder {
             properties: self.properties,
-            vtimezones: self
-                .vtimezones
-                .into_iter()
-                .map(|(tzid, tz)| (tzid, tz.mutable()))
-                .collect(),
+            vtimezones: self.vtimezones,
             inner: Some(self.inner.mutable()),
         }
     }
@@ -363,10 +359,22 @@ impl ComponentMut for IcalCalendarObjectBuilder {
         &mut self,
         value: &str,
         line_parser: &mut ContentLineParser<'a, I>,
+        options: &ParserOptions,
     ) -> Result<(), ParserError> {
         match value {
             "VEVENT" => {
-                let event = IcalEventBuilder::from_parser(line_parser)?;
+                let event = IcalEventBuilder::from_parser(line_parser, options)?;
+
+                if options.rfc7809 {
+                    for tzid in event.get_tzids() {
+                        if !self.vtimezones.contains_key(tzid)
+                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
+                        {
+                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
+                        }
+                    }
+                }
+
                 match &mut self.inner {
                     Some(CalendarInnerDataBuilder::Event(events)) => {
                         events.push(event);
@@ -378,7 +386,18 @@ impl ComponentMut for IcalCalendarObjectBuilder {
                 };
             }
             "VTODO" => {
-                let todo = IcalTodoBuilder::from_parser(line_parser)?;
+                let todo = IcalTodoBuilder::from_parser(line_parser, options)?;
+
+                if options.rfc7809 {
+                    for tzid in todo.get_tzids() {
+                        if !self.vtimezones.contains_key(tzid)
+                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
+                        {
+                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
+                        }
+                    }
+                }
+
                 match &mut self.inner {
                     Some(CalendarInnerDataBuilder::Todo(todos)) => {
                         todos.push(todo);
@@ -390,7 +409,18 @@ impl ComponentMut for IcalCalendarObjectBuilder {
                 };
             }
             "VJOURNAL" => {
-                let journal = IcalJournalBuilder::from_parser(line_parser)?;
+                let journal = IcalJournalBuilder::from_parser(line_parser, options)?;
+
+                if options.rfc7809 {
+                    for tzid in journal.get_tzids() {
+                        if !self.vtimezones.contains_key(tzid)
+                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
+                        {
+                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
+                        }
+                    }
+                }
+
                 match &mut self.inner {
                     Some(CalendarInnerDataBuilder::Journal(journals)) => {
                         journals.push(journal);
@@ -402,11 +432,9 @@ impl ComponentMut for IcalCalendarObjectBuilder {
                 };
             }
             "VTIMEZONE" => {
-                let timezone = IcalTimeZone::from_parser(line_parser)?;
-                self.vtimezones.insert(
-                    timezone.clone().build(None)?.get_tzid().to_owned(),
-                    timezone,
-                );
+                let timezone = IcalTimeZone::from_parser(line_parser, options)?.build(None)?;
+                self.vtimezones
+                    .insert(timezone.get_tzid().to_owned(), timezone);
             }
             _ => return Err(ParserError::InvalidComponent(value.to_owned())),
         };
@@ -422,11 +450,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
         let _prodid: IcalPRODIDProperty = self.safe_get_required(None)?;
         let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(None)?;
 
-        let vtimezones: BTreeMap<String, IcalTimeZone> = self
-            .vtimezones
-            .into_iter()
-            .map(|(tzid, tz)| tz.build(None).map(|tz| (tzid, tz)))
-            .collect::<Result<_, _>>()?;
+        let vtimezones: BTreeMap<String, IcalTimeZone> = self.vtimezones;
 
         let timezones = HashMap::from_iter(
             vtimezones

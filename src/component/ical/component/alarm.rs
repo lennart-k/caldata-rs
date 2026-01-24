@@ -1,3 +1,5 @@
+#[cfg(not(tarpaulin_include))]
+use crate::parser::ParserOptions;
 use crate::{
     component::{Component, ComponentMut},
     parser::{ContentLine, ContentLineParser, ParserError},
@@ -64,6 +66,7 @@ impl ComponentMut for IcalAlarmBuilder {
         &mut self,
         value: &str,
         _: &mut ContentLineParser<'a, I>,
+        _options: &ParserOptions,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }

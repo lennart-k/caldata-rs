@@ -1,7 +1,7 @@
 use crate::{
     ContentLineParser,
     component::{Component, ComponentMut},
-    parser::{ContentLine, ParserError},
+    parser::{ContentLine, ParserError, ParserOptions},
 };
 #[cfg(not(tarpaulin_include))]
 use std::borrow::Cow;
@@ -116,18 +116,19 @@ impl ComponentMut for IcalTimeZone<false> {
         &mut self,
         value: &str,
         line_parser: &mut ContentLineParser<'a, I>,
+        options: &ParserOptions,
     ) -> Result<(), ParserError> {
         use self::IcalTimeZoneTransitionType::{DAYLIGHT, STANDARD};
 
         match value {
             "STANDARD" => {
                 let mut transition = IcalTimeZoneTransition::new(STANDARD);
-                transition.parse(line_parser)?;
+                transition.parse(line_parser, options)?;
                 self.transitions.push(transition.build(None)?);
             }
             "DAYLIGHT" => {
                 let mut transition = IcalTimeZoneTransition::new(DAYLIGHT);
-                transition.parse(line_parser)?;
+                transition.parse(line_parser, options)?;
                 self.transitions.push(transition.build(None)?);
             }
             _ => return Err(ParserError::InvalidComponent(value.to_owned())),
@@ -224,6 +225,7 @@ impl ComponentMut for IcalTimeZoneTransition<false> {
         &mut self,
         value: &str,
         _: &mut ContentLineParser<'a, I>,
+        _options: &ParserOptions,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }

@@ -1,7 +1,7 @@
 use crate::{
     ContentLineParser,
     component::{Component, ComponentMut},
-    parser::{ContentLine, ParserError},
+    parser::{ContentLine, ParserError, ParserOptions},
     property::{
         GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalEXDATEProperty,
         IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty,
@@ -37,6 +37,13 @@ impl IcalJournalBuilder {
         Self {
             properties: Vec::new(),
         }
+    }
+
+    pub fn get_tzids(&self) -> HashSet<&str> {
+        self.properties
+            .iter()
+            .filter_map(|prop| prop.params.get_tzid())
+            .collect()
     }
 }
 
@@ -93,6 +100,7 @@ impl ComponentMut for IcalJournalBuilder {
         &mut self,
         value: &str,
         _: &mut ContentLineParser<'a, I>,
+        _options: &ParserOptions,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }

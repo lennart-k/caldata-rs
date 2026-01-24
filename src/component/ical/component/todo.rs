@@ -3,7 +3,7 @@ use rrule::RRule;
 use crate::{
     ContentLineParser,
     component::{Component, ComponentMut, IcalAlarm, IcalAlarmBuilder},
-    parser::{ContentLine, ParserError},
+    parser::{ContentLine, ParserError, ParserOptions},
     property::{
         GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDUEProperty,
         IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty,
@@ -118,11 +118,12 @@ impl ComponentMut for IcalTodoBuilder {
         &mut self,
         value: &str,
         line_parser: &mut ContentLineParser<'a, I>,
+        options: &ParserOptions,
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {
                 let mut alarm = IcalAlarmBuilder::new();
-                alarm.parse(line_parser)?;
+                alarm.parse(line_parser, options)?;
                 self.alarms.push(alarm);
             }
             _ => return Err(ParserError::InvalidComponent(value.to_owned())),
@@ -205,6 +206,15 @@ impl IcalTodo {
             .iter()
             .filter_map(|prop| prop.params.get_tzid())
             .chain(self.alarms.iter().flat_map(IcalAlarm::get_tzids))
+            .collect()
+    }
+}
+
+impl IcalTodoBuilder {
+    pub fn get_tzids(&self) -> HashSet<&str> {
+        self.properties
+            .iter()
+            .filter_map(|prop| prop.params.get_tzid())
             .collect()
     }
 }

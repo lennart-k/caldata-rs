@@ -5,7 +5,7 @@ use crate::{
         IcalCalendarObject, IcalEvent, IcalEventBuilder, IcalFreeBusy, IcalFreeBusyBuilder,
         IcalJournal, IcalJournalBuilder, IcalTimeZone, IcalTodo, IcalTodoBuilder, ParserError,
     },
-    parser::ContentLine,
+    parser::{ContentLine, ParserOptions},
     property::{
         Calscale, GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty,
         IcalVersion,
@@ -95,37 +95,31 @@ impl ComponentMut for IcalCalendarBuilder {
         &mut self,
         value: &str,
         line_parser: &mut ContentLineParser<'a, I>,
+        options: &ParserOptions,
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {
-                let mut alarm = IcalAlarmBuilder::new();
-                alarm.parse(line_parser)?;
-                self.alarms.push(alarm);
+                self.alarms
+                    .push(IcalAlarmBuilder::from_parser(line_parser, options)?);
             }
             "VEVENT" => {
-                let mut event = IcalEventBuilder::new();
-                event.parse(line_parser)?;
-                self.events.push(event);
+                self.events
+                    .push(IcalEventBuilder::from_parser(line_parser, options)?);
             }
             "VTODO" => {
-                let mut todo = IcalTodoBuilder::default();
-                todo.parse(line_parser)?;
-                self.todos.push(todo);
+                self.todos
+                    .push(IcalTodoBuilder::from_parser(line_parser, options)?);
             }
             "VJOURNAL" => {
-                let mut journal = IcalJournalBuilder::new();
-                journal.parse(line_parser)?;
-                self.journals.push(journal);
+                self.journals
+                    .push(IcalJournalBuilder::from_parser(line_parser, options)?);
             }
             "VFREEBUSY" => {
-                let mut free_busy = IcalFreeBusyBuilder::new();
-                free_busy.parse(line_parser)?;
-                self.free_busys.push(free_busy);
+                self.free_busys
+                    .push(IcalFreeBusyBuilder::from_parser(line_parser, options)?);
             }
             "VTIMEZONE" => {
-                let mut timezone = IcalTimeZone::new();
-                timezone.parse(line_parser)?;
-                let timezone = timezone.build(None)?;
+                let timezone = IcalTimeZone::from_parser(line_parser, options)?.build(None)?;
                 self.vtimezones
                     .insert(timezone.get_tzid().to_owned(), timezone);
             }

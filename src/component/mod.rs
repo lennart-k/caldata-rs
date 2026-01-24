@@ -4,7 +4,7 @@ pub mod vcard;
 pub use vcard::component::*;
 
 use crate::ParserError;
-use crate::parser::{ContentLine, ContentLineParser};
+use crate::parser::{ContentLine, ContentLineParser, ParserOptions};
 use std::borrow::Cow;
 use std::collections::HashMap;
 
@@ -48,6 +48,7 @@ pub trait ComponentMut: Component + Default {
         &mut self,
         value: &str,
         line_parser: &mut ContentLineParser<'a, T>,
+        options: &ParserOptions,
     ) -> Result<(), ParserError>;
 
     fn get_properties_mut(&mut self) -> &mut Vec<ContentLine>;
@@ -71,6 +72,7 @@ pub trait ComponentMut: Component + Default {
     fn parse<'a, T: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         line_parser: &mut ContentLineParser<'a, T>,
+        options: &ParserOptions,
     ) -> Result<(), ParserError> {
         loop {
             let line = line_parser.next().ok_or(ParserError::NotComplete)??;
@@ -78,7 +80,7 @@ pub trait ComponentMut: Component + Default {
             match line.name.as_ref() {
                 "END" => break,
                 "BEGIN" => match line.value {
-                    Some(v) => self.add_sub_component(v.as_str(), line_parser)?,
+                    Some(v) => self.add_sub_component(v.as_str(), line_parser, options)?,
                     None => return Err(ParserError::NotComplete),
                 },
 
@@ -90,9 +92,10 @@ pub trait ComponentMut: Component + Default {
 
     fn from_parser<'a, T: Iterator<Item = Cow<'a, [u8]>>>(
         line_parser: &mut ContentLineParser<'a, T>,
+        options: &ParserOptions,
     ) -> Result<Self, ParserError> {
         let mut out = Self::default();
-        out.parse(line_parser)?;
+        out.parse(line_parser, options)?;
         Ok(out)
     }
 }
