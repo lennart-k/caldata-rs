@@ -6,6 +6,12 @@ use crate::{
 #[cfg(not(tarpaulin_include))]
 use std::borrow::Cow;
 use std::collections::HashMap;
+#[cfg(feature = "vtimezones-rs")]
+use std::sync::OnceLock;
+
+// Memoise generated vtimezones
+#[cfg(feature = "vtimezones-rs")]
+static TIMEZONES_CACHE: OnceLock<HashMap<String, OnceLock<IcalTimeZone>>> = OnceLock::new();
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalTimeZone<const VERIFIED: bool = true> {
@@ -24,6 +30,30 @@ impl IcalTimeZone {
     pub fn get_lic_location(&self) -> Option<&str> {
         self.get_property("X-LIC-LOCATION")
             .and_then(|prop| prop.value.as_deref())
+    }
+
+    #[cfg(feature = "vtimezones-rs")]
+    pub fn from_tzid(tzid: &str) -> Option<&Self> {
+        let timezones = TIMEZONES_CACHE.get_or_init(|| {
+            let mut timezones = HashMap::new();
+            for tzid in vtimezones_rs::VTIMEZONES.keys() {
+                timezones
+                    .entry(tzid.to_string())
+                    .or_insert_with(OnceLock::new);
+            }
+            timezones
+        });
+
+        let lock = timezones.get(tzid)?;
+        Some(lock.get_or_init(|| {
+            use crate::IcalParser;
+
+            let tz_ics = *vtimezones_rs::VTIMEZONES.get(tzid).unwrap();
+            let cal = IcalParser::from_slice(tz_ics.as_bytes())
+                .expect_one()
+                .unwrap();
+            cal.vtimezones.into_values().next().unwrap()
+        }))
     }
 }
 
@@ -206,5 +236,30 @@ impl ComponentMut for IcalTimeZoneTransition<false> {
             transition: self.transition,
             properties: self.properties,
         })
+    }
+}
+
+#[cfg(all(test, feature = "vtimezones-rs"))]
+mod tests {
+    use rstest::rstest;
+
+    use crate::{component::IcalTimeZone, generator::Emitter};
+
+    #[rstest]
+    #[case("Europe/Berlin")]
+    #[case("CET")]
+    fn test_timezone(#[case] tzid: &str) {
+        let tz = IcalTimeZone::from_tzid(tzid).unwrap();
+        assert_eq!(tz.get_tzid(), tzid);
+        assert!(tz.generate().contains(tzid));
+    }
+
+    #[test]
+    fn test_all_timezones() {
+        for tzid in vtimezones_rs::VTIMEZONES.keys() {
+            let tz = IcalTimeZone::from_tzid(tzid).unwrap();
+            assert_eq!(&tz.get_tzid(), tzid);
+            assert!(tz.generate().contains(tzid));
+        }
     }
 }

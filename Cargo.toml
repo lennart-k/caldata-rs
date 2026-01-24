@@ -31,6 +31,7 @@ derive_more = { version = "2.1", features = [
 ] }
 rrule = { version = "0.14", features = ["exrule"] }
 phf = { version = "0.13", features = ["macros"] }
+vtimezones-rs = { version = "0.3", optional = true }
 
 [dev-dependencies]
 insta = { version = "1.44", features = ["filters"] }
@@ -43,7 +44,8 @@ name = "parse_benchmark"
 harness = false
 
 [features]
-default = ["chrono-tz"]
+default = ["chrono-tz", "vtimezones-rs"]
+vtimezones-rs = ["dep:vtimezones-rs"]
 chrono-tz = ["dep:chrono-tz"]
 test = []
 rkyv = ["dep:rkyv"]
