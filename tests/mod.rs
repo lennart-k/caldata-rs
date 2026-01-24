@@ -139,7 +139,7 @@ pub mod calendar_object {
 }
 
 pub mod rfc7809 {
-    use caldata::{IcalObjectParser, generator::Emitter, parser::ParserOptions};
+    use caldata::{IcalObjectParser, IcalParser, generator::Emitter, parser::ParserOptions};
 
     #[rstest::rstest]
     #[case(0, include_str!("./resources/ical_rfc7809.ics"))]
@@ -153,7 +153,15 @@ pub mod rfc7809 {
             .with_options(ParserOptions { rfc7809: true });
 
         let cal = reader.expect_one().unwrap();
-        insta::assert_snapshot!(format!("{case}_ics"), cal.generate());
+        insta::assert_snapshot!(cal.generate());
+
+        let reader = IcalParser::from_slice(input.as_bytes());
+        assert!(reader.expect_one().is_err());
+        let reader =
+            IcalParser::from_slice(input.as_bytes()).with_options(ParserOptions { rfc7809: true });
+
+        let cal2 = reader.expect_one().unwrap();
+        assert_eq!(cal.generate(), cal2.generate());
     }
 }
 

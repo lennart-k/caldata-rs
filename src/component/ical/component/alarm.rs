@@ -89,3 +89,12 @@ impl IcalAlarm {
             .collect()
     }
 }
+
+impl IcalAlarmBuilder {
+    pub fn get_tzids(&self) -> HashSet<&str> {
+        self.properties
+            .iter()
+            .filter_map(|prop| prop.params.get_tzid())
+            .collect()
+    }
+}

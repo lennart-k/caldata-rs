@@ -106,3 +106,12 @@ impl IcalFreeBusy {
             .collect()
     }
 }
+
+impl IcalFreeBusyBuilder {
+    pub fn get_tzids(&self) -> HashSet<&str> {
+        self.properties
+            .iter()
+            .filter_map(|prop| prop.params.get_tzid())
+            .collect()
+    }
+}

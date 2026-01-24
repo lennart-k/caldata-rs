@@ -99,24 +99,74 @@ impl ComponentMut for IcalCalendarBuilder {
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {
-                self.alarms
-                    .push(IcalAlarmBuilder::from_parser(line_parser, options)?);
+                let alarm = IcalAlarmBuilder::from_parser(line_parser, options)?;
+                #[cfg(feature = "vtimezones-rs")]
+                if options.rfc7809 {
+                    for tzid in alarm.get_tzids() {
+                        if !self.vtimezones.contains_key(tzid)
+                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
+                        {
+                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
+                        }
+                    }
+                }
+                self.alarms.push(alarm);
             }
             "VEVENT" => {
-                self.events
-                    .push(IcalEventBuilder::from_parser(line_parser, options)?);
+                let event = IcalEventBuilder::from_parser(line_parser, options)?;
+                #[cfg(feature = "vtimezones-rs")]
+                if options.rfc7809 {
+                    for tzid in event.get_tzids() {
+                        if !self.vtimezones.contains_key(tzid)
+                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
+                        {
+                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
+                        }
+                    }
+                }
+                self.events.push(event);
             }
             "VTODO" => {
-                self.todos
-                    .push(IcalTodoBuilder::from_parser(line_parser, options)?);
+                let todo = IcalTodoBuilder::from_parser(line_parser, options)?;
+                #[cfg(feature = "vtimezones-rs")]
+                if options.rfc7809 {
+                    for tzid in todo.get_tzids() {
+                        if !self.vtimezones.contains_key(tzid)
+                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
+                        {
+                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
+                        }
+                    }
+                }
+                self.todos.push(todo);
             }
             "VJOURNAL" => {
-                self.journals
-                    .push(IcalJournalBuilder::from_parser(line_parser, options)?);
+                let journal = IcalJournalBuilder::from_parser(line_parser, options)?;
+                #[cfg(feature = "vtimezones-rs")]
+                if options.rfc7809 {
+                    for tzid in journal.get_tzids() {
+                        if !self.vtimezones.contains_key(tzid)
+                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
+                        {
+                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
+                        }
+                    }
+                }
+                self.journals.push(journal);
             }
             "VFREEBUSY" => {
-                self.free_busys
-                    .push(IcalFreeBusyBuilder::from_parser(line_parser, options)?);
+                let free_busy = IcalFreeBusyBuilder::from_parser(line_parser, options)?;
+                #[cfg(feature = "vtimezones-rs")]
+                if options.rfc7809 {
+                    for tzid in free_busy.get_tzids() {
+                        if !self.vtimezones.contains_key(tzid)
+                            && let Some(tz) = IcalTimeZone::from_tzid(tzid)
+                        {
+                            self.vtimezones.insert(tzid.to_owned(), tz.clone());
+                        }
+                    }
+                }
+                self.free_busys.push(free_busy);
             }
             "VTIMEZONE" => {
                 let timezone = IcalTimeZone::from_parser(line_parser, options)?.build(None)?;

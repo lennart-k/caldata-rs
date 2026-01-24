@@ -365,6 +365,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             "VEVENT" => {
                 let event = IcalEventBuilder::from_parser(line_parser, options)?;
 
+                #[cfg(feature = "vtimezones-rs")]
                 if options.rfc7809 {
                     for tzid in event.get_tzids() {
                         if !self.vtimezones.contains_key(tzid)
@@ -388,6 +389,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             "VTODO" => {
                 let todo = IcalTodoBuilder::from_parser(line_parser, options)?;
 
+                #[cfg(feature = "vtimezones-rs")]
                 if options.rfc7809 {
                     for tzid in todo.get_tzids() {
                         if !self.vtimezones.contains_key(tzid)
@@ -411,6 +413,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             "VJOURNAL" => {
                 let journal = IcalJournalBuilder::from_parser(line_parser, options)?;
 
+                #[cfg(feature = "vtimezones-rs")]
                 if options.rfc7809 {
                     for tzid in journal.get_tzids() {
                         if !self.vtimezones.contains_key(tzid)
