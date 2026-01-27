@@ -80,11 +80,7 @@ pub trait ComponentMut: Component + Default {
 
             match line.name.as_ref() {
                 "END" => break,
-                "BEGIN" => match line.value {
-                    Some(v) => self.add_sub_component(v.as_str(), line_parser, options)?,
-                    None => return Err(ParserError::NotComplete),
-                },
-
+                "BEGIN" => self.add_sub_component(&line.value, line_parser, options)?,
                 _ => self.add_content_line(line),
             };
         }

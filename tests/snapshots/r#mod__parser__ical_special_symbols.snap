@@ -9,27 +9,21 @@ IcalCalendar {
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "GREGORIAN",
-            ),
+            value: "GREGORIAN",
         },
         ContentLine {
             name: "PRODID",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "-//Ximian//NONSGML Evolution Calendar//EN",
-            ),
+            value: "-//Ximian//NONSGML Evolution Calendar//EN",
         },
         ContentLine {
             name: "VERSION",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "2.0",
-            ),
+            value: "2.0",
         },
     ],
     events: [
@@ -110,18 +104,14 @@ IcalCalendar {
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "fa915b604e6e3f36772501ff869439e6a3c5cf67",
-                    ),
+                    value: "fa915b604e6e3f36772501ff869439e6a3c5cf67",
                 },
                 ContentLine {
                     name: "DTSTAMP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20250726T112617Z",
-                    ),
+                    value: "20250726T112617Z",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -135,9 +125,7 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20250806",
-                    ),
+                    value: "20250806",
                 },
                 ContentLine {
                     name: "DTEND",
@@ -151,18 +139,14 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20250807",
-                    ),
+                    value: "20250807",
                 },
                 ContentLine {
                     name: "SEQUENCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "2",
-                    ),
+                    value: "2",
                 },
                 ContentLine {
                     name: "SUMMARY",
@@ -176,9 +160,7 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "sönderzaichän :))",
-                    ),
+                    value: "sönderzaichän :))",
                 },
                 ContentLine {
                     name: "X-YEET",
@@ -192,45 +174,35 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "sönderzaichän :))",
-                    ),
+                    value: "sönderzaichän :))",
                 },
                 ContentLine {
                     name: "TRANSP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "OPAQUE",
-                    ),
+                    value: "OPAQUE",
                 },
                 ContentLine {
                     name: "CLASS",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "PUBLIC",
-                    ),
+                    value: "PUBLIC",
                 },
                 ContentLine {
                     name: "CREATED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20250726T144426Z",
-                    ),
+                    value: "20250726T144426Z",
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20250726T144426Z",
-                    ),
+                    value: "20250726T144426Z",
                 },
             ],
             alarms: [],

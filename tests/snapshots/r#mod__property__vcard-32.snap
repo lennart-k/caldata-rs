@@ -4,4 +4,4 @@ expression: prop
 ---
 name: TZ
 params: ContentLineParams([("VALUE", ["utc-offset"])])
-value: Some("-0500")
+value: "-0500"

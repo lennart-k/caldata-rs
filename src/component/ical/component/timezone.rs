@@ -23,15 +23,16 @@ pub struct IcalTimeZone<const VERIFIED: bool = true> {
 
 impl IcalTimeZone {
     pub fn get_tzid(&self) -> &str {
-        self.get_property("TZID")
-            .and_then(|prop| prop.value.as_ref())
+        &self
+            .get_property("TZID")
             .expect("we already verified this exists")
+            .value
     }
 
     /// This is a common property containing a timezone identifier from the IANA TZDB
     pub fn get_lic_location(&self) -> Option<&str> {
         self.get_property("X-LIC-LOCATION")
-            .and_then(|prop| prop.value.as_deref())
+            .map(|prop| prop.value.as_str())
     }
 
     #[cfg(feature = "vtimezones-rs")]
@@ -146,10 +147,7 @@ impl ComponentMut for IcalTimeZone<false> {
         _options: &ParserOptions,
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalTimeZone, ParserError> {
-        if !matches!(
-            self.get_property("TZID"),
-            Some(&ContentLine { value: Some(_), .. }),
-        ) {
+        if self.get_property("TZID").is_none() {
             return Err(ParserError::MissingProperty("TZID"));
         }
 

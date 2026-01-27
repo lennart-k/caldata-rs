@@ -4,4 +4,4 @@ expression: prop
 ---
 name: ROLE
 params: ContentLineParams([])
-value: Some("Project Leader")
+value: "Project Leader"

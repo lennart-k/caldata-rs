@@ -4,4 +4,4 @@ expression: prop
 ---
 name: KIND
 params: ContentLineParams([])
-value: Some("individual")
+value: "individual"

@@ -4,4 +4,4 @@ expression: prop
 ---
 name: X-BAZ2
 params: ContentLineParams([("PARAM1", ["VAL1"]), ("PARAM2", ["VAL2:FOO"])])
-value: Some("BAZ;BAR")
+value: "BAZ;BAR"

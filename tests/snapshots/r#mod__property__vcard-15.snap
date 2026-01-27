@@ -4,4 +4,4 @@ expression: prop
 ---
 name: KEY
 params: ContentLineParams([])
-value: Some("http://www.example.com/keys/jdoe.cer")
+value: "http://www.example.com/keys/jdoe.cer"

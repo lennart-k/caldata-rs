@@ -4,4 +4,4 @@ expression: prop
 ---
 name: DTSTART
 params: ContentLineParams([("VALUE", ["DATE"])])
-value: Some("20081006")
+value: "20081006"

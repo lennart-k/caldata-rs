@@ -65,7 +65,7 @@ mod helper {
     ///         (\"param2\", [\"pvalue1\", \"pvalue2\"]), \
     ///         (\"param3\", [\"pvalue3\"])\
     ///     ]), \
-    ///     value: Some(\"value\") \
+    ///     value: \"value\" \
     /// }";
     /// similar_asserts::assert_eq!(debug_output, format!("{:?}", prop));
     /// ```
@@ -74,14 +74,14 @@ mod helper {
         ($name:literal, $value:expr) => {
             ContentLine {
                 name: String::from($name),
-                value: Some($value.into()),
+                value: $value.into(),
                 params: vec![].into(),
             }
         };
         ($name:literal, $value:expr, $($params:expr),+) => {
             ContentLine {
                 name: String::from($name),
-                value: Some(String::from($value)),
+                value: String::from($value),
                 params: vec![$($params,)+].into(),
             }
         };

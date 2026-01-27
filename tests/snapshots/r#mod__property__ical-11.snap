@@ -4,4 +4,4 @@ expression: prop
 ---
 name: SUMMARY
 params: ContentLineParams([])
-value: Some("escaped\\, comma and\\; semicolon\\nnewline")
+value: "escaped\\, comma and\\; semicolon\\nnewline"

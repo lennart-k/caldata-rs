@@ -4,4 +4,4 @@ expression: prop
 ---
 name: TEL
 params: ContentLineParams([("VALUE", ["uri"]), ("TYPE", ["home"])])
-value: Some("tel:+33-01-23-45-67")
+value: "tel:+33-01-23-45-67"

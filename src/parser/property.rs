@@ -12,7 +12,7 @@ impl ParseProp for String {
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
-        Ok(prop.value.to_owned().unwrap_or_default())
+        Ok(prop.value.to_owned())
     }
 }
 
@@ -52,7 +52,7 @@ impl ParseProp for chrono::Duration {
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
-        Ok(parse_duration(prop.value.as_deref().unwrap_or_default())?)
+        Ok(parse_duration(&prop.value)?)
     }
 }
 
@@ -62,9 +62,7 @@ impl ParseProp for rrule::RRule<rrule::Unvalidated> {
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
-        Ok(rrule::RRule::from_str(
-            prop.value.as_deref().unwrap_or_default(),
-        )?)
+        Ok(rrule::RRule::from_str(&prop.value)?)
     }
 }
 
@@ -75,17 +73,11 @@ impl<T: ParseProp> ParseProp for Vec<T> {
         default_type: &str,
     ) -> Result<Self, ParserError> {
         let mut out = vec![];
-        for value in prop
-            .value
-            .as_deref()
-            .unwrap_or_default()
-            .trim_end_matches(',')
-            .split(',')
-        {
+        for value in prop.value.trim_end_matches(',').split(',') {
             let content_line = ContentLine {
                 name: prop.name.to_owned(),
                 params: prop.params.to_owned(),
-                value: Some(value.to_owned()),
+                value: value.to_owned(),
             };
             out.push(T::parse_prop(&content_line, timezones, default_type)?);
         }
@@ -146,7 +138,7 @@ macro_rules! property {
                 crate::parser::ContentLine {
                     name: $name.to_owned(),
                     params,
-                    value: Some(crate::types::Value::value(&inner)),
+                    value: crate::types::Value::value(&inner),
                 }
             }
         }

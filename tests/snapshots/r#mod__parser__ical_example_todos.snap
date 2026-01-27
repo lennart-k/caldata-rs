@@ -9,27 +9,21 @@ IcalCalendar {
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "-//Ximian//NONSGML Evolution Calendar//EN",
-            ),
+            value: "-//Ximian//NONSGML Evolution Calendar//EN",
         },
         ContentLine {
             name: "VERSION",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "2.0",
-            ),
+            value: "2.0",
         },
         ContentLine {
             name: "METHOD",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "PUBLISH",
-            ),
+            value: "PUBLISH",
         },
     ],
     events: [],
@@ -94,27 +88,21 @@ IcalCalendar {
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "89b13d12c2142cc66192932e1e560ed344dfb174",
-                    ),
+                    value: "89b13d12c2142cc66192932e1e560ed344dfb174",
                 },
                 ContentLine {
                     name: "DTSTAMP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20250726T112618Z",
-                    ),
+                    value: "20250726T112618Z",
                 },
                 ContentLine {
                     name: "SUMMARY",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "amazing task",
-                    ),
+                    value: "amazing task",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -128,9 +116,7 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20250804",
-                    ),
+                    value: "20250804",
                 },
                 ContentLine {
                     name: "DUE",
@@ -144,72 +130,56 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20250819",
-                    ),
+                    value: "20250819",
                 },
                 ContentLine {
                     name: "PERCENT-COMPLETE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "0",
-                    ),
+                    value: "0",
                 },
                 ContentLine {
                     name: "CLASS",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "PUBLIC",
-                    ),
+                    value: "PUBLIC",
                 },
                 ContentLine {
                     name: "ESTIMATED-DURATION",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "P1D",
-                    ),
+                    value: "P1D",
                 },
                 ContentLine {
                     name: "SEQUENCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "1",
-                    ),
+                    value: "1",
                 },
                 ContentLine {
                     name: "CREATED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20250726T130323Z",
-                    ),
+                    value: "20250726T130323Z",
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20250726T130323Z",
-                    ),
+                    value: "20250726T130323Z",
                 },
                 ContentLine {
                     name: "X-EVOLUTION-CALDAV-ETAG",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "302e353d3134d1104500f9d9153454e6e21c5da41ae8a5fd26f8b0d98ee34979",
-                    ),
+                    value: "302e353d3134d1104500f9d9153454e6e21c5da41ae8a5fd26f8b0d98ee34979",
                 },
             ],
             alarms: [],

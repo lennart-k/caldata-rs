@@ -4,4 +4,4 @@ expression: prop
 ---
 name: GENDER
 params: ContentLineParams([])
-value: Some("M;Fellow")
+value: "M;Fellow"

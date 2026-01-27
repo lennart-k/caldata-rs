@@ -4,4 +4,4 @@ expression: prop
 ---
 name: PRODID
 params: ContentLineParams([])
-value: Some("-//Example Inc.//Example Calendar//EN")
+value: "-//Example Inc.//Example Calendar//EN"

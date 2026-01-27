@@ -4,4 +4,4 @@ expression: prop
 ---
 name: CALSCALE
 params: ContentLineParams([])
-value: Some("GREGORIAN")
+value: "GREGORIAN"

@@ -9,27 +9,21 @@ IcalCalendar {
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "GREGORIAN",
-            ),
+            value: "GREGORIAN",
         },
         ContentLine {
             name: "PRODID",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "-//Example Inc.//Example Calendar//EN",
-            ),
+            value: "-//Example Inc.//Example Calendar//EN",
         },
         ContentLine {
             name: "VERSION",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "2.0",
-            ),
+            value: "2.0",
         },
     ],
     events: [
@@ -84,9 +78,7 @@ IcalCalendar {
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20080205T191224Z",
-                    ),
+                    value: "20080205T191224Z",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -100,34 +92,28 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20081006",
-                    ),
+                    value: "20081006",
                 },
                 ContentLine {
                     name: "SUMMARY",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "Missing description value, but includes header",
-                    ),
+                    value: "Missing description value, but includes header",
                 },
                 ContentLine {
                     name: "DESCRIPTION",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: None,
+                    value: "",
                 },
                 ContentLine {
                     name: "UID",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "4088E990AD89CB3DBB484909",
-                    ),
+                    value: "4088E990AD89CB3DBB484909",
                 },
             ],
             alarms: [],

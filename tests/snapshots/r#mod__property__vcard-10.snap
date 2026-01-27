@@ -4,4 +4,4 @@ expression: prop
 ---
 name: FBURL
 params: ContentLineParams([("MEDIATYPE", ["text/calendar"])])
-value: Some("ftp://example.com/busy/project-a.ifb")
+value: "ftp://example.com/busy/project-a.ifb"

@@ -4,4 +4,4 @@ expression: prop
 ---
 name: VERSION
 params: ContentLineParams([])
-value: Some("2.0")
+value: "2.0"

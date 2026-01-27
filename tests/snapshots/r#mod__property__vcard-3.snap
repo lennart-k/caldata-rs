@@ -4,4 +4,4 @@ expression: prop
 ---
 name: ADR
 params: ContentLineParams([("TYPE", ["work"])])
-value: Some("pobox;apt;street;city;state;zipcode;country")
+value: "pobox;apt;street;city;state;zipcode;country"

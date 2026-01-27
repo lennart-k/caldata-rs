@@ -219,7 +219,7 @@ impl IcalCalendar {
                 IcalVERSIONProperty(IcalVersion::Version2_0, vec![].into()).into(),
                 ContentLine {
                     name: "PRODID".to_owned(),
-                    value: Some(prodid),
+                    value: prodid,
                     params: Default::default(),
                 },
                 IcalCALSCALEProperty(Calscale::Gregorian, vec![].into()).into(),

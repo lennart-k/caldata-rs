@@ -4,4 +4,4 @@ expression: prop
 ---
 name: CALADRURI
 params: ContentLineParams([])
-value: Some("http://example.com/calendar/jdoe")
+value: "http://example.com/calendar/jdoe"

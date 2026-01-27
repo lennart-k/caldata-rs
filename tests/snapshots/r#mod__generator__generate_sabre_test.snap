@@ -9,45 +9,35 @@ IcalCalendar {
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "2.0",
-            ),
+            value: "2.0",
         },
         ContentLine {
             name: "CALSCALE",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "GREGORIAN",
-            ),
+            value: "GREGORIAN",
         },
         ContentLine {
             name: "PRODID",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "-//SabreDAV//SabreDAV//EN",
-            ),
+            value: "-//SabreDAV//SabreDAV//EN",
         },
         ContentLine {
             name: "X-WR-CALNAME",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "icalTest",
-            ),
+            value: "icalTest",
         },
         ContentLine {
             name: "X-APPLE-CALENDAR-COLOR",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "#D09E6D",
-            ),
+            value: "#D09E6D",
         },
         ContentLine {
             name: "REFRESH-INTERVAL",
@@ -61,18 +51,14 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "PT4H",
-            ),
+            value: "PT4H",
         },
         ContentLine {
             name: "X-PUBLISHED-TTL",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "PT4H",
-            ),
+            value: "PT4H",
         },
     ],
     events: [
@@ -148,45 +134,35 @@ IcalCalendar {
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20201204T082156Z",
-                    ),
+                    value: "20201204T082156Z",
                 },
                 ContentLine {
                     name: "DTSTAMP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20201204T082257Z",
-                    ),
+                    value: "20201204T082257Z",
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20201204T082257Z",
-                    ),
+                    value: "20201204T082257Z",
                 },
                 ContentLine {
                     name: "SEQUENCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "2",
-                    ),
+                    value: "2",
                 },
                 ContentLine {
                     name: "UID",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "6fb8cdb4-d333-4a4f-99a5-2d32d0c701f9",
-                    ),
+                    value: "6fb8cdb4-d333-4a4f-99a5-2d32d0c701f9",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -200,9 +176,7 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20201223T203000",
-                    ),
+                    value: "20201223T203000",
                 },
                 ContentLine {
                     name: "DTEND",
@@ -216,36 +190,28 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20201223T223000",
-                    ),
+                    value: "20201223T223000",
                 },
                 ContentLine {
                     name: "SUMMARY",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "Geschenke einpacken",
-                    ),
+                    value: "Geschenke einpacken",
                 },
                 ContentLine {
                     name: "LOCATION",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "Arbeitszimmer",
-                    ),
+                    value: "Arbeitszimmer",
                 },
                 ContentLine {
                     name: "CATEGORIES",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "XMas",
-                    ),
+                    value: "XMas",
                 },
             ],
             alarms: [
@@ -256,9 +222,7 @@ IcalCalendar {
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "DISPLAY",
-                            ),
+                            value: "DISPLAY",
                         },
                         ContentLine {
                             name: "TRIGGER",
@@ -272,9 +236,7 @@ IcalCalendar {
                                     ),
                                 ],
                             ),
-                            value: Some(
-                                "-PT5M",
-                            ),
+                            value: "-PT5M",
                         },
                     ],
                 },
@@ -352,45 +314,35 @@ IcalCalendar {
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20201204T082021Z",
-                    ),
+                    value: "20201204T082021Z",
                 },
                 ContentLine {
                     name: "DTSTAMP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20201204T082107Z",
-                    ),
+                    value: "20201204T082107Z",
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20201204T082107Z",
-                    ),
+                    value: "20201204T082107Z",
                 },
                 ContentLine {
                     name: "SEQUENCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "2",
-                    ),
+                    value: "2",
                 },
                 ContentLine {
                     name: "UID",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "6bec1263-c5f4-4446-8a0c-10d960a6e06e",
-                    ),
+                    value: "6bec1263-c5f4-4446-8a0c-10d960a6e06e",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -404,9 +356,7 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20201225T150000",
-                    ),
+                    value: "20201225T150000",
                 },
                 ContentLine {
                     name: "DTEND",
@@ -420,18 +370,14 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20201225T223000",
-                    ),
+                    value: "20201225T223000",
                 },
                 ContentLine {
                     name: "SUMMARY",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "Risiko spielen",
-                    ),
+                    value: "Risiko spielen",
                 },
             ],
             alarms: [],
@@ -508,45 +454,35 @@ IcalCalendar {
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20201204T081751Z",
-                    ),
+                    value: "20201204T081751Z",
                 },
                 ContentLine {
                     name: "DTSTAMP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20201204T082358Z",
-                    ),
+                    value: "20201204T082358Z",
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20201204T082358Z",
-                    ),
+                    value: "20201204T082358Z",
                 },
                 ContentLine {
                     name: "SEQUENCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "3",
-                    ),
+                    value: "3",
                 },
                 ContentLine {
                     name: "UID",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "e5e8ce2a-4881-402f-9e85-1a35b4fe11d1",
-                    ),
+                    value: "e5e8ce2a-4881-402f-9e85-1a35b4fe11d1",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -560,9 +496,7 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20201224T100000",
-                    ),
+                    value: "20201224T100000",
                 },
                 ContentLine {
                     name: "DTEND",
@@ -576,45 +510,35 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20201224T110000",
-                    ),
+                    value: "20201224T110000",
                 },
                 ContentLine {
                     name: "SUMMARY",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "Weihnachten vorbereiten",
-                    ),
+                    value: "Weihnachten vorbereiten",
                 },
                 ContentLine {
                     name: "LOCATION",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "Wohnzimmer\\, Zuhause",
-                    ),
+                    value: "Wohnzimmer\\, Zuhause",
                 },
                 ContentLine {
                     name: "DESCRIPTION",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "Baum rein\\, Einstiehlen und Schmücken\\,",
-                    ),
+                    value: "Baum rein\\, Einstiehlen und Schmücken\\,",
                 },
                 ContentLine {
                     name: "CATEGORIES",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "xmas",
-                    ),
+                    value: "xmas",
                 },
             ],
             alarms: [],
@@ -632,9 +556,7 @@ IcalCalendar {
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "Europe/Berlin",
-                    ),
+                    value: "Europe/Berlin",
                 },
             ],
             transitions: [
@@ -646,45 +568,35 @@ IcalCalendar {
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "+0100",
-                            ),
+                            value: "+0100",
                         },
                         ContentLine {
                             name: "TZOFFSETTO",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "+0200",
-                            ),
+                            value: "+0200",
                         },
                         ContentLine {
                             name: "TZNAME",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "CEST",
-                            ),
+                            value: "CEST",
                         },
                         ContentLine {
                             name: "DTSTART",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "19700329T020000",
-                            ),
+                            value: "19700329T020000",
                         },
                         ContentLine {
                             name: "RRULE",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU",
-                            ),
+                            value: "FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU",
                         },
                     ],
                     dtstart: IcalDTSTARTProperty(
@@ -706,45 +618,35 @@ IcalCalendar {
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "+0200",
-                            ),
+                            value: "+0200",
                         },
                         ContentLine {
                             name: "TZOFFSETTO",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "+0100",
-                            ),
+                            value: "+0100",
                         },
                         ContentLine {
                             name: "TZNAME",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "CET",
-                            ),
+                            value: "CET",
                         },
                         ContentLine {
                             name: "DTSTART",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "19701025T030000",
-                            ),
+                            value: "19701025T030000",
                         },
                         ContentLine {
                             name: "RRULE",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU",
-                            ),
+                            value: "FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU",
                         },
                     ],
                     dtstart: IcalDTSTARTProperty(

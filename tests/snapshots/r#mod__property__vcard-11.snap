@@ -4,4 +4,4 @@ expression: prop
 ---
 name: FN
 params: ContentLineParams([])
-value: Some("J. Doe")
+value: "J. Doe"

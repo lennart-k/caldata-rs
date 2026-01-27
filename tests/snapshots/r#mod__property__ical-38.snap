@@ -4,4 +4,4 @@ expression: prop
 ---
 name: SUMMARY
 params: ContentLineParams([])
-value: Some("Missing description value, but includes header")
+value: "Missing description value, but includes header"

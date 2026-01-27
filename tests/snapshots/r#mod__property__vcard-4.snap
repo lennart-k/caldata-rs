@@ -4,4 +4,4 @@ expression: prop
 ---
 name: ANNIVERSARY
 params: ContentLineParams([])
-value: Some("19960415")
+value: "19960415"

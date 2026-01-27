@@ -39,7 +39,7 @@ fn benchmark(c: &mut Criterion) {
         b.iter(|| {
             let content_line = ContentLine {
                 name: "DTSTART".to_owned(),
-                value: Some("19700329T020000Z".to_owned()),
+                value: "19700329T020000Z".to_owned(),
                 params: vec![].into(),
             };
             IcalDTSTARTProperty::parse_prop(&content_line, None).unwrap();

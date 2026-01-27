@@ -4,4 +4,4 @@ expression: prop
 ---
 name: TITLE
 params: ContentLineParams([])
-value: Some("Research Scientist")
+value: "Research Scientist"

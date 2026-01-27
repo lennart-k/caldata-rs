@@ -103,7 +103,7 @@ pub struct ContentLine {
     /// Property list of parameters.
     pub params: ContentLineParams,
     /// Property value.
-    pub value: Option<String>,
+    pub value: String,
 }
 
 impl fmt::Display for ContentLine {
@@ -208,7 +208,7 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
         Ok(ContentLine {
             name: prop_name.to_uppercase(),
             params: params.into(),
-            value: (!to_parse.is_empty()).then_some(to_parse.to_string()),
+            value: to_parse.to_owned(),
         })
     }
 }

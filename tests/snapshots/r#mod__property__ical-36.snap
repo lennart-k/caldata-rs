@@ -4,4 +4,4 @@ expression: prop
 ---
 name: DTSTAMP
 params: ContentLineParams([])
-value: Some("20080205T191224Z")
+value: "20080205T191224Z"

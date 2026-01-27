@@ -58,7 +58,7 @@ impl ParseProp for PartialDateAndOrTime {
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
-        Self::parse(prop.value.as_deref().unwrap_or_default())
+        Self::parse(&prop.value)
     }
 }
 impl Value for PartialDateAndOrTime {
@@ -91,7 +91,7 @@ impl ParseProp for PartialDateTime {
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
-        Self::parse(prop.value.as_deref().unwrap_or_default())
+        Self::parse(&prop.value)
     }
 }
 

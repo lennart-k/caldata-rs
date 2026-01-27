@@ -41,8 +41,7 @@ impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> ComponentParser<'a, C,
         };
 
         if line.name != "BEGIN"
-            || line.value.is_none()
-            || !C::NAMES.contains(&line.value.as_ref().unwrap().to_uppercase().as_str())
+            || !C::NAMES.contains(&line.value.to_uppercase().as_str())
             || !line.params.is_empty()
         {
             return Err(ParserError::MissingHeader);

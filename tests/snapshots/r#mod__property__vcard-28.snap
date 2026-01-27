@@ -4,4 +4,4 @@ expression: prop
 ---
 name: SOUND
 params: ContentLineParams([])
-value: Some("CID:JOHNQPUBLIC.part8.19960229T080000.xyzMail@example.com")
+value: "CID:JOHNQPUBLIC.part8.19960229T080000.xyzMail@example.com"

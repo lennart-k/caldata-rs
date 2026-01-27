@@ -4,4 +4,4 @@ expression: prop
 ---
 name: LOGO
 params: ContentLineParams([])
-value: Some("http://www.example.com/pub/logos/abccorp.jpg")
+value: "http://www.example.com/pub/logos/abccorp.jpg"

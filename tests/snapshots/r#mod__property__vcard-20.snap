@@ -4,4 +4,4 @@ expression: prop
 ---
 name: N
 params: ContentLineParams([])
-value: Some("Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.")
+value: "Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P."

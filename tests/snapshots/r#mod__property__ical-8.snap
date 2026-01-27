@@ -4,4 +4,4 @@ expression: prop
 ---
 name: SUMMARY
 params: ContentLineParams([])
-value: Some("Planning meeting")
+value: "Planning meeting"

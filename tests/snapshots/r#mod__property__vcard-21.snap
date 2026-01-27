@@ -4,4 +4,4 @@ expression: prop
 ---
 name: NICKNAME
 params: ContentLineParams([("TYPE", ["work"])])
-value: Some("Boss")
+value: "Boss"

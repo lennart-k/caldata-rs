@@ -4,4 +4,4 @@ expression: prop
 ---
 name: END
 params: ContentLineParams([])
-value: Some("VCARD")
+value: "VCARD"

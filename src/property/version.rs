@@ -30,13 +30,7 @@ impl ParseProp for IcalVersion {
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
-        match prop
-            .value
-            .as_deref()
-            .unwrap_or_default()
-            .to_uppercase()
-            .as_str()
-        {
+        match prop.value.to_uppercase().as_str() {
             "1.0" => Ok(Self::Version1_0),
             "2.0" => Ok(Self::Version2_0),
             _ => Err(ParserError::InvalidVersion),

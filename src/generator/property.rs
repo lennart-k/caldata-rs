@@ -205,9 +205,7 @@ impl Emitter for ContentLine {
             output.push_str(&get_params(&self.params));
         }
         output.push(VALUE_DELIMITER);
-        if let Some(value) = self.value.as_ref() {
-            output.push_str(value);
-        }
+        output.push_str(&self.value);
         split_line(output)
     }
 }

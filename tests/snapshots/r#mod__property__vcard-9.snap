@@ -4,4 +4,4 @@ expression: prop
 ---
 name: EMAIL
 params: ContentLineParams([("TYPE", ["work"])])
-value: Some("jqpublic@xyz.example.com")
+value: "jqpublic@xyz.example.com"

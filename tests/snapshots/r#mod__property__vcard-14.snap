@@ -4,4 +4,4 @@ expression: prop
 ---
 name: IMPP
 params: ContentLineParams([("PREF", ["1"])])
-value: Some("xmpp:alice@example.com")
+value: "xmpp:alice@example.com"

@@ -4,4 +4,4 @@ expression: prop
 ---
 name: BEGIN
 params: ContentLineParams([])
-value: Some("VCALENDAR")
+value: "VCALENDAR"

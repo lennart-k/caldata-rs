@@ -4,4 +4,4 @@ expression: prop
 ---
 name: BDAY
 params: ContentLineParams([])
-value: Some("--0203")
+value: "--0203"

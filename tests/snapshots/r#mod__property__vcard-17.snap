@@ -4,4 +4,4 @@ expression: prop
 ---
 name: LANG
 params: ContentLineParams([("PREF", ["1"])])
-value: Some("fr")
+value: "fr"

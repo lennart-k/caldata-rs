@@ -4,4 +4,4 @@ expression: prop
 ---
 name: ORG
 params: ContentLineParams([])
-value: Some("ABC\\, Inc.;North American Division;Marketing")
+value: "ABC\\, Inc.;North American Division;Marketing"

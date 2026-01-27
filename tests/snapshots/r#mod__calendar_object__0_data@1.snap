@@ -64,18 +64,14 @@ Event(
                 params: ContentLineParams(
                     [],
                 ),
-                value: Some(
-                    "wholeday",
-                ),
+                value: "wholeday",
             },
             ContentLine {
                 name: "DTSTAMP",
                 params: ContentLineParams(
                     [],
                 ),
-                value: Some(
-                    "20251228T111327Z",
-                ),
+                value: "20251228T111327Z",
             },
             ContentLine {
                 name: "DTSTART",
@@ -89,27 +85,21 @@ Event(
                         ),
                     ],
                 ),
-                value: Some(
-                    "20251230",
-                ),
+                value: "20251230",
             },
             ContentLine {
                 name: "SEQUENCE",
                 params: ContentLineParams(
                     [],
                 ),
-                value: Some(
-                    "3",
-                ),
+                value: "3",
             },
             ContentLine {
                 name: "SUMMARY",
                 params: ContentLineParams(
                     [],
                 ),
-                value: Some(
-                    "wholeday event",
-                ),
+                value: "wholeday event",
             },
             ContentLine {
                 name: "RECURRENCE-ID",
@@ -123,9 +113,7 @@ Event(
                         ),
                     ],
                 ),
-                value: Some(
-                    "20251230",
-                ),
+                value: "20251230",
             },
         ],
         alarms: [],
@@ -192,18 +180,14 @@ Event(
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "wholeday",
-                    ),
+                    value: "wholeday",
                 },
                 ContentLine {
                     name: "DTSTAMP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20251228T111327Z",
-                    ),
+                    value: "20251228T111327Z",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -217,27 +201,21 @@ Event(
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20251231",
-                    ),
+                    value: "20251231",
                 },
                 ContentLine {
                     name: "SEQUENCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "3",
-                    ),
+                    value: "3",
                 },
                 ContentLine {
                     name: "SUMMARY",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "wholeday event",
-                    ),
+                    value: "wholeday event",
                 },
                 ContentLine {
                     name: "RECURRENCE-ID",
@@ -251,9 +229,7 @@ Event(
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20251231",
-                    ),
+                    value: "20251231",
                 },
             ],
             alarms: [],
@@ -319,18 +295,14 @@ Event(
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "wholeday",
-                    ),
+                    value: "wholeday",
                 },
                 ContentLine {
                     name: "DTSTAMP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20251228T111327Z",
-                    ),
+                    value: "20251228T111327Z",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -344,27 +316,21 @@ Event(
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20260101",
-                    ),
+                    value: "20260101",
                 },
                 ContentLine {
                     name: "SEQUENCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "3",
-                    ),
+                    value: "3",
                 },
                 ContentLine {
                     name: "SUMMARY",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "wholeday event",
-                    ),
+                    value: "wholeday event",
                 },
                 ContentLine {
                     name: "RECURRENCE-ID",
@@ -378,9 +344,7 @@ Event(
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20260101",
-                    ),
+                    value: "20260101",
                 },
             ],
             alarms: [],
@@ -446,18 +410,14 @@ Event(
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "wholeday",
-                    ),
+                    value: "wholeday",
                 },
                 ContentLine {
                     name: "DTSTAMP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20251228T111327Z",
-                    ),
+                    value: "20251228T111327Z",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -471,27 +431,21 @@ Event(
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20260102",
-                    ),
+                    value: "20260102",
                 },
                 ContentLine {
                     name: "SEQUENCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "3",
-                    ),
+                    value: "3",
                 },
                 ContentLine {
                     name: "SUMMARY",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "wholeday event",
-                    ),
+                    value: "wholeday event",
                 },
                 ContentLine {
                     name: "RECURRENCE-ID",
@@ -505,9 +459,7 @@ Event(
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20260102",
-                    ),
+                    value: "20260102",
                 },
             ],
             alarms: [],

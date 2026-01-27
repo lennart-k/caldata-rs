@@ -4,4 +4,4 @@ expression: prop
 ---
 name: ATTENDEE
 params: ContentLineParams([("ROLE", ["REQ-PARTICIPANT;foo"]), ("DELEGATED-FROM", ["mailto:bar@baz.com"]), ("PARTSTAT", ["ACCEPTED"]), ("RSVP", ["TRUE"])])
-value: Some("mailto:foo@bar.com")
+value: "mailto:foo@bar.com"

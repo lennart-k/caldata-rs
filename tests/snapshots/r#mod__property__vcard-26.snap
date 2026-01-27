@@ -4,4 +4,4 @@ expression: prop
 ---
 name: REV
 params: ContentLineParams([])
-value: Some("19951031T222710Z")
+value: "19951031T222710Z"

@@ -29,11 +29,7 @@ impl TryFrom<&ContentLine> for Option<chrono::Duration> {
     type Error = InvalidDuration;
 
     fn try_from(value: &ContentLine) -> Result<Self, Self::Error> {
-        if let Some(value) = &value.value {
-            Ok(Some(parse_duration(value)?))
-        } else {
-            Ok(None)
-        }
+        Ok(Some(parse_duration(&value.value)?))
     }
 }
 

@@ -9,18 +9,14 @@ IcalCalendar {
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "-//Example Inc.//Example Calendar//EN",
-            ),
+            value: "-//Example Inc.//Example Calendar//EN",
         },
         ContentLine {
             name: "VERSION",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "2.0",
-            ),
+            value: "2.0",
         },
         ContentLine {
             name: "ATTENDEE",
@@ -41,9 +37,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "mailto:foo1@bar",
-            ),
+            value: "mailto:foo1@bar",
         },
         ContentLine {
             name: "ATTENDEE",
@@ -64,9 +58,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "mailto:foo2@bar",
-            ),
+            value: "mailto:foo2@bar",
         },
         ContentLine {
             name: "ATTENDEE",
@@ -80,9 +72,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "mailto:foo3@bar",
-            ),
+            value: "mailto:foo3@bar",
         },
         ContentLine {
             name: "ATTENDEE",
@@ -96,9 +86,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "mailto:foo4@bar",
-            ),
+            value: "mailto:foo4@bar",
         },
         ContentLine {
             name: "ATTENDEE",
@@ -118,9 +106,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "mailto:foo5@bar",
-            ),
+            value: "mailto:foo5@bar",
         },
         ContentLine {
             name: "ATTENDEE",
@@ -140,9 +126,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "mailto:foo6@bar",
-            ),
+            value: "mailto:foo6@bar",
         },
         ContentLine {
             name: "ATTENDEE",
@@ -174,9 +158,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "mailto:foo@bar.com",
-            ),
+            value: "mailto:foo@bar.com",
         },
         ContentLine {
             name: "X-FOO",
@@ -190,9 +172,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "FOO;BAR",
-            ),
+            value: "FOO;BAR",
         },
         ContentLine {
             name: "X-FOO2",
@@ -212,9 +192,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "FOO;BAR",
-            ),
+            value: "FOO;BAR",
         },
         ContentLine {
             name: "X-BAR",
@@ -228,9 +206,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "BAZ;BAR",
-            ),
+            value: "BAZ;BAR",
         },
         ContentLine {
             name: "X-BAZ",
@@ -250,9 +226,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "BAZ;BAR",
-            ),
+            value: "BAZ;BAR",
         },
         ContentLine {
             name: "X-BAZ2",
@@ -272,9 +246,7 @@ IcalCalendar {
                     ),
                 ],
             ),
-            value: Some(
-                "BAZ;BAR",
-            ),
+            value: "BAZ;BAR",
         },
     ],
     events: [],

@@ -70,9 +70,7 @@ VcardContact {
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "4.0",
-            ),
+            value: "4.0",
         },
         ContentLine {
             name: "ADR",
@@ -86,36 +84,28 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "pobox;apt;street;city;state;zipcode;country",
-            ),
+            value: "pobox;apt;street;city;state;zipcode;country",
         },
         ContentLine {
             name: "ANNIVERSARY",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "19960415",
-            ),
+            value: "19960415",
         },
         ContentLine {
             name: "BDAY",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "--0203",
-            ),
+            value: "--0203",
         },
         ContentLine {
             name: "CALADRURI",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "http://example.com/calendar/jdoe",
-            ),
+            value: "http://example.com/calendar/jdoe",
         },
         ContentLine {
             name: "CALURI",
@@ -129,18 +119,14 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "ftp://ftp.example.com/calA.ics",
-            ),
+            value: "ftp://ftp.example.com/calA.ics",
         },
         ContentLine {
             name: "CLIENTPIDMAP",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "1;urn:uuid:3df403f4-5924-4bb7-b077-3c711d9eb34b",
-            ),
+            value: "1;urn:uuid:3df403f4-5924-4bb7-b077-3c711d9eb34b",
         },
         ContentLine {
             name: "EMAIL",
@@ -154,9 +140,7 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "jqpublic@xyz.example.com",
-            ),
+            value: "jqpublic@xyz.example.com",
         },
         ContentLine {
             name: "FBURL",
@@ -170,36 +154,28 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "ftp://example.com/busy/project-a.ifb",
-            ),
+            value: "ftp://example.com/busy/project-a.ifb",
         },
         ContentLine {
             name: "FN",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "J. Doe",
-            ),
+            value: "J. Doe",
         },
         ContentLine {
             name: "GENDER",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "M;Fellow",
-            ),
+            value: "M;Fellow",
         },
         ContentLine {
             name: "GEO",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "geo:37.386013\\,-122.082932",
-            ),
+            value: "geo:37.386013\\,-122.082932",
         },
         ContentLine {
             name: "IMPP",
@@ -213,27 +189,21 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "xmpp:alice@example.com",
-            ),
+            value: "xmpp:alice@example.com",
         },
         ContentLine {
             name: "KEY",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "http://www.example.com/keys/jdoe.cer",
-            ),
+            value: "http://www.example.com/keys/jdoe.cer",
         },
         ContentLine {
             name: "KIND",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "individual",
-            ),
+            value: "individual",
         },
         ContentLine {
             name: "LANG",
@@ -247,36 +217,28 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "fr",
-            ),
+            value: "fr",
         },
         ContentLine {
             name: "LOGO",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "http://www.example.com/pub/logos/abccorp.jpg",
-            ),
+            value: "http://www.example.com/pub/logos/abccorp.jpg",
         },
         ContentLine {
             name: "MEMBER",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "urn:uuid:03a0e51f-d1aa-4385-8a53-e29025acd8af",
-            ),
+            value: "urn:uuid:03a0e51f-d1aa-4385-8a53-e29025acd8af",
         },
         ContentLine {
             name: "N",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.",
-            ),
+            value: "Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.",
         },
         ContentLine {
             name: "NICKNAME",
@@ -290,36 +252,28 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "Boss",
-            ),
+            value: "Boss",
         },
         ContentLine {
             name: "NOTE",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "This fax number is operational 0800 to 1715 EST\\, Mon-Fri",
-            ),
+            value: "This fax number is operational 0800 to 1715 EST\\, Mon-Fri",
         },
         ContentLine {
             name: "ORG",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "ABC\\, Inc.;North American Division;Marketing",
-            ),
+            value: "ABC\\, Inc.;North American Division;Marketing",
         },
         ContentLine {
             name: "PHOTO",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "http://www.example.com/pub/photos/jqpublic.gif",
-            ),
+            value: "http://www.example.com/pub/photos/jqpublic.gif",
         },
         ContentLine {
             name: "RELATED",
@@ -333,45 +287,35 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
-            ),
+            value: "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
         },
         ContentLine {
             name: "REV",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "19951031T222710Z",
-            ),
+            value: "19951031T222710Z",
         },
         ContentLine {
             name: "ROLE",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "Project Leader",
-            ),
+            value: "Project Leader",
         },
         ContentLine {
             name: "SOUND",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "CID:JOHNQPUBLIC.part8.19960229T080000.xyzMail@example.com",
-            ),
+            value: "CID:JOHNQPUBLIC.part8.19960229T080000.xyzMail@example.com",
         },
         ContentLine {
             name: "SOURCE",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "ldap://ldap.example.com/cn=Babs%20Jensen\\,%20o=Babsco\\,%20c=US",
-            ),
+            value: "ldap://ldap.example.com/cn=Babs%20Jensen\\,%20o=Babsco\\,%20c=US",
         },
         ContentLine {
             name: "TEL",
@@ -391,18 +335,14 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "tel:+33-01-23-45-67",
-            ),
+            value: "tel:+33-01-23-45-67",
         },
         ContentLine {
             name: "TITLE",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "Research Scientist",
-            ),
+            value: "Research Scientist",
         },
         ContentLine {
             name: "TZ",
@@ -416,18 +356,14 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "-0500",
-            ),
+            value: "-0500",
         },
         ContentLine {
             name: "XML",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "<html xmlns=\"http://www.w3.org/1999/xhtml\"></html>",
-            ),
+            value: "<html xmlns=\"http://www.w3.org/1999/xhtml\"></html>",
         },
     ],
 }

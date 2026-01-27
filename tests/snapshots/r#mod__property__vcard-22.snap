@@ -4,4 +4,4 @@ expression: prop
 ---
 name: NOTE
 params: ContentLineParams([])
-value: Some("This fax number is operational 0800 to 1715 EST\\, Mon-Fri")
+value: "This fax number is operational 0800 to 1715 EST\\, Mon-Fri"

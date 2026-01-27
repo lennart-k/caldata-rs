@@ -9,27 +9,21 @@ IcalCalendar {
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "-//Ximian//NONSGML Evolution Calendar//EN",
-            ),
+            value: "-//Ximian//NONSGML Evolution Calendar//EN",
         },
         ContentLine {
             name: "VERSION",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "2.0",
-            ),
+            value: "2.0",
         },
         ContentLine {
             name: "METHOD",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "PUBLISH",
-            ),
+            value: "PUBLISH",
         },
     ],
     events: [],
@@ -74,27 +68,21 @@ IcalCalendar {
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "84f728973b37b1cb9abf7556adde789b780779f7",
-                    ),
+                    value: "84f728973b37b1cb9abf7556adde789b780779f7",
                 },
                 ContentLine {
                     name: "DTSTAMP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20250726T130653Z",
-                    ),
+                    value: "20250726T130653Z",
                 },
                 ContentLine {
                     name: "SUMMARY",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "journal entry!",
-                    ),
+                    value: "journal entry!",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -108,63 +96,49 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20250705",
-                    ),
+                    value: "20250705",
                 },
                 ContentLine {
                     name: "CLASS",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "PRIVATE",
-                    ),
+                    value: "PRIVATE",
                 },
                 ContentLine {
                     name: "DESCRIPTION",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "description\\n\\nnice",
-                    ),
+                    value: "description\\n\\nnice",
                 },
                 ContentLine {
                     name: "SEQUENCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "1",
-                    ),
+                    value: "1",
                 },
                 ContentLine {
                     name: "CREATED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20250726T130707Z",
-                    ),
+                    value: "20250726T130707Z",
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20250726T130707Z",
-                    ),
+                    value: "20250726T130707Z",
                 },
                 ContentLine {
                     name: "X-EVOLUTION-CALDAV-ETAG",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "0af7d703351f3eed3c08491bdcb10a4c138181cc6be73d5b58aa13ccab898b55",
-                    ),
+                    value: "0af7d703351f3eed3c08491bdcb10a4c138181cc6be73d5b58aa13ccab898b55",
                 },
             ],
             rdates: [],

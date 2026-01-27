@@ -4,4 +4,4 @@ expression: prop
 ---
 name: DESCRIPTION
 params: ContentLineParams([])
-value: None
+value: ""

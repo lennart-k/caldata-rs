@@ -28,27 +28,21 @@ VcardContact {
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "4.0",
-            ),
+            value: "4.0",
         },
         ContentLine {
             name: "FN",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "Alice Foobar",
-            ),
+            value: "Alice Foobar",
         },
         ContentLine {
             name: "N",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "Foobar;Alice",
-            ),
+            value: "Foobar;Alice",
         },
         ContentLine {
             name: "EMAIL",
@@ -62,9 +56,7 @@ VcardContact {
                     ),
                 ],
             ),
-            value: Some(
-                "alice@example.org",
-            ),
+            value: "alice@example.org",
         },
     ],
 }

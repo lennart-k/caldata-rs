@@ -9,36 +9,28 @@ IcalCalendar {
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "-//Microsoft Corporation//Outlook 16.0 MIMEDIR//EN",
-            ),
+            value: "-//Microsoft Corporation//Outlook 16.0 MIMEDIR//EN",
         },
         ContentLine {
             name: "VERSION",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "2.0",
-            ),
+            value: "2.0",
         },
         ContentLine {
             name: "METHOD",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "PUBLISH",
-            ),
+            value: "PUBLISH",
         },
         ContentLine {
             name: "X-MS-OLK-FORCEINSPECTOROPEN",
             params: ContentLineParams(
                 [],
             ),
-            value: Some(
-                "TRUE",
-            ),
+            value: "TRUE",
         },
     ],
     events: [
@@ -121,27 +113,21 @@ IcalCalendar {
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "PUBLIC",
-                    ),
+                    value: "PUBLIC",
                 },
                 ContentLine {
                     name: "CREATED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20210511T063845Z",
-                    ),
+                    value: "20210511T063845Z",
                 },
                 ContentLine {
                     name: "DESCRIPTION",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "Einwahldaten folgen in der Veranstaltungswoche \\nSeminartitel: Software-QS-Cast - Application Performance Monitoring\\nDatum: 27.Mai 2021\\nUhrzeit: 10:30 - ca.12:00 Uhr  \\n \\n",
-                    ),
+                    value: "Einwahldaten folgen in der Veranstaltungswoche \\nSeminartitel: Software-QS-Cast - Application Performance Monitoring\\nDatum: 27.Mai 2021\\nUhrzeit: 10:30 - ca.12:00 Uhr  \\n \\n",
                 },
                 ContentLine {
                     name: "DTEND",
@@ -155,18 +141,14 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20210527T120000",
-                    ),
+                    value: "20210527T120000",
                 },
                 ContentLine {
                     name: "DTSTAMP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20210511T063845Z",
-                    ),
+                    value: "20210511T063845Z",
                 },
                 ContentLine {
                     name: "DTSTART",
@@ -180,36 +162,28 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "20210527T103000",
-                    ),
+                    value: "20210527T103000",
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "20210511T063845Z",
-                    ),
+                    value: "20210511T063845Z",
                 },
                 ContentLine {
                     name: "PRIORITY",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "5",
-                    ),
+                    value: "5",
                 },
                 ContentLine {
                     name: "SEQUENCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "0",
-                    ),
+                    value: "0",
                 },
                 ContentLine {
                     name: "SUMMARY",
@@ -223,63 +197,49 @@ IcalCalendar {
                             ),
                         ],
                     ),
-                    value: Some(
-                        "Software-QS-Cast Application Performance Monitoring",
-                    ),
+                    value: "Software-QS-Cast Application Performance Monitoring",
                 },
                 ContentLine {
                     name: "TRANSP",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "OPAQUE",
-                    ),
+                    value: "OPAQUE",
                 },
                 ContentLine {
                     name: "UID",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "040000008200E000*************00800000000*****************00000000000000010000000********************************",
-                    ),
+                    value: "040000008200E000*************00800000000*****************00000000000000010000000********************************",
                 },
                 ContentLine {
                     name: "X-MICROSOFT-CDO-BUSYSTATUS",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "BUSY",
-                    ),
+                    value: "BUSY",
                 },
                 ContentLine {
                     name: "X-MICROSOFT-CDO-IMPORTANCE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "1",
-                    ),
+                    value: "1",
                 },
                 ContentLine {
                     name: "X-MICROSOFT-DISALLOW-COUNTER",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "FALSE",
-                    ),
+                    value: "FALSE",
                 },
                 ContentLine {
                     name: "X-MS-OLK-CONFTYPE",
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "0",
-                    ),
+                    value: "0",
                 },
             ],
             alarms: [
@@ -290,27 +250,21 @@ IcalCalendar {
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "-PT15M",
-                            ),
+                            value: "-PT15M",
                         },
                         ContentLine {
                             name: "ACTION",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "DISPLAY",
-                            ),
+                            value: "DISPLAY",
                         },
                         ContentLine {
                             name: "DESCRIPTION",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "Reminder",
-                            ),
+                            value: "Reminder",
                         },
                     ],
                 },
@@ -329,9 +283,7 @@ IcalCalendar {
                     params: ContentLineParams(
                         [],
                     ),
-                    value: Some(
-                        "W. Europe Standard Time",
-                    ),
+                    value: "W. Europe Standard Time",
                 },
             ],
             transitions: [
@@ -343,36 +295,28 @@ IcalCalendar {
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "16011028T030000",
-                            ),
+                            value: "16011028T030000",
                         },
                         ContentLine {
                             name: "RRULE",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10",
-                            ),
+                            value: "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10",
                         },
                         ContentLine {
                             name: "TZOFFSETFROM",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "+0200",
-                            ),
+                            value: "+0200",
                         },
                         ContentLine {
                             name: "TZOFFSETTO",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "+0100",
-                            ),
+                            value: "+0100",
                         },
                     ],
                     dtstart: IcalDTSTARTProperty(
@@ -394,36 +338,28 @@ IcalCalendar {
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "16010325T020000",
-                            ),
+                            value: "16010325T020000",
                         },
                         ContentLine {
                             name: "RRULE",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3",
-                            ),
+                            value: "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3",
                         },
                         ContentLine {
                             name: "TZOFFSETFROM",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "+0100",
-                            ),
+                            value: "+0100",
                         },
                         ContentLine {
                             name: "TZOFFSETTO",
                             params: ContentLineParams(
                                 [],
                             ),
-                            value: Some(
-                                "+0200",
-                            ),
+                            value: "+0200",
                         },
                     ],
                     dtstart: IcalDTSTARTProperty(
