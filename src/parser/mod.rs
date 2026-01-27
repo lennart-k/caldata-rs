@@ -23,6 +23,7 @@ pub struct ParserOptions {
     pub rfc7809: bool,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for ParserOptions {
     fn default() -> Self {
         Self {

@@ -33,9 +33,7 @@ use std::fmt;
 use std::iter::Iterator;
 
 use super::{BytesLines, Line, LineError, LineReader};
-use crate::{
-    PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_QUOTE, PARAM_VALUE_DELIMITER, VALUE_DELIMITER,
-};
+use crate::{PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_DELIMITER};
 
 /// Error arising when trying to parse a content line
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
@@ -65,7 +63,7 @@ impl ContentLineParams {
         self.0
             .iter()
             .find(|(key, _)| name == key)
-            .and_then(|(_, value)| value.iter().map(String::as_str).next())
+            .and_then(|(_, value)| value.iter().map(String::as_ref).next())
     }
 
     #[inline]
@@ -132,22 +130,23 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
     }
 
     fn parse(&self, line: Line) -> Result<ContentLine, ContentLineError> {
-        let to_parse = line.as_str();
+        let mut to_parse = line.as_str();
 
         // Find end of parameter name
-        let Some(end_name_index) = to_parse.find([PARAM_DELIMITER, VALUE_DELIMITER]) else {
+        let Some(param_end_pos) = to_parse.find([PARAM_DELIMITER, VALUE_DELIMITER]) else {
             return Err(ContentLineError::MissingName(line.number()));
         };
-        let (prop_name, mut to_parse) = to_parse.split_at(end_name_index);
+        let (prop_name, remainder) = to_parse.split_at(param_end_pos);
         if prop_name.is_empty() {
             return Err(ContentLineError::MissingName(line.number()));
         }
+        to_parse = remainder;
 
         // remainder either starts with ; or :
         // Fetch all parameters
         let mut params = vec![];
         while to_parse.starts_with(PARAM_DELIMITER) {
-            to_parse = to_parse.split_at(1).1;
+            to_parse = &to_parse[1..];
 
             // Split the param key and the rest of the line
             let Some((key, remainder)) = to_parse.split_once(PARAM_NAME_DELIMITER) else {
@@ -161,28 +160,24 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
             }
             to_parse = remainder;
 
-            let mut values = Vec::new();
+            // In almost all cases we'll have one parameter value
+            let mut values = Vec::with_capacity(1);
 
-            // Parse parameter value.
+            // Loop over comma-separated parameter values
             loop {
                 if to_parse.starts_with('"') {
                     // This is a dquoted value. (NAME:Foo="Bar":value)
-                    let mut elements = to_parse.splitn(3, PARAM_QUOTE).skip(1);
-                    // unwrap is safe here as we have already check above if there is on '"'.
-                    values.push(
-                        elements
-                            .next()
-                            .ok_or_else(|| ContentLineError::MissingClosingQuote(line.number()))?
-                            .to_string(),
-                    );
-
-                    to_parse = elements
-                        .next()
-                        .ok_or_else(|| ContentLineError::MissingClosingQuote(line.number()))?
+                    // Skip first dquote
+                    to_parse = &to_parse[1..];
+                    let Some((content, remainder)) = to_parse.split_once('"') else {
+                        return Err(ContentLineError::MissingClosingQuote(line.number()));
+                    };
+                    values.push(content.to_owned());
+                    to_parse = remainder;
                 } else {
                     // This is a 'raw' value. (NAME;Foo=Bar:value)
                     // Try to find the next param separator.
-                    let Some(end_param_value) =
+                    let Some(delim_pos) =
                         to_parse.find([PARAM_DELIMITER, VALUE_DELIMITER, PARAM_VALUE_DELIMITER])
                     else {
                         return Err(ContentLineError::MissingContentAfter(
@@ -190,17 +185,16 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
                             PARAM_NAME_DELIMITER,
                         ));
                     };
+                    let (content, remainder) = to_parse.split_at(delim_pos);
 
-                    let elements = to_parse.split_at(end_param_value);
-                    values.push(elements.0.to_string());
-                    to_parse = elements.1;
+                    values.push(content.to_owned());
+                    to_parse = remainder;
                 }
 
                 if !to_parse.starts_with(PARAM_VALUE_DELIMITER) {
                     break;
                 }
-
-                to_parse = to_parse.trim_start_matches(PARAM_VALUE_DELIMITER);
+                to_parse = &to_parse[1..];
             }
 
             params.push((key.to_uppercase(), values));
@@ -210,7 +204,7 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
         if !to_parse.starts_with(VALUE_DELIMITER) {
             return Err(ContentLineError::MissingValue(line.number()));
         }
-        to_parse = to_parse.split_at(1).1;
+        to_parse = &to_parse[1..];
         Ok(ContentLine {
             name: prop_name.to_uppercase(),
             params: params.into(),
@@ -222,7 +216,7 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
 impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> Iterator for ContentLineParser<'a, T> {
     type Item = Result<ContentLine, ContentLineError>;
 
-    fn next(&mut self) -> Option<Result<ContentLine, ContentLineError>> {
+    fn next(&mut self) -> Option<Self::Item> {
         match self.0.next() {
             Some(Ok(line)) => Some(self.parse(line)),
             Some(Err(err)) => Some(Err(err.into())),

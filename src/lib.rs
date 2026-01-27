@@ -2,7 +2,6 @@ const PARAM_VALUE_DELIMITER: char = ',';
 const VALUE_DELIMITER: char = ':';
 const PARAM_DELIMITER: char = ';';
 const PARAM_NAME_DELIMITER: char = '=';
-const PARAM_QUOTE: char = '"';
 
 pub mod component;
 pub use component::ical::*;
