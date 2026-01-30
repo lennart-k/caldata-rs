@@ -9,3 +9,6 @@ target
 
 # Idea
 .idea/
+
+flamegraph.svg
+perf.data*
