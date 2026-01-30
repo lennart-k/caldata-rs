@@ -59,8 +59,20 @@ pub enum LineError {
 /// been made yet.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Line<'a> {
-    inner: Cow<'a, str>,
+    pub inner: Cow<'a, str>,
     number: usize,
+}
+
+impl<'a> PartialOrd for Line<'a> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl<'a> Ord for Line<'a> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.inner.cmp(&other.inner)
+    }
 }
 
 impl<'a> Line<'a> {
