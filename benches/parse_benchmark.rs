@@ -14,28 +14,28 @@ fn parse_ical() -> IcalCalendar {
 }
 
 fn benchmark(c: &mut Criterion) {
-    c.bench_function("parse PartialDate", |b| {
+    let mut group = c.benchmark_group("parse_type");
+    group.bench_function("parse PartialDate", |b| {
         b.iter(|| {
             PartialDate::parse("--0329").unwrap();
         })
     });
-    c.bench_function("parse CalDate", |b| {
+    group.bench_function("parse CalDate", |b| {
         b.iter(|| {
             CalDate::parse("19700329", None).unwrap();
         })
     });
-    c.bench_function("parse CalDateTime UTC", |b| {
+    group.bench_function("parse CalDateTime UTC", |b| {
         b.iter(|| {
             CalDateTime::parse("19700329T020000Z", None).unwrap();
         })
     });
-    c.bench_function("parse CalDateTime Local", |b| {
+    group.bench_function("parse CalDateTime Local", |b| {
         b.iter(|| {
             CalDateTime::parse("19700329T020000", None).unwrap();
         })
     });
-
-    c.bench_function("ics parse DTSTART", |b| {
+    group.bench_function("ics parse DTSTART", |b| {
         b.iter(|| {
             let content_line = ContentLine {
                 name: "DTSTART".to_owned(),
@@ -45,8 +45,9 @@ fn benchmark(c: &mut Criterion) {
             IcalDTSTARTProperty::parse_prop(&content_line, None).unwrap();
         })
     });
-
-    c.bench_function("line parse ical_everything.ics", |b| {
+    drop(group);
+    let mut group = c.benchmark_group("lines");
+    group.bench_function("line parse ical_everything.ics", |b| {
         b.iter(|| {
             let input = include_str!("../tests/resources/ical_everything.ics");
             let reader = LineReader::from_slice(input.as_bytes());
@@ -54,9 +55,14 @@ fn benchmark(c: &mut Criterion) {
             for _ in reader {}
         })
     });
-    c.bench_function("ics parse ical_everything.ics", |b| b.iter(parse_ical));
+    drop(group);
+    let mut group = c.benchmark_group("comps_parse");
+    group.bench_function("ics parse ical_everything.ics", |b| b.iter(parse_ical));
+
+    drop(group);
+    let mut group = c.benchmark_group("comps_serialise");
     let cal = parse_ical();
-    c.bench_function("ics serialise ical_everything.ics", |b| {
+    group.bench_function("ics serialise ical_everything.ics", |b| {
         b.iter(|| cal.generate())
     });
     // #[cfg(feature = "rkyv")]
