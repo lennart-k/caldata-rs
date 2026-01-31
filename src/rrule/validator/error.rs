@@ -4,6 +4,7 @@ use thiserror::Error;
 
 use crate::rrule::Frequency;
 
+#[allow(missing_docs)]
 #[derive(Error, Debug, Clone, PartialEq, Eq)]
 pub enum ValidationError {
     #[error("BYSETPOS should only be used in conjunction with another BYxxx rule part.")]
