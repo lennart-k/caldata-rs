@@ -1,4 +1,4 @@
-use super::timezone::Tz;
+use crate::types::Tz;
 use chrono::{Datelike, Duration, NaiveTime, Timelike};
 
 pub(crate) fn duration_from_midnight(time: NaiveTime) -> Duration {

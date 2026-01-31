@@ -13,8 +13,6 @@ use crate::rrule::{RRuleError, RRuleSet, Unvalidated, Validated};
 use crate::types::Tz;
 use chrono::DateTime;
 use chrono::{Datelike, Month, Weekday};
-#[cfg(feature = "serde")]
-use serde_with::{DeserializeFromStr, SerializeDisplay, serde_as};
 use std::cmp::Ordering;
 use std::fmt::Display;
 use std::fmt::Formatter;
@@ -22,7 +20,6 @@ use std::marker::PhantomData;
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-#[cfg_attr(feature = "serde", derive(DeserializeFromStr, SerializeDisplay))]
 /// The frequency of a recurrence.
 pub enum Frequency {
     /// The recurrence occurs on a yearly basis.
@@ -80,7 +77,6 @@ impl FromStr for Frequency {
 /// whereas `NWeekday::Nth(-1, MO)` represents the last Monday of the month or year.
 /// And `NWeekday::Every(MO)`, means all Mondays of the month or year.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(DeserializeFromStr, SerializeDisplay))]
 pub enum NWeekday {
     /// When it is every weekday of the month or year.
     Every(Weekday),
@@ -215,8 +211,6 @@ fn weekday_to_str(d: Weekday) -> String {
 /// - `Unvalidated`, which is the raw string representation of the RRULE
 /// - `Validated`, which is when the `RRule` has been parsed and validated, based on the start date
 #[derive(Debug, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", serde_as)]
-#[cfg_attr(feature = "serde", derive(DeserializeFromStr, SerializeDisplay))]
 pub struct RRule<Stage = Validated> {
     /// The frequency of the rrule.
     /// For example, yearly, weekly, hourly
@@ -230,7 +224,6 @@ pub struct RRule<Stage = Validated> {
     pub(crate) count: Option<u32>,
     /// The end date after which new events will no longer be generated.
     /// If the `DateTime` is equal to an instance of the event, it will be the last event.
-    #[cfg_attr(feature = "serde", serde_as(as = "DisplayFromStr"))]
     pub(crate) until: Option<DateTime<Tz>>,
     /// The start day of the week.
     /// This will affect recurrences based on weekly periods.
@@ -275,7 +268,6 @@ pub struct RRule<Stage = Validated> {
     /// Note: Only used when `by-easter` feature flag is set. Otherwise, it is ignored.
     pub(crate) by_easter: Option<i16>,
     /// A phantom data to have the stage (unvalidated or validated).
-    #[cfg_attr(feature = "serde", serde_as(as = "ignore"))]
     pub(crate) stage: PhantomData<Stage>,
 }
 

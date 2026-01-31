@@ -4,15 +4,11 @@ use crate::rrule::parser::{ContentLine, Grammar};
 use crate::rrule::{ParseError, RRule, RRuleError};
 use crate::types::Tz;
 use chrono::DateTime;
-#[cfg(feature = "serde")]
-use serde_with::{DeserializeFromStr, SerializeDisplay, serde_as};
 use std::fmt::Display;
 use std::str::FromStr;
 
 /// A validated Recurrence Rule that can be used to create an iterator.
-#[cfg_attr(feature = "serde", serde_as)]
 #[derive(Clone, Debug, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(DeserializeFromStr, SerializeDisplay))]
 pub struct RRuleSet {
     /// List of rrules.
     pub(crate) rrule: Vec<RRule>,

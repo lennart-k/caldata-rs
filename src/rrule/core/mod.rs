@@ -9,11 +9,6 @@ pub(crate) use datetime::{
     duration_from_midnight, get_day, get_hour, get_minute, get_month, get_second,
 };
 
-pub mod timezone {
-    // TODO: Remove this alias!
-    pub use crate::types::Tz;
-}
-
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 /// An empty struct to keep the validated stage
 pub struct Validated;
