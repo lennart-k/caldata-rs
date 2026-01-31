@@ -91,7 +91,7 @@ impl CalDate {
 
     #[must_use]
     pub fn succ_opt(&self) -> Option<Self> {
-        Some(Self(self.0.succ_opt()?, self.1.clone()))
+        Some(Self(self.0.succ_opt()?, self.1))
     }
 }
 

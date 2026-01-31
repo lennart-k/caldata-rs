@@ -44,15 +44,14 @@ impl TryFrom<&ContentLineCaptures<'_>> for StartDateContentLine {
         } else {
             "DATE"
         };
-        if let Some(value_in_parameter) = value_in_parameter {
-            if value_in_parameter != value {
+        if let Some(value_in_parameter) = value_in_parameter
+            && value_in_parameter != value {
                 return Err(ParseError::ParameterValueMismatch {
                     parameter: "VALUE".into(),
                     parameter_value: value_in_parameter.into(),
                     found_value: value.into(),
                 });
             }
-        }
 
         let datetime = datestring_to_date(content_line.value, timezone, "DTSTART")?;
 

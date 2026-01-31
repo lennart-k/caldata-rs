@@ -66,13 +66,12 @@ impl TryFrom<ContentLineCaptures<'_>> for RRule<Unvalidated> {
     type Error = ParseError;
 
     fn try_from(value: ContentLineCaptures) -> Result<Self, Self::Error> {
-        if let Some(parameters) = value.parameters {
-            if !parameters.is_empty() {
+        if let Some(parameters) = value.parameters
+            && !parameters.is_empty() {
                 return Err(ParseError::PropertyParametersNotSupported(
                     parameters.into(),
                 ));
             }
-        }
 
         let properties: HashMap<RRuleProperty, String> = parse_parameters(value.value)?;
 

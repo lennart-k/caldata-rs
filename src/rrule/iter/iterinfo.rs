@@ -247,7 +247,9 @@ impl IterInfo {
                 self.get_timeset_unchecked(hour, minute, second)
             }
             _ => {
-                let timeset = self
+                
+
+                self
                     .rrule
                     .by_hour
                     .iter()
@@ -262,9 +264,7 @@ impl IterInfo {
                             })
                         })
                     })
-                    .collect();
-
-                timeset
+                    .collect()
             }
         }
     }

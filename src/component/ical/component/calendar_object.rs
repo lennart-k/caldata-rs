@@ -437,9 +437,11 @@ impl ComponentMut for IcalCalendarObjectBuilder {
         let _prodid: IcalPRODIDProperty = self.safe_get_required(None)?;
         let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(None)?;
 
+        #[allow(unused_mut)]
         let mut vtimezones: BTreeMap<String, IcalTimeZone> = self.vtimezones;
         let inner = self.inner.ok_or(ParserError::NotComplete)?;
 
+        #[allow(unused_mut)]
         let mut timezones = HashMap::from_iter(
             vtimezones
                 .iter()

@@ -139,6 +139,7 @@ impl ComponentMut for IcalCalendarBuilder {
         let _prodid: IcalPRODIDProperty = self.safe_get_required(None)?;
         let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(None)?;
 
+        #[allow(unused_mut)]
         let mut timezones = HashMap::from_iter(
             self.vtimezones
                 .iter()
@@ -155,6 +156,7 @@ impl ComponentMut for IcalCalendarBuilder {
             .chain(self.journals.iter().flat_map(|object| object.get_tzids()))
             .chain(self.free_busys.iter().flat_map(|object| object.get_tzids()))
             .collect();
+        #[allow(unused_mut)]
         let mut vtimezones = self.vtimezones;
         #[cfg(feature = "vtimezones-rs")]
         if options.rfc7809 {

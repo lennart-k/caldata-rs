@@ -52,7 +52,7 @@ impl CalDateOrDateTime {
     pub fn timezone(&self) -> Tz {
         match self {
             Self::DateTime(datetime) => datetime.timezone(),
-            Self::Date(date) => date.timezone().clone(),
+            Self::Date(date) => *date.timezone(),
         }
     }
 
