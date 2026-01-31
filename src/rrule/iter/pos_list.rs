@@ -1,5 +1,5 @@
 use super::utils::{add_time_to_date, date_from_ordinal, pymod};
-use crate::rrule::core::Tz;
+use crate::types::Tz;
 use chrono::NaiveTime;
 
 pub(crate) fn build_pos_list(

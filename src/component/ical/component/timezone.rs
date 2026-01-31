@@ -3,6 +3,7 @@ use crate::{
     component::{Component, ComponentMut},
     parser::{ContentLine, ICalProperty, ParserError, ParserOptions},
     property::{GetProperty, IcalDTSTARTProperty, IcalRRULEProperty, IcalTZRDATEProperty},
+    types::Tz,
 };
 use chrono::{DateTime, Utc};
 #[cfg(not(tarpaulin_include))]
@@ -278,7 +279,7 @@ impl ComponentMut for IcalTimeZoneTransitionBuilder {
 
 impl IcalTimeZoneTransition {
     pub fn truncate(self, start: DateTime<Utc>) -> Option<Self> {
-        let dtstart = self.dtstart.0.utc().with_timezone(&crate::rrule::Tz::UTC);
+        let dtstart = self.dtstart.0.utc().with_timezone(&Tz::UTC);
         let mut rrules = vec![];
         let mut rdates = vec![];
         let mut other_properties = vec![];

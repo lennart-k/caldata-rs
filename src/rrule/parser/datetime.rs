@@ -1,8 +1,8 @@
-use std::str::FromStr;
-
 use super::{ParseError, regex::ParsedDateString};
-use crate::rrule::{NWeekday, core::Tz};
+use crate::rrule::NWeekday;
+use crate::types::Tz;
 use chrono::{NaiveDate, TimeZone, Weekday};
+use std::str::FromStr;
 
 /// Attempts to convert a `str` to a `chrono_tz::Tz`.
 pub(crate) fn parse_timezone(tz: &str) -> Result<Tz, ParseError> {

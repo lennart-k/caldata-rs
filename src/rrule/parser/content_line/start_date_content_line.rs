@@ -4,13 +4,11 @@ use super::{
     content_line_parts::ContentLineCaptures, date_content_line::DateParameter,
     parameters::parse_parameters,
 };
-use crate::rrule::{
-    core::Tz,
-    parser::{
-        ParseError,
-        datetime::{datestring_to_date, parse_timezone},
-    },
+use crate::rrule::parser::{
+    ParseError,
+    datetime::{datestring_to_date, parse_timezone},
 };
+use crate::types::Tz;
 
 const UTC: Tz = Tz::UTC;
 

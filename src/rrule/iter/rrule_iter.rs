@@ -2,7 +2,8 @@ use super::counter_date::DateTimeIter;
 use super::utils::add_time_to_date;
 use super::{IterInfo, MAX_ITER_LOOP, build_pos_list, utils::date_from_ordinal};
 use crate::rrule::core::{get_hour, get_minute, get_second};
-use crate::rrule::{Frequency, RRule, Tz};
+use crate::rrule::{Frequency, RRule};
+use crate::types::Tz;
 use chrono::NaiveTime;
 use std::collections::VecDeque;
 

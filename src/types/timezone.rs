@@ -1,14 +1,13 @@
 use chrono::{MappedLocalTime, NaiveDate, NaiveDateTime, TimeZone, Utc};
-use chrono_tz::Tz;
 use derive_more::{Display, From};
 
 #[derive(Debug, Clone, Copy, From, PartialEq, Eq)]
-pub enum Timezone {
+pub enum Tz {
     Local,
-    Olson(Tz),
+    Olson(chrono_tz::Tz),
 }
 
-impl Timezone {
+impl Tz {
     pub const UTC: Self = Self::Olson(chrono_tz::UTC);
 
     pub fn is_local(&self) -> bool {
@@ -43,13 +42,13 @@ impl chrono::Offset for CalTimezoneOffset {
     }
 }
 
-impl TimeZone for Timezone {
+impl TimeZone for Tz {
     type Offset = CalTimezoneOffset;
 
     fn from_offset(offset: &Self::Offset) -> Self {
         match offset {
             CalTimezoneOffset::Local => Self::Local,
-            CalTimezoneOffset::Olson(offset) => Self::Olson(Tz::from_offset(offset)),
+            CalTimezoneOffset::Olson(offset) => Self::Olson(chrono_tz::Tz::from_offset(offset)),
         }
     }
 

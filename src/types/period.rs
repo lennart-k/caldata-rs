@@ -1,5 +1,4 @@
 use chrono::Duration;
-use chrono_tz::Tz;
 use std::collections::HashMap;
 
 use crate::{
@@ -15,7 +14,7 @@ pub enum DateTimeOrDuration {
 }
 
 impl DateTimeOrDuration {
-    pub fn parse(value: &str, timezone: Option<Tz>) -> Result<Self, CalDateTimeError> {
+    pub fn parse(value: &str, timezone: Option<chrono_tz::Tz>) -> Result<Self, CalDateTimeError> {
         if let Ok(datetime) = CalDateTime::parse(value, timezone) {
             return Ok(Self::DateTime(datetime));
         }
@@ -71,7 +70,7 @@ impl Period {
         Self::parse(&prop.value, timezone)
     }
 
-    pub fn parse(value: &str, timezone: Option<Tz>) -> Result<Self, CalDateTimeError> {
+    pub fn parse(value: &str, timezone: Option<chrono_tz::Tz>) -> Result<Self, CalDateTimeError> {
         let (start, end) = value
             .split_once('/')
             .ok_or_else(|| CalDateTimeError::InvalidPeriodFormat(value.to_owned()))?;

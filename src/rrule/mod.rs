@@ -101,7 +101,7 @@ mod tests;
 mod validator;
 
 pub use chrono::Weekday;
-pub use core::{Frequency, NWeekday, RRule, RRuleResult, RRuleSet, Tz};
+pub use core::{Frequency, NWeekday, RRule, RRuleResult, RRuleSet};
 pub use core::{Unvalidated, Validated};
 pub use error::{ParseError, RRuleError, ValidationError};
 pub use iter::RRuleSetIter;

@@ -1,4 +1,3 @@
-use crate::rrule::Tz;
 use crate::rrule::core::get_day;
 use crate::rrule::core::get_hour;
 use crate::rrule::core::get_minute;
@@ -11,6 +10,7 @@ use crate::rrule::parser::str_to_weekday;
 use crate::rrule::validator::ValidationError;
 use crate::rrule::validator::validate_rrule;
 use crate::rrule::{RRuleError, RRuleSet, Unvalidated, Validated};
+use crate::types::Tz;
 use chrono::DateTime;
 use chrono::{Datelike, Month, Weekday};
 #[cfg(feature = "serde")]

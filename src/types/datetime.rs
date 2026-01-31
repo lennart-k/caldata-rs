@@ -1,8 +1,7 @@
 use crate::parser::{ContentLine, ParserError};
 use crate::types::CalDateTimeError;
-use crate::types::{Timezone, Value};
+use crate::types::{Tz, Value};
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, Utc};
-use chrono_tz::Tz;
 use std::{collections::HashMap, ops::Add};
 
 const LOCAL_DATE_TIME: &str = "%Y%m%dT%H%M%S";
@@ -13,23 +12,23 @@ const UTC_DATE_TIME: &str = "%Y%m%dT%H%M%SZ";
 // Form 2, example: 19980119T070000Z -> UTC
 // Form 3, example: TZID=America/New_York:19980119T020000 -> Olson
 // https://en.wikipedia.org/wiki/Tz_database
-pub struct CalDateTime(pub(crate) DateTime<Timezone>);
+pub struct CalDateTime(pub(crate) DateTime<Tz>);
 
-impl From<DateTime<Timezone>> for CalDateTime {
-    fn from(value: DateTime<Timezone>) -> Self {
+impl From<DateTime<Tz>> for CalDateTime {
+    fn from(value: DateTime<Tz>) -> Self {
         Self(value)
     }
 }
 
 impl From<DateTime<Local>> for CalDateTime {
     fn from(value: DateTime<Local>) -> Self {
-        Self(value.with_timezone(&Timezone::Local))
+        Self(value.with_timezone(&Tz::Local))
     }
 }
 
 impl From<DateTime<Utc>> for CalDateTime {
     fn from(value: DateTime<Utc>) -> Self {
-        Self(value.with_timezone(&Timezone::Olson(chrono_tz::UTC)))
+        Self(value.with_timezone(&Tz::Olson(chrono_tz::UTC)))
     }
 }
 
@@ -66,12 +65,12 @@ impl CalDateTime {
     #[must_use]
     pub fn format(&self) -> String {
         match self.timezone() {
-            Timezone::Olson(chrono_tz::UTC) => self.0.format(UTC_DATE_TIME).to_string(),
+            Tz::Olson(chrono_tz::UTC) => self.0.format(UTC_DATE_TIME).to_string(),
             _ => self.0.format(LOCAL_DATE_TIME).to_string(),
         }
     }
 
-    pub fn parse(value: &str, timezone: Option<Tz>) -> Result<Self, CalDateTimeError> {
+    pub fn parse(value: &str, timezone: Option<chrono_tz::Tz>) -> Result<Self, CalDateTimeError> {
         let utc = value.ends_with('Z');
         // Remove Z suffix
         // Stripping the suffix manually and only running parse_from_str improves worst-case
@@ -95,7 +94,7 @@ impl CalDateTime {
             }
             Ok(Self(
                 datetime
-                    .and_local_timezone(Timezone::Local)
+                    .and_local_timezone(Tz::Local)
                     .earliest()
                     .ok_or(CalDateTimeError::LocalTimeGap)?,
             ))
@@ -108,7 +107,7 @@ impl CalDateTime {
     }
 
     #[must_use]
-    pub fn timezone(&self) -> Timezone {
+    pub fn timezone(&self) -> Tz {
         self.0.timezone()
     }
 
@@ -192,8 +191,8 @@ impl Value for CalDateTime {
 
     fn utc_or_local(self) -> Self {
         match self.timezone() {
-            Timezone::Local => self.clone(),
-            Timezone::Olson(_) => Self(self.0.with_timezone(&Timezone::utc())),
+            Tz::Local => self.clone(),
+            Tz::Olson(_) => Self(self.0.with_timezone(&Tz::utc())),
         }
     }
 }

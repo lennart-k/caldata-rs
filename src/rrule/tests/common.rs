@@ -1,7 +1,7 @@
 #![cfg(test)]
 #![allow(dead_code)]
-
-use crate::rrule::{RRule, RRuleError, RRuleSet, Unvalidated, core::Tz};
+use crate::rrule::{RRule, RRuleError, RRuleSet, Unvalidated};
+use crate::types::Tz;
 use chrono::{DateTime, TimeZone};
 use std::fmt::Debug;
 

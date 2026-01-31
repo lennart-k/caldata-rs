@@ -1,4 +1,5 @@
 use crate::rrule::RRule;
+use crate::types::Tz;
 use crate::{
     ContentLineParser,
     component::{Component, ComponentMut},
@@ -127,7 +128,7 @@ impl ComponentMut for IcalJournalBuilder {
         let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
         let exdates = self.safe_get_all::<IcalEXDATEProperty>(timezones)?;
         let (rrules, exrules) = if let Some(dtstart) = dtstart.as_ref() {
-            let rrule_dtstart = dtstart.0.utc().with_timezone(&crate::rrule::Tz::UTC);
+            let rrule_dtstart = dtstart.0.utc().with_timezone(&Tz::UTC);
             let rrules = self
                 .safe_get_all::<IcalRRULEProperty>(timezones)?
                 .into_iter()

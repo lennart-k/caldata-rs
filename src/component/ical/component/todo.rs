@@ -1,5 +1,6 @@
 use crate::rrule::RRule;
 
+use crate::types::Tz;
 use crate::{
     ContentLineParser,
     component::{Component, ComponentMut, IcalAlarm, IcalAlarmBuilder},
@@ -162,16 +163,16 @@ impl ComponentMut for IcalTodoBuilder {
         let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
         let exdates = self.safe_get_all::<IcalEXDATEProperty>(timezones)?;
         let (rrules, exrules) = if let Some(dtstart) = dtstart.as_ref() {
-            let rrule_dtstart = dtstart.0.utc().with_timezone(&crate::rrule::Tz::UTC);
+            let dtstart = dtstart.0.utc().with_timezone(&Tz::UTC);
             let rrules = self
                 .safe_get_all::<IcalRRULEProperty>(timezones)?
                 .into_iter()
-                .map(|rrule| rrule.0.validate(rrule_dtstart))
+                .map(|rrule| rrule.0.validate(dtstart))
                 .collect::<Result<Vec<_>, _>>()?;
             let exrules = self
                 .safe_get_all::<IcalEXRULEProperty>(timezones)?
                 .into_iter()
-                .map(|rrule| rrule.0.validate(rrule_dtstart))
+                .map(|rrule| rrule.0.validate(dtstart))
                 .collect::<Result<Vec<_>, _>>()?;
             (rrules, exrules)
         } else {

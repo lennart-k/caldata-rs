@@ -1,6 +1,6 @@
-use crate::rrule::core::Tz;
 use crate::rrule::tests::common::{test_recurring_rrule, ymd_hms};
 use crate::rrule::{Frequency, NWeekday, RRule, RRuleSet, Weekday};
+use crate::types::Tz;
 use chrono::{Datelike, TimeZone};
 
 #[test]

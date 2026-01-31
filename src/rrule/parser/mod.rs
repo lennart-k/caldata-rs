@@ -80,7 +80,8 @@ mod test {
     use chrono::{TimeZone, Weekday};
 
     use super::*;
-    use crate::rrule::{Frequency, NWeekday, RRule, core::Tz, parser::content_line::ContentLine};
+    use crate::rrule::{Frequency, NWeekday, RRule, parser::content_line::ContentLine};
+    use crate::types::Tz;
 
     const UTC: Tz = Tz::UTC;
     const BERLIN: Tz = Tz::Olson(chrono_tz::Europe::Berlin);

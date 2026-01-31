@@ -1,14 +1,10 @@
-use std::{collections::HashMap, str::FromStr};
-
-use log::warn;
-
-use crate::rrule::{
-    Tz,
-    parser::{
-        ParseError,
-        datetime::{datestring_to_date, parse_timezone},
-    },
+use crate::rrule::parser::{
+    ParseError,
+    datetime::{datestring_to_date, parse_timezone},
 };
+use crate::types::Tz;
+use log::warn;
+use std::{collections::HashMap, str::FromStr};
 
 use super::{content_line_parts::ContentLineCaptures, parameters::parse_parameters};
 
@@ -89,9 +85,9 @@ impl TryFrom<ContentLineCaptures<'_>> for Vec<chrono::DateTime<Tz>> {
 
 #[cfg(test)]
 mod tests {
+    use crate::rrule::parser::content_line::PropertyName;
+    use crate::types::Tz;
     use chrono::TimeZone;
-
-    use crate::rrule::{core::Tz, parser::content_line::PropertyName};
 
     use super::*;
 

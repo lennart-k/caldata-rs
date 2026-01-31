@@ -1,8 +1,7 @@
-use std::collections::HashSet;
-
+use crate::rrule::{Frequency, RRule, RRuleError};
+use crate::types::Tz;
 use chrono::{Datelike, TimeZone, Timelike, Utc, Weekday};
-
-use crate::rrule::{Frequency, RRule, RRuleError, Tz};
+use std::collections::HashSet;
 
 use super::{
     checks,
@@ -320,7 +319,7 @@ impl From<&chrono::DateTime<Tz>> for DateTimeIter {
 
 #[cfg(test)]
 mod tests {
-    use crate::rrule::core::Tz;
+    use crate::types::Tz;
 
     use super::*;
     use chrono::TimeZone;

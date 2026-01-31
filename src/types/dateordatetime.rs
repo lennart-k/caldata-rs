@@ -9,7 +9,7 @@ use derive_more::From;
 use crate::{
     generator::Emitter,
     parser::{ContentLine, ParserError},
-    types::{CalDate, CalDateTime, Timezone, Value},
+    types::{CalDate, CalDateTime, Tz, Value},
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, From)]
@@ -49,7 +49,7 @@ impl CalDateOrDateTime {
         }
     }
 
-    pub fn timezone(&self) -> Timezone {
+    pub fn timezone(&self) -> Tz {
         match self {
             Self::DateTime(datetime) => datetime.timezone(),
             Self::Date(date) => date.timezone().clone(),
@@ -95,7 +95,7 @@ impl From<CalDateOrDateTime> for CalDateTime {
     }
 }
 
-impl From<CalDateOrDateTime> for DateTime<Timezone> {
+impl From<CalDateOrDateTime> for DateTime<Tz> {
     fn from(value: CalDateOrDateTime) -> Self {
         match value {
             CalDateOrDateTime::DateTime(datetime) => datetime.0,

@@ -1,5 +1,6 @@
 use crate::rrule::RRuleResult;
-use crate::rrule::{Tz, iter::rrule_iter::WasLimited};
+use crate::rrule::iter::rrule_iter::WasLimited;
+use crate::types::Tz;
 use std::ops::{
     Bound::{Excluded, Unbounded},
     RangeBounds,
@@ -92,7 +93,7 @@ pub(super) fn is_in_range(
 
 #[cfg(test)]
 mod tests {
-    use crate::rrule::core::Tz;
+    use crate::types::Tz;
 
     use super::*;
     use chrono::TimeZone;

@@ -8,8 +8,8 @@ use std::fmt::Display;
 use std::str::FromStr;
 
 use crate::rrule::RRule;
-use crate::rrule::Tz;
 use crate::rrule::Unvalidated;
+use crate::types::Tz;
 
 pub(crate) use content_line_parts::ContentLineCaptures;
 pub(crate) use start_date_content_line::StartDateContentLine;

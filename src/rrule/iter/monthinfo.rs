@@ -123,7 +123,7 @@ impl MonthInfo {
 mod tests {
     use chrono::{TimeZone, Weekday};
 
-    use crate::rrule::core::Tz;
+    use crate::types::Tz;
 
     use super::*;
 

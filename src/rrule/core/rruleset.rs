@@ -1,7 +1,8 @@
 use crate::rrule::core::datetime::datetime_to_ical_format;
 use crate::rrule::core::utils::collect_with_error;
 use crate::rrule::parser::{ContentLine, Grammar};
-use crate::rrule::{ParseError, RRule, RRuleError, Tz};
+use crate::rrule::{ParseError, RRule, RRuleError};
+use crate::types::Tz;
 use chrono::DateTime;
 #[cfg(feature = "serde")]
 use serde_with::{DeserializeFromStr, SerializeDisplay, serde_as};
@@ -331,7 +332,8 @@ mod tests {
 
     use chrono::{Month, TimeZone};
 
-    use crate::rrule::{Frequency, RRule, RRuleSet, Tz};
+    use crate::rrule::{Frequency, RRule, RRuleSet};
+    use crate::types::Tz;
 
     #[test]
     fn rruleset_string_roundtrip() {

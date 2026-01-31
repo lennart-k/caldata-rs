@@ -9,13 +9,9 @@ pub(crate) use datetime::{
     duration_from_midnight, get_day, get_hour, get_minute, get_month, get_second,
 };
 
-// TODO: Remove this alias!
-use crate::types::Timezone;
-pub type Tz = Timezone;
 pub mod timezone {
     // TODO: Remove this alias!
-    use crate::types::Timezone;
-    pub type Tz = Timezone;
+    pub use crate::types::Tz;
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]

@@ -1,6 +1,6 @@
+use crate::rrule::{Frequency, NWeekday, RRule, Unvalidated};
+use crate::types::Tz;
 use std::ops::RangeInclusive;
-
-use crate::rrule::{Frequency, NWeekday, RRule, Tz, Unvalidated};
 
 use super::ValidationError;
 
@@ -361,9 +361,8 @@ fn validate_not_equal_for_vec<T: PartialEq<T> + ToString>(
 
 #[cfg(test)]
 mod tests {
+    use crate::types::Tz;
     use chrono::TimeZone;
-
-    use crate::rrule::core::Tz;
 
     use super::*;
 

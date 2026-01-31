@@ -3,7 +3,8 @@ use super::counter_date::DateTimeIter;
 use super::easter::easter;
 use super::{monthinfo::MonthInfo, yearinfo::YearInfo};
 use crate::rrule::core::get_month;
-use crate::rrule::{Frequency, NWeekday, RRule, Tz};
+use crate::rrule::{Frequency, NWeekday, RRule};
+use crate::types::Tz;
 use chrono::{Datelike, NaiveTime, TimeZone};
 
 #[derive(Debug, Clone)]

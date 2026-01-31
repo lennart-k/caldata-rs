@@ -1,7 +1,7 @@
-use std::ops;
-
-use crate::rrule::core::{Tz, duration_from_midnight};
+use crate::rrule::core::duration_from_midnight;
+use crate::types::Tz;
 use chrono::{NaiveDate, NaiveTime, Utc};
+use std::ops;
 
 const DAY_SECS: i64 = 24 * 60 * 60;
 

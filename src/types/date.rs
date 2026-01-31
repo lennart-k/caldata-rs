@@ -1,13 +1,12 @@
-use crate::types::{CalDateTimeError, Timezone, Value};
+use crate::types::{CalDateTimeError, Tz, Value};
 use crate::{parser::ContentLine, types::CalDateTime};
 use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveTime};
-use chrono_tz::Tz;
 use std::{collections::HashMap, ops::Add};
 
 pub const LOCAL_DATE: &str = "%Y%m%d";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CalDate(pub NaiveDate, pub Timezone);
+pub struct CalDate(pub NaiveDate, pub Tz);
 
 impl PartialOrd for CalDate {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
@@ -69,7 +68,7 @@ impl CalDate {
     }
 
     #[must_use]
-    pub fn as_datetime(&self) -> DateTime<Timezone> {
+    pub fn as_datetime(&self) -> DateTime<Tz> {
         self.0
             .and_time(NaiveTime::default())
             .and_local_timezone(self.1.to_owned())
@@ -77,8 +76,8 @@ impl CalDate {
             .expect("Midnight always exists")
     }
 
-    pub fn parse(value: &str, timezone: Option<Tz>) -> Result<Self, CalDateTimeError> {
-        let timezone = timezone.map_or(Timezone::Local, Timezone::Olson);
+    pub fn parse(value: &str, timezone: Option<chrono_tz::Tz>) -> Result<Self, CalDateTimeError> {
+        let timezone = timezone.map_or(Tz::Local, Tz::Olson);
         if let Ok(date) = NaiveDate::parse_from_str(value, LOCAL_DATE) {
             return Ok(Self(date, timezone));
         }
@@ -86,7 +85,7 @@ impl CalDate {
     }
 
     #[must_use]
-    pub fn timezone(&self) -> &Timezone {
+    pub fn timezone(&self) -> &Tz {
         &self.1
     }
 
@@ -159,9 +158,9 @@ impl Value for CalDate {
 
     fn utc_or_local(self) -> Self {
         let tz = if self.1.is_local() {
-            Timezone::Local
+            Tz::Local
         } else {
-            Timezone::utc()
+            Tz::utc()
         };
         Self(self.0, tz)
     }
