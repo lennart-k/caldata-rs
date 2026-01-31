@@ -65,6 +65,10 @@ pub enum ValidationError {
     )]
     UntilBeforeStart { until: String, dt_start: String },
     #[error(
+        "`UNTIL` is `{until}`, but since it appears inside a VTIMEZONE component, it MUST be specified in UTC"
+    )]
+    UntilWrongTimezoneInTransition { until: String },
+    #[error(
         "`INTERVAL` is `{0}`, is higher than expected, make sure this is correct. \
             See 'validator limits' in docs for more info."
     )]

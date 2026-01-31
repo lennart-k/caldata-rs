@@ -537,6 +537,32 @@ impl RRule<Unvalidated> {
         self
     }
 
+    /// Validates the [`RRule`] with the given `dt_start` in the special case where it appears
+    /// inside a VTIMEZONE "STANDARD" or "DAYLIGHT" subcomponent.
+    ///
+    /// It adds an additional check that the UNTIL datetime is given in UTC.
+    ///
+    /// According to https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.10,
+    /// The UNTIL date inside a "STANDARD" or "DAYLIGHT" subcomponent MUST be given in UTC.
+    ///
+    /// # Errors
+    ///
+    /// If the properties aren't valid, it will return [`RRuleError`].
+    pub fn validate_inside_vtimezone(
+        self,
+        dt_start: DateTime<Tz>,
+    ) -> Result<RRule<Validated>, RRuleError> {
+        if let Some(until) = self.get_until()
+            && until.timezone() != Tz::UTC
+        {
+            return Err(ValidationError::UntilWrongTimezoneInTransition {
+                until: until.to_rfc3339(),
+            }
+            .into());
+        }
+        self.validate(dt_start)
+    }
+
     /// Validates the [`RRule`] with the given `dt_start`.
     ///
     /// # Errors

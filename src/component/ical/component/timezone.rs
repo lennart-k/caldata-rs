@@ -290,8 +290,16 @@ impl IcalTimeZoneTransition {
                     let rrule = IcalRRULEProperty::parse_prop(property, None)
                         .expect("validated in build")
                         .0;
-                    let rrule = rrule.validate(dtstart).ok()?;
-                    rrules.push((property, rrule))
+                    // In case an error occurs we simply don't try to remove the RRULE.
+                    // One example of an error is VTIMEZONEs used by Thunderbird which don't output
+                    // UNTIL in UTC.
+                    if let Ok(rrule) = rrule.validate_inside_vtimezone(dtstart)
+                        && let Some(until) = rrule.get_until()
+                        && until < &start
+                    {
+                        continue;
+                    }
+                    rrules.push(property)
                 }
                 "RDATE" => {
                     let prop = IcalTZRDATEProperty::parse_prop(property, None)
@@ -311,14 +319,6 @@ impl IcalTimeZoneTransition {
             }
         }
 
-        rrules.retain(|(_content_line, rrule)| {
-            if let Some(until) = rrule.get_until()
-                && until < &start
-            {
-                return false;
-            }
-            true
-        });
         rdates.retain(|(_content_line, min_rdate)| min_rdate.utc() >= start);
 
         if rrules.is_empty() && rdates.is_empty() && dtstart < start {
@@ -328,7 +328,7 @@ impl IcalTimeZoneTransition {
         Some(Self {
             properties: std::iter::once(dtstart_prop.clone())
                 .chain(rdates.into_iter().map(|(line, _)| line.clone()))
-                .chain(rrules.into_iter().map(|(line, _)| line.clone()))
+                .chain(rrules.into_iter().cloned())
                 .chain(other_properties.into_iter().cloned())
                 .collect(),
             transition: self.transition,
