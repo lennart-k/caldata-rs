@@ -31,7 +31,6 @@ pub enum RRuleProperty {
     ByMonth,
     BySetPos,
     Wkst,
-    #[cfg(feature = "by-easter")]
     ByEaster,
 }
 
@@ -54,7 +53,6 @@ impl FromStr for RRuleProperty {
             "BYMONTH" => Self::ByMonth,
             "BYSETPOS" => Self::BySetPos,
             "WKST" => Self::Wkst,
-            #[cfg(feature = "by-easter")]
             "BYEASTER" => Self::ByEaster,
             _ => return Err(ParseError::UnrecognizedParameter(s.into())),
         };
@@ -67,11 +65,12 @@ impl TryFrom<ContentLineCaptures<'_>> for RRule<Unvalidated> {
 
     fn try_from(value: ContentLineCaptures) -> Result<Self, Self::Error> {
         if let Some(parameters) = value.parameters
-            && !parameters.is_empty() {
-                return Err(ParseError::PropertyParametersNotSupported(
-                    parameters.into(),
-                ));
-            }
+            && !parameters.is_empty()
+        {
+            return Err(ParseError::PropertyParametersNotSupported(
+                parameters.into(),
+            ));
+        }
 
         let properties: HashMap<RRuleProperty, String> = parse_parameters(value.value)?;
 
@@ -188,9 +187,6 @@ fn props_to_rrule(
         .transpose()?
         .unwrap_or_default();
 
-    #[cfg(not(feature = "by-easter"))]
-    let by_easter = None;
-    #[cfg(feature = "by-easter")]
     let by_easter = props
         .get(&RRuleProperty::ByEaster)
         .map(|new_by_easter: &String| {

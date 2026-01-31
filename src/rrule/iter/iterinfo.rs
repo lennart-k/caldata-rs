@@ -1,5 +1,4 @@
 use super::counter_date::DateTimeIter;
-#[cfg(feature = "by-easter")]
 use super::easter::easter;
 use super::{monthinfo::MonthInfo, yearinfo::YearInfo};
 use crate::rrule::core::get_month;
@@ -52,13 +51,10 @@ impl IterInfo {
             self.month_info = Some(new_month_info);
         }
 
-        #[cfg(feature = "by-easter")]
-        {
-            self.easter_mask = self
-                .rrule
-                .by_easter
-                .map(|by_easter| vec![easter(year, by_easter)]);
-        }
+        self.easter_mask = self
+            .rrule
+            .by_easter
+            .map(|by_easter| vec![easter(year, by_easter)]);
     }
 
     pub fn rebuild(&mut self, counter_date: &DateTimeIter) {
@@ -246,26 +242,22 @@ impl IterInfo {
 
                 self.get_timeset_unchecked(hour, minute, second)
             }
-            _ => {
-                
-
-                self
-                    .rrule
-                    .by_hour
-                    .iter()
-                    .flat_map(|hour| {
-                        self.rrule.by_minute.iter().flat_map(move |minute| {
-                            self.rrule.by_second.iter().filter_map(move |second| {
-                                NaiveTime::from_hms_opt(
-                                    u32::from(*hour),
-                                    u32::from(*minute),
-                                    u32::from(*second),
-                                )
-                            })
+            _ => self
+                .rrule
+                .by_hour
+                .iter()
+                .flat_map(|hour| {
+                    self.rrule.by_minute.iter().flat_map(move |minute| {
+                        self.rrule.by_second.iter().filter_map(move |second| {
+                            NaiveTime::from_hms_opt(
+                                u32::from(*hour),
+                                u32::from(*minute),
+                                u32::from(*second),
+                            )
                         })
                     })
-                    .collect()
-            }
+                })
+                .collect(),
         }
     }
 

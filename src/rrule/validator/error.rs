@@ -50,7 +50,6 @@ pub enum ValidationError {
         "Unable to generate a timeset for the RRULE. Please specify a BYHOUR, BYMINUTE or BYSECOND"
     )]
     UnableToGenerateTimeset,
-    #[cfg(feature = "by-easter")]
     #[error("`BYEASTER` can only be used when `BYHOUR`, `BYMINUTE` and `BYSECOND` are set.")]
     InvalidByRuleWithByEaster,
     #[error(

@@ -78,7 +78,6 @@ fn yearly_interval_large() {
 }
 
 #[test]
-#[cfg(feature = "by-easter")]
 fn yearly_by_easter() {
     let rrule = RRule {
         freq: Frequency::Yearly,
@@ -102,7 +101,6 @@ fn yearly_by_easter() {
 }
 
 #[test]
-#[cfg(feature = "by-easter")]
 fn yearly_by_easterpos() {
     let rrule = RRule {
         freq: Frequency::Yearly,
@@ -126,7 +124,6 @@ fn yearly_by_easterpos() {
 }
 
 #[test]
-#[cfg(feature = "by-easter")]
 fn yearly_by_easterpos_neg() {
     let rrule = RRule {
         freq: Frequency::Yearly,
@@ -878,7 +875,6 @@ fn monthly_interval_large() {
 }
 
 #[test]
-#[cfg(feature = "by-easter")]
 fn monthly_by_easter() {
     let rrule = RRule {
         freq: Frequency::Monthly,
@@ -902,7 +898,6 @@ fn monthly_by_easter() {
 }
 
 #[test]
-#[cfg(feature = "by-easter")]
 fn monthly_by_easterpos() {
     let rrule = RRule {
         freq: Frequency::Monthly,
@@ -926,7 +921,6 @@ fn monthly_by_easterpos() {
 }
 
 #[test]
-#[cfg(feature = "by-easter")]
 fn monthly_by_easterpos_neg() {
     let rrule = RRule {
         freq: Frequency::Monthly,

@@ -269,7 +269,6 @@ fn validate_by_easter(
     rrule: &RRule<Unvalidated>,
     _dt_start: &chrono::DateTime<Tz>,
 ) -> Result<(), ValidationError> {
-    #[cfg(feature = "by-easter")]
     {
         // By_easter:
         // - Can be a value from -366 to 366.
@@ -299,15 +298,6 @@ fn validate_by_easter(
                 || rrule.by_second.is_empty())
         {
             return Err(ValidationError::InvalidByRuleWithByEaster);
-        }
-    }
-    #[cfg(not(feature = "by-easter"))]
-    {
-        if rrule.by_easter.is_some() {
-            log::warn!(
-                "The `by-easter` feature flag is not set, but `by_easter` is used.\
-                The `by_easter` will be ignored, as if it was set to `None`."
-            );
         }
     }
     Ok(())

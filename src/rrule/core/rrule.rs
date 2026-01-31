@@ -427,7 +427,6 @@ impl RRule<Unvalidated> {
     /// If given, it must be either an integer, or a sequence of integers, positive or negative.
     /// Each integer will define an offset from the Easter Sunday. Passing the offset 0 to
     /// `by_easter` will yield the Easter Sunday itself. This is an extension to the RFC specification.
-    #[cfg(feature = "by-easter")]
     #[must_use]
     pub fn by_easter(mut self, by_easter: i16) -> Self {
         self.by_easter = Some(by_easter);
@@ -450,11 +449,7 @@ impl RRule<Unvalidated> {
         self.by_n_month_day = by_n_month_day;
 
         // Can only be set to true if the feature flag is set.
-        let by_easter_is_some = if cfg!(feature = "by-easter") {
-            self.by_easter.is_some()
-        } else {
-            false
-        };
+        let by_easter_is_some = self.by_easter.is_some();
 
         // Add some freq-specific additional properties
         if !(!self.by_week_no.is_empty()
@@ -751,7 +746,6 @@ impl<S> Display for RRule<S> {
             ));
         }
 
-        #[cfg(feature = "by-easter")]
         if let Some(by_easter) = &self.by_easter {
             res.push(format!("BYEASTER={}", by_easter));
         }
@@ -846,7 +840,6 @@ impl<S> RRule<S> {
     }
 
     /// Get the `by_easter` of the recurrence.
-    #[cfg(feature = "by-easter")]
     #[must_use]
     pub fn get_by_easter(&self) -> Option<&i16> {
         self.by_easter.as_ref()

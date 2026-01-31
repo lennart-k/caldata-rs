@@ -72,18 +72,14 @@ fn is_filtered_by_neg_weekday(ii: &IterInfo, current_day: usize, _rrule: &RRule)
 }
 
 fn is_filtered_by_easter(ii: &IterInfo, current_day: usize, rrule: &RRule) -> bool {
-    if cfg!(feature = "by-easter") {
-        if rrule.by_easter.is_none() {
-            return false;
+    if rrule.by_easter.is_none() {
+        return false;
+    }
+    match i32::try_from(current_day) {
+        Ok(current_day) => {
+            !matches!(ii.easter_mask(), Some(easter_mask) if easter_mask.contains(&current_day))
         }
-        match i32::try_from(current_day) {
-            Ok(current_day) => {
-                !matches!(ii.easter_mask(), Some(easter_mask) if easter_mask.contains(&current_day))
-            }
-            _ => true,
-        }
-    } else {
-        false
+        _ => true,
     }
 }
 

@@ -1,5 +1,3 @@
-#![cfg(feature = "by-easter")]
-
 use super::masks::MASKS;
 use super::utils::is_leap_year;
 
