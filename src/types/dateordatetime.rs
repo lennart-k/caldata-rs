@@ -95,13 +95,11 @@ impl From<CalDateOrDateTime> for CalDateTime {
     }
 }
 
-impl From<CalDateOrDateTime> for DateTime<crate::rrule::Tz> {
+impl From<CalDateOrDateTime> for DateTime<Timezone> {
     fn from(value: CalDateOrDateTime) -> Self {
         match value {
-            CalDateOrDateTime::DateTime(datetime) => datetime.into(),
-            CalDateOrDateTime::Date(date) => date
-                .as_datetime()
-                .with_timezone(&date.timezone().to_owned().into()),
+            CalDateOrDateTime::DateTime(datetime) => datetime.0,
+            CalDateOrDateTime::Date(date) => date.as_datetime(),
         }
     }
 }

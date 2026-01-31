@@ -54,8 +54,8 @@ fn validate_until(
     match rrule.until {
         Some(until) => {
             match dt_start.timezone() {
-                Tz::Local(_) => {
-                    let allowed_timezones = vec![Tz::LOCAL, Tz::UTC];
+                Tz::Local => {
+                    let allowed_timezones = vec![Tz::Local, Tz::UTC];
                     if !allowed_timezones.contains(&until.timezone()) {
                         return Err(ValidationError::DtStartUntilMismatchTimezone {
                             dt_start_tz: dt_start.timezone().name().into(),
@@ -67,7 +67,7 @@ fn validate_until(
                         });
                     }
                 }
-                Tz::Tz(_) => {
+                Tz::Olson(_) => {
                     if until.timezone() != Tz::UTC {
                         return Err(ValidationError::DtStartUntilMismatchTimezone {
                             dt_start_tz: dt_start.timezone().name().into(),
@@ -600,7 +600,7 @@ mod tests {
             )
         }
 
-        let tests = [t(Tz::LOCAL, Tz::LOCAL), t(Tz::LOCAL, UTC), t(UTC, UTC)];
+        let tests = [t(Tz::Local, Tz::Local), t(Tz::Local, UTC), t(UTC, UTC)];
 
         for (start_date, until) in tests {
             let rrule = RRule {
@@ -622,9 +622,9 @@ mod tests {
         }
 
         let tests = [
-            t(Tz::UTC, Tz::LOCAL),
-            t(Tz::Europe__Berlin, Tz::LOCAL),
-            t(Tz::LOCAL, Tz::Europe__Berlin),
+            t(Tz::UTC, Tz::Local),
+            t(Tz::Olson(chrono_tz::Europe::Berlin), Tz::Local),
+            t(Tz::Local, Tz::Olson(chrono_tz::Europe::Berlin)),
         ];
 
         for (start_date, until) in tests {

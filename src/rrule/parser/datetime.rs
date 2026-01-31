@@ -8,7 +8,7 @@ use chrono::{NaiveDate, TimeZone, Weekday};
 pub(crate) fn parse_timezone(tz: &str) -> Result<Tz, ParseError> {
     chrono_tz::Tz::from_str(tz)
         .map_err(|_| ParseError::InvalidTimezone(tz.into()))
-        .map(Tz::Tz)
+        .map(Tz::Olson)
 }
 
 /// Convert a datetime string and a timezone to a `chrono::DateTime<Tz>`.
@@ -83,7 +83,7 @@ pub(crate) fn datestring_to_date(
         } else {
             // Use current system timezone
             // TODO Add option to always use UTC when this is executed on a server.
-            let local = Tz::LOCAL;
+            let local = Tz::Local;
             match local.from_local_datetime(&datetime) {
                 LocalResult::None => {
                     return Err(ParseError::InvalidDateTimeInLocalTimezone {
@@ -140,7 +140,7 @@ pub(crate) fn parse_weekdays(val: &str) -> Result<Vec<NWeekday>, ParseError> {
 mod tests {
     use super::*;
 
-    const US_PACIFIC: Tz = Tz::US__Pacific;
+    const US_PACIFIC: Tz = Tz::Olson(chrono_tz::US::Pacific);
 
     #[test]
     fn parses_valid_nweekdays() {

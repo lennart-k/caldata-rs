@@ -87,7 +87,9 @@ IcalCalendar {
                     interval: 2,
                     count: None,
                     until: Some(
-                        2020-11-26T10:00:00UTC,
+                        2020-11-26T10:00:00Olson(
+                            UTC,
+                        ),
                     ),
                     week_start: Mon,
                     by_set_pos: [],
@@ -107,7 +109,7 @@ IcalCalendar {
                         0,
                     ],
                     by_easter: None,
-                    stage: PhantomData<rrule::core::Validated>,
+                    stage: PhantomData<caldata::rrule::core::Validated>,
                 },
             ],
             exdates: [],

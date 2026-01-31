@@ -114,7 +114,7 @@ mod tests {
                     parameters: None,
                     value: "19970714T123000",
                 },
-                vec![Tz::LOCAL.with_ymd_and_hms(1997, 7, 14, 12, 30, 0).unwrap()],
+                vec![Tz::Local.with_ymd_and_hms(1997, 7, 14, 12, 30, 0).unwrap()],
             ),
             (
                 ContentLineCaptures {

@@ -2,15 +2,25 @@ use chrono::{MappedLocalTime, NaiveDate, NaiveDateTime, TimeZone, Utc};
 use chrono_tz::Tz;
 use derive_more::{Display, From};
 
-#[derive(Debug, Clone, From, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, From, PartialEq, Eq)]
 pub enum Timezone {
     Local,
     Olson(Tz),
 }
 
 impl Timezone {
+    pub const UTC: Self = Self::Olson(chrono_tz::UTC);
+
     pub fn is_local(&self) -> bool {
         matches!(self, Self::Local)
+    }
+
+    #[must_use]
+    pub fn name(&self) -> &str {
+        match self {
+            Self::Local => "Local",
+            Self::Olson(tz) => tz.name(),
+        }
     }
 
     pub fn utc() -> Self {
@@ -18,25 +28,7 @@ impl Timezone {
     }
 }
 
-impl From<Timezone> for crate::rrule::Tz {
-    fn from(value: Timezone) -> Self {
-        match value {
-            Timezone::Local => Self::LOCAL,
-            Timezone::Olson(tz) => Self::Tz(tz),
-        }
-    }
-}
-
-impl From<crate::rrule::Tz> for Timezone {
-    fn from(value: crate::rrule::Tz) -> Self {
-        match value {
-            crate::rrule::Tz::Local(_) => Self::Local,
-            crate::rrule::Tz::Tz(tz) => Self::Olson(tz),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Display)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Display)]
 pub enum CalTimezoneOffset {
     Local,
     Olson(chrono_tz::TzOffset),

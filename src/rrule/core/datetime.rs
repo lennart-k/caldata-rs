@@ -35,8 +35,8 @@ pub(crate) fn datetime_to_ical_format(dt: &chrono::DateTime<Tz>) -> String {
     let mut tz_postfix = String::new();
     let tz = dt.timezone();
     match tz {
-        Tz::Local(_) => {}
-        Tz::Tz(tz) => match tz {
+        Tz::Local => {}
+        Tz::Olson(tz) => match tz {
             chrono_tz::UTC => {
                 tz_postfix = "Z".to_string();
             }

@@ -83,7 +83,7 @@ mod test {
     use crate::rrule::{Frequency, NWeekday, RRule, core::Tz, parser::content_line::ContentLine};
 
     const UTC: Tz = Tz::UTC;
-    const BERLIN: Tz = Tz::Europe__Berlin;
+    const BERLIN: Tz = Tz::Olson(chrono_tz::Europe::Berlin);
 
     #[test]
     fn parses_valid_input_to_grammar() {
