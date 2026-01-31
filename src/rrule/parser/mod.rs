@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Fredrik Meringdal, Ralph Bisschops <https://github.com/fmeringdal/rust-rrule>
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
+ *
+ * This code is taken from github.com/fmeringdal/rust-rrule with slight modifications.
+ */
 //! Module for parsing text inputs to a [`Grammar`] which can further be used
 //! to construct an [`crate::RRuleSet`].
 mod content_line;

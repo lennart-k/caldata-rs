@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Fredrik Meringdal, Ralph Bisschops <https://github.com/fmeringdal/rust-rrule>
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
+ *
+ * This code is taken from github.com/fmeringdal/rust-rrule with slight modifications.
+ */
 use super::{ParseError, regex::ParsedDateString};
 use crate::rrule::NWeekday;
 use crate::types::Tz;
@@ -61,8 +67,7 @@ pub(crate) fn datestring_to_date(
     } else {
         // If no `Z` is present, local time should be used.
         use chrono::offset::LocalResult;
-        // Get datetime in local time or machine local time.
-        // So this also takes into account daylight or standard time (summer/winter).
+        // Local time is calculated in UTC
         if let Some(tz) = tz {
             // Use the timezone specified in the `tz`
             match tz.from_local_datetime(&datetime) {
@@ -82,7 +87,6 @@ pub(crate) fn datestring_to_date(
             }?
         } else {
             // Use current system timezone
-            // TODO Add option to always use UTC when this is executed on a server.
             let local = Tz::Local;
             match local.from_local_datetime(&datetime) {
                 LocalResult::None => {

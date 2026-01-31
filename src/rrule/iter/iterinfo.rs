@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Fredrik Meringdal, Ralph Bisschops <https://github.com/fmeringdal/rust-rrule>
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
+ *
+ * This code is taken from github.com/fmeringdal/rust-rrule with slight modifications.
+ */
 use super::counter_date::DateTimeIter;
 use super::easter::easter;
 use super::{monthinfo::MonthInfo, yearinfo::YearInfo};

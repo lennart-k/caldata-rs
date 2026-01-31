@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Fredrik Meringdal, Ralph Bisschops <https://github.com/fmeringdal/rust-rrule>
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
+ *
+ * This code is taken from github.com/fmeringdal/rust-rrule with slight modifications.
+ */
 use crate::rrule::core::datetime::datetime_to_ical_format;
 use crate::rrule::core::utils::collect_with_error;
 use crate::rrule::parser::{ContentLine, Grammar};

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Fredrik Meringdal, Ralph Bisschops <https://github.com/fmeringdal/rust-rrule>
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
+ *
+ * This code is taken from github.com/fmeringdal/rust-rrule with slight modifications.
+ */
 use crate::rrule::tests::common::{test_recurring_rrule, ymd_hms};
 use crate::rrule::{Frequency, NWeekday, RRule, RRuleSet, Weekday};
 use crate::types::Tz;

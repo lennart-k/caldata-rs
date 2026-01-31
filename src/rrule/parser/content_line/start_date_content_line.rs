@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Fredrik Meringdal, Ralph Bisschops <https://github.com/fmeringdal/rust-rrule>
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
+ *
+ * This code is taken from github.com/fmeringdal/rust-rrule with slight modifications.
+ */
 use std::collections::HashMap;
 
 use super::{
@@ -45,13 +51,14 @@ impl TryFrom<&ContentLineCaptures<'_>> for StartDateContentLine {
             "DATE"
         };
         if let Some(value_in_parameter) = value_in_parameter
-            && value_in_parameter != value {
-                return Err(ParseError::ParameterValueMismatch {
-                    parameter: "VALUE".into(),
-                    parameter_value: value_in_parameter.into(),
-                    found_value: value.into(),
-                });
-            }
+            && value_in_parameter != value
+        {
+            return Err(ParseError::ParameterValueMismatch {
+                parameter: "VALUE".into(),
+                parameter_value: value_in_parameter.into(),
+                found_value: value.into(),
+            });
+        }
 
         let datetime = datestring_to_date(content_line.value, timezone, "DTSTART")?;
 

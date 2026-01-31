@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Fredrik Meringdal, Ralph Bisschops <https://github.com/fmeringdal/rust-rrule>
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
+ *
+ * This code is taken from github.com/fmeringdal/rust-rrule with slight modifications.
+ */
 use crate::rrule::core::get_day;
 use crate::rrule::core::get_hour;
 use crate::rrule::core::get_minute;
@@ -8,7 +14,7 @@ use crate::rrule::parser::ContentLineCaptures;
 use crate::rrule::parser::ParseError;
 use crate::rrule::parser::str_to_weekday;
 use crate::rrule::validator::ValidationError;
-use crate::rrule::validator::validate_rrule;
+use crate::rrule::validator::validate_rrule_forced;
 use crate::rrule::{RRuleError, RRuleSet, Unvalidated, Validated};
 use crate::types::Tz;
 use chrono::DateTime;
@@ -540,7 +546,7 @@ impl RRule<Unvalidated> {
         let rrule = self.finalize_parsed_rrule(&dt_start);
 
         // Validate required checks (defined by RFC 5545)
-        validate_rrule::validate_rrule_forced(&rrule, &dt_start)?;
+        validate_rrule_forced(&rrule, &dt_start)?;
 
         // Check if it is possible to generate a timeset
         match rrule.freq {

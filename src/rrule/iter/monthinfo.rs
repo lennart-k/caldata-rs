@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Fredrik Meringdal, Ralph Bisschops <https://github.com/fmeringdal/rust-rrule>
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
+ *
+ * This code is taken from github.com/fmeringdal/rust-rrule with slight modifications.
+ */
 use super::{utils::pymod, yearinfo::YearInfo};
 use crate::rrule::{Frequency, NWeekday, RRule};
 
@@ -106,10 +112,12 @@ impl MonthInfo {
                             .expect("to be positive because nth_first_day_weekday is at most 6");
                         nth_first_day + pymod(a, 7)
                     };
-                    if first <= nth_weekday && nth_weekday <= last
-                        && let Ok(nth_weekday) = usize::try_from(nth_weekday) {
-                            neg_weekday_mask[nth_weekday] = 1;
-                        }
+                    if first <= nth_weekday
+                        && nth_weekday <= last
+                        && let Ok(nth_weekday) = usize::try_from(nth_weekday)
+                    {
+                        neg_weekday_mask[nth_weekday] = 1;
+                    }
                 }
             }
         }

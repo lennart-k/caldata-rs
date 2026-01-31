@@ -1,8 +1,14 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Fredrik Meringdal, Ralph Bisschops <https://github.com/fmeringdal/rust-rrule>
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
+ *
+ * This code is taken from github.com/fmeringdal/rust-rrule with slight modifications.
+ */
 use crate::rrule::{Frequency, NWeekday, RRule, Unvalidated};
 use crate::types::Tz;
 use std::ops::RangeInclusive;
 
-use super::ValidationError;
+pub use super::ValidationError;
 
 /// Range of values that a month can be.
 /// Range: `1..=12`

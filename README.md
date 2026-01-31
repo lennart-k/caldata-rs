@@ -11,11 +11,16 @@
 > The main difference to the original project is that this version is very strict in enforcing the iCalendar spec and in turn also parses data types like date-times and offers methods for recurrence expansion.
 > Thanks [Peltoche](https://github.com/Peltoche) for providing a solid codebase to build upon.
 
+> [!NOTE]
+> This crate also contains a slightly modified but almost completely copy-pasted version of [rust-rrule](https://github.com/fmeringdal/rust-rrule) by Fredrik Meringdal and Ralph Bisschops.
+> The main reason for that hard fork is that I need to do local-timezone calculations in UTC.
+> Thanks to the `rust-rrule` authors for providing this wonderful library.
+
 ## Installing
 
 Put this in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-caldata = "0.12"
+caldata = "0.13"
 ```

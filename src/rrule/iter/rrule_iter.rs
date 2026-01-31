@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Fredrik Meringdal, Ralph Bisschops <https://github.com/fmeringdal/rust-rrule>
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
+ *
+ * This code is taken from github.com/fmeringdal/rust-rrule with slight modifications.
+ */
 use super::counter_date::DateTimeIter;
 use super::utils::add_time_to_date;
 use super::{IterInfo, MAX_ITER_LOOP, build_pos_list, utils::date_from_ordinal};
