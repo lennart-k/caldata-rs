@@ -16,7 +16,8 @@
 //!
 //! ```rust
 //! use chrono::{DateTime, TimeZone};
-//! use rrule::{RRuleSet, RRule, Tz, Unvalidated, Frequency};
+//! use caldata::rrule::{RRuleSet, RRule, Unvalidated, Frequency};
+//! use caldata::types::Tz;
 //!
 //! // Parse a single RRule string. Useful when you don't have a start date yet or
 //! // just want to check if the input string is grammatically correct.
@@ -53,7 +54,7 @@
 //! All the methods above use the iterator trait in its implementation as shown below.
 //! ```rust
 //! use chrono::{DateTime, TimeZone};
-//! use rrule::{RRuleSet, Tz};
+//! use caldata::{rrule::RRuleSet, types::Tz};
 //!
 //! let rrule: RRuleSet = "DTSTART:20120201T093000Z\nRRULE:FREQ=DAILY;COUNT=3".parse().unwrap();
 //! let result = rrule.all(100);
@@ -71,7 +72,7 @@
 //! Find all events that are within a given range.
 //! ```rust
 //!  use chrono::{DateTime, TimeZone};
-//!  use rrule::{RRuleSet, Tz};
+//!  use caldata::{rrule::RRuleSet, types::Tz};
 //!
 //! let rrule: RRuleSet = "DTSTART:20120201T093000Z\nRRULE:FREQ=DAILY;COUNT=3".parse().unwrap();
 //!

@@ -181,7 +181,7 @@ impl RRuleSet {
     /// # Usage
     ///
     /// ```
-    /// use rrule::RRuleSet;
+    /// use caldata::rrule::RRuleSet;
     ///
     /// let rrule_set: RRuleSet = "DTSTART:20210101T090000Z\nRRULE:FREQ=DAILY".parse().unwrap();
     ///

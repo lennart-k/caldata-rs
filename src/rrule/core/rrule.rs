@@ -136,7 +136,7 @@ impl NWeekday {
     ///
     /// ```
     /// use chrono::Weekday;
-    /// use rrule::NWeekday;
+    /// use caldata::rrule::NWeekday;
     ///
     /// let nth_weekday = NWeekday::new(Some(1), Weekday::Mon);
     /// ```
@@ -178,7 +178,7 @@ impl Display for NWeekday {
     ///
     /// ```
     /// use chrono::Weekday;
-    /// use rrule::NWeekday;
+    /// use caldata::rrule::NWeekday;
     ///
     /// assert_eq!(format!("{}", NWeekday::Every(Weekday::Mon)), "MO");
     /// assert_eq!(format!("{}", NWeekday::Nth(1, Weekday::Mon)), "MO");

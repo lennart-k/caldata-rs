@@ -207,6 +207,9 @@ pub mod calendar_object {
     #[case(5, include_str!("./resources/ical_todos.ics"), "")]
     #[case(6, include_str!("./resources/ical_journals.ics"), "")]
     #[case(7, include_str!("./resources/recurring_wholeday.ics"), "")]
+    // Calendar objects from Thunderbird are invalid since their VTIMEZONE object RRULEs contain an
+    // UNTIL datetime in local time (this MUST be UTC)
+    #[case(8, include_str!("./resources/ical_thunderbird.ics"), "Europe/Berlin")]
     fn valid_objects(#[case] case: usize, #[case] input: &str, #[case] tzids: &str) {
         set_snapshot_suffix!("{case}");
         let generic_reader = IcalParser::from_slice(input.as_bytes());
@@ -221,9 +224,6 @@ pub mod calendar_object {
 
     #[rstest::rstest]
     #[case(0, include_str!("./resources/ical_freebusy.ics"))]
-    // Calendar objects from Thunderbird are invalid since their VTIMEZONE object RRULEs contain an
-    // UNTIL datetime in local time (this MUST be UTC)
-    #[case(1, include_str!("./resources/ical_thunderbird.ics"))]
     fn invalid_objects(#[case] case: usize, #[case] input: &str) {
         set_snapshot_suffix!("{case}");
         let reader = IcalObjectParser::from_slice(input.as_bytes());
