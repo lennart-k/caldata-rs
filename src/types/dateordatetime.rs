@@ -95,7 +95,7 @@ impl From<CalDateOrDateTime> for CalDateTime {
     }
 }
 
-impl From<CalDateOrDateTime> for DateTime<rrule::Tz> {
+impl From<CalDateOrDateTime> for DateTime<crate::rrule::Tz> {
     fn from(value: CalDateOrDateTime) -> Self {
         match value {
             CalDateOrDateTime::DateTime(datetime) => datetime.into(),

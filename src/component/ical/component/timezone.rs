@@ -278,21 +278,20 @@ impl ComponentMut for IcalTimeZoneTransitionBuilder {
 
 impl IcalTimeZoneTransition {
     pub fn truncate(self, start: DateTime<Utc>) -> Option<Self> {
-        let dtstart = self.dtstart.0.utc().with_timezone(&rrule::Tz::UTC);
+        let dtstart = self.dtstart.0.utc().with_timezone(&crate::rrule::Tz::UTC);
         let mut rrules = vec![];
         let mut rdates = vec![];
         let mut other_properties = vec![];
         let mut dtstart_prop = &ContentLine::default();
         for property in &self.properties {
             match property.name.as_str() {
-                "RRULE" => rrules.push((
-                    property,
-                    IcalRRULEProperty::parse_prop(property, None)
+                "RRULE" => {
+                    let rrule = IcalRRULEProperty::parse_prop(property, None)
                         .expect("validated in build")
-                        .0
-                        .validate(dtstart)
-                        .ok()?,
-                )),
+                        .0;
+                    let rrule = rrule.validate(dtstart).ok()?;
+                    rrules.push((property, rrule))
+                }
                 "RDATE" => {
                     let prop = IcalTZRDATEProperty::parse_prop(property, None)
                         .expect("validated in build");

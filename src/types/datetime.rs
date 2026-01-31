@@ -15,14 +15,14 @@ const UTC_DATE_TIME: &str = "%Y%m%dT%H%M%SZ";
 // https://en.wikipedia.org/wiki/Tz_database
 pub struct CalDateTime(pub(crate) DateTime<Timezone>);
 
-impl From<CalDateTime> for DateTime<rrule::Tz> {
+impl From<CalDateTime> for DateTime<crate::rrule::Tz> {
     fn from(value: CalDateTime) -> Self {
         value.0.with_timezone(&value.timezone().into())
     }
 }
 
-impl From<DateTime<rrule::Tz>> for CalDateTime {
-    fn from(value: DateTime<rrule::Tz>) -> Self {
+impl From<DateTime<crate::rrule::Tz>> for CalDateTime {
+    fn from(value: DateTime<crate::rrule::Tz>) -> Self {
         Self(value.with_timezone(&value.timezone().into()))
     }
 }

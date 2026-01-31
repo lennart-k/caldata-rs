@@ -1,4 +1,4 @@
-use rrule::RRule;
+use crate::rrule::RRule;
 
 use crate::{
     ContentLineParser,
@@ -162,7 +162,7 @@ impl ComponentMut for IcalTodoBuilder {
         let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
         let exdates = self.safe_get_all::<IcalEXDATEProperty>(timezones)?;
         let (rrules, exrules) = if let Some(dtstart) = dtstart.as_ref() {
-            let rrule_dtstart = dtstart.0.utc().with_timezone(&rrule::Tz::UTC);
+            let rrule_dtstart = dtstart.0.utc().with_timezone(&crate::rrule::Tz::UTC);
             let rrules = self
                 .safe_get_all::<IcalRRULEProperty>(timezones)?
                 .into_iter()

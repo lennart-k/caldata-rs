@@ -18,7 +18,7 @@ impl Timezone {
     }
 }
 
-impl From<Timezone> for rrule::Tz {
+impl From<Timezone> for crate::rrule::Tz {
     fn from(value: Timezone) -> Self {
         match value {
             Timezone::Local => Self::LOCAL,
@@ -27,11 +27,11 @@ impl From<Timezone> for rrule::Tz {
     }
 }
 
-impl From<rrule::Tz> for Timezone {
-    fn from(value: rrule::Tz) -> Self {
+impl From<crate::rrule::Tz> for Timezone {
+    fn from(value: crate::rrule::Tz) -> Self {
         match value {
-            rrule::Tz::Local(_) => Self::Local,
-            rrule::Tz::Tz(tz) => Self::Olson(tz),
+            crate::rrule::Tz::Local(_) => Self::Local,
+            crate::rrule::Tz::Tz(tz) => Self::Olson(tz),
         }
     }
 }

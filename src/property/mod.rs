@@ -81,13 +81,13 @@ property!(
     "RRULE",
     "RECUR",
     IcalRRULEProperty,
-    rrule::RRule<rrule::Unvalidated>
+    crate::rrule::RRule<crate::rrule::Unvalidated>
 );
 property!(
     "EXRULE",
     "RECUR",
     IcalEXRULEProperty,
-    rrule::RRule<rrule::Unvalidated>
+    crate::rrule::RRule<crate::rrule::Unvalidated>
 );
 property!("PRODID", "TEXT", IcalPRODIDProperty, String);
 

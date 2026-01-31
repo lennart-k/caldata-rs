@@ -56,13 +56,13 @@ impl ParseProp for chrono::Duration {
     }
 }
 
-impl ParseProp for rrule::RRule<rrule::Unvalidated> {
+impl ParseProp for crate::rrule::RRule<crate::rrule::Unvalidated> {
     fn parse_prop(
         prop: &ContentLine,
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
-        Ok(rrule::RRule::from_str(&prop.value)?)
+        Ok(crate::rrule::RRule::from_str(&prop.value)?)
     }
 }
 

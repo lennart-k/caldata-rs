@@ -30,7 +30,7 @@ pub enum ParserError {
     #[error("invalid property value type for: {0}")]
     InvalidPropertyType(String),
     #[error(transparent)]
-    RRule(#[from] rrule::RRuleError),
+    RRule(#[from] crate::rrule::RRuleError),
     #[error(transparent)]
     DateTime(#[from] CalDateTimeError),
     #[error("Invalid CALSCALE: Only GREGORIAN supported")]

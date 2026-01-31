@@ -1,8 +1,8 @@
 mod duration;
 pub use duration::*;
 mod timezone;
+use crate::rrule::{RRule, Unvalidated};
 use itertools::Itertools;
-use rrule::{RRule, Unvalidated};
 pub use timezone::*;
 mod date;
 mod period;

@@ -11,8 +11,8 @@ use crate::{
 use chrono::{DateTime, Duration, Utc};
 use std::collections::HashSet;
 
+use crate::rrule::{RRule, RRuleSet};
 pub use builder::IcalEventBuilder;
-use rrule::{RRule, RRuleSet};
 mod builder;
 
 #[derive(Debug, Clone)]
@@ -141,7 +141,7 @@ impl IcalEvent {
             || !self.exdates.is_empty()
     }
 
-    pub fn get_rruleset(&self, dtstart: DateTime<rrule::Tz>) -> Option<RRuleSet> {
+    pub fn get_rruleset(&self, dtstart: DateTime<crate::rrule::Tz>) -> Option<RRuleSet> {
         if !self.has_rruleset() {
             return None;
         }
@@ -191,16 +191,16 @@ impl IcalEvent {
             .map(|over| over.clone().to_utc_or_local())
             .collect();
         overrides.sort_by_key(|over| over.recurid.as_ref().unwrap().0.clone());
-        let dtstart_utc = main.dtstart.0.utc().with_timezone(&rrule::Tz::UTC);
+        let dtstart_utc = main.dtstart.0.utc().with_timezone(&crate::rrule::Tz::UTC);
         let Some(mut rrule_set) = main.get_rruleset(dtstart_utc) else {
             return std::iter::once(main).chain(overrides).collect();
         };
 
         if let Some(start) = start {
-            rrule_set = rrule_set.after(start.with_timezone(&rrule::Tz::UTC));
+            rrule_set = rrule_set.after(start.with_timezone(&crate::rrule::Tz::UTC));
         }
         if let Some(end) = end {
-            rrule_set = rrule_set.before(end.with_timezone(&rrule::Tz::UTC));
+            rrule_set = rrule_set.before(end.with_timezone(&crate::rrule::Tz::UTC));
         }
 
         let mut events = vec![];
