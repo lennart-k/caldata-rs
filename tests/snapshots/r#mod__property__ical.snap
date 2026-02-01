@@ -1,7 +1,460 @@
 ---
 source: tests/mod.rs
-expression: prop
+expression: lines
 ---
-name: BEGIN
-params: ContentLineParams([])
-value: "VCALENDAR"
+[
+    ContentLine {
+        name: "BEGIN",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VCALENDAR",
+    },
+    ContentLine {
+        name: "CALSCALE",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "GREGORIAN",
+    },
+    ContentLine {
+        name: "PRODID",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "-//Example Inc.//Example Calendar//EN",
+    },
+    ContentLine {
+        name: "VERSION",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "2.0",
+    },
+    ContentLine {
+        name: "BEGIN",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VEVENT",
+    },
+    ContentLine {
+        name: "DTSTAMP",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "20080205T191224Z",
+    },
+    ContentLine {
+        name: "DTSTART",
+        params: ContentLineParams(
+            [
+                (
+                    "VALUE",
+                    [
+                        "DATE",
+                    ],
+                ),
+            ],
+        ),
+        value: "20081006",
+    },
+    ContentLine {
+        name: "SUMMARY",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "Planning meeting",
+    },
+    ContentLine {
+        name: "UID",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "4088E990AD89CB3DBB484909",
+    },
+    ContentLine {
+        name: "BEGIN",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VALARM",
+    },
+    ContentLine {
+        name: "SUMMARY",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "escaped\\, comma and\\; semicolon\\nnewline",
+    },
+    ContentLine {
+        name: "END",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VALARM",
+    },
+    ContentLine {
+        name: "END",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VEVENT",
+    },
+    ContentLine {
+        name: "END",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VCALENDAR",
+    },
+    ContentLine {
+        name: "BEGIN",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VCALENDAR",
+    },
+    ContentLine {
+        name: "PRODID",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "-//Example Inc.//Example Calendar//EN",
+    },
+    ContentLine {
+        name: "VERSION",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "2.0",
+    },
+    ContentLine {
+        name: "ATTENDEE",
+        params: ContentLineParams(
+            [
+                (
+                    "DELEGATED-TO",
+                    [
+                        "mailto:foo7@bar",
+                        "mailto:foo8@bar",
+                    ],
+                ),
+                (
+                    "CN",
+                    [
+                        "Foo, Bar",
+                    ],
+                ),
+            ],
+        ),
+        value: "mailto:foo1@bar",
+    },
+    ContentLine {
+        name: "ATTENDEE",
+        params: ContentLineParams(
+            [
+                (
+                    "DELEGATED-TO",
+                    [
+                        "mailto:foo7@bar",
+                        "mailto:foo8@bar",
+                    ],
+                ),
+                (
+                    "CN",
+                    [
+                        "Foo; Bar",
+                    ],
+                ),
+            ],
+        ),
+        value: "mailto:foo2@bar",
+    },
+    ContentLine {
+        name: "ATTENDEE",
+        params: ContentLineParams(
+            [
+                (
+                    "CN",
+                    [
+                        "Foo, Bar",
+                    ],
+                ),
+            ],
+        ),
+        value: "mailto:foo3@bar",
+    },
+    ContentLine {
+        name: "ATTENDEE",
+        params: ContentLineParams(
+            [
+                (
+                    "CN",
+                    [
+                        "Foo; Bar",
+                    ],
+                ),
+            ],
+        ),
+        value: "mailto:foo4@bar",
+    },
+    ContentLine {
+        name: "ATTENDEE",
+        params: ContentLineParams(
+            [
+                (
+                    "DELEGATED-TO",
+                    [
+                        "mailto:foo7@bar",
+                    ],
+                ),
+                (
+                    "CN",
+                    [
+                        "Foo, Bar",
+                    ],
+                ),
+            ],
+        ),
+        value: "mailto:foo5@bar",
+    },
+    ContentLine {
+        name: "ATTENDEE",
+        params: ContentLineParams(
+            [
+                (
+                    "DELEGATED-TO",
+                    [
+                        "mailto:foo7@bar",
+                    ],
+                ),
+                (
+                    "CN",
+                    [
+                        "Foo; Bar",
+                    ],
+                ),
+            ],
+        ),
+        value: "mailto:foo6@bar",
+    },
+    ContentLine {
+        name: "ATTENDEE",
+        params: ContentLineParams(
+            [
+                (
+                    "ROLE",
+                    [
+                        "REQ-PARTICIPANT;foo",
+                    ],
+                ),
+                (
+                    "DELEGATED-FROM",
+                    [
+                        "mailto:bar@baz.com",
+                    ],
+                ),
+                (
+                    "PARTSTAT",
+                    [
+                        "ACCEPTED",
+                    ],
+                ),
+                (
+                    "RSVP",
+                    [
+                        "TRUE",
+                    ],
+                ),
+            ],
+        ),
+        value: "mailto:foo@bar.com",
+    },
+    ContentLine {
+        name: "X-FOO",
+        params: ContentLineParams(
+            [
+                (
+                    "PARAM1",
+                    [
+                        "VAL1",
+                    ],
+                ),
+            ],
+        ),
+        value: "FOO;BAR",
+    },
+    ContentLine {
+        name: "X-FOO2",
+        params: ContentLineParams(
+            [
+                (
+                    "PARAM1",
+                    [
+                        "VAL1",
+                    ],
+                ),
+                (
+                    "PARAM2",
+                    [
+                        "VAL2",
+                    ],
+                ),
+            ],
+        ),
+        value: "FOO;BAR",
+    },
+    ContentLine {
+        name: "X-BAR",
+        params: ContentLineParams(
+            [
+                (
+                    "PARAM1",
+                    [
+                        "VAL1:FOO",
+                    ],
+                ),
+            ],
+        ),
+        value: "BAZ;BAR",
+    },
+    ContentLine {
+        name: "X-BAZ",
+        params: ContentLineParams(
+            [
+                (
+                    "PARAM1",
+                    [
+                        "VAL1:FOO",
+                    ],
+                ),
+                (
+                    "PARAM2",
+                    [
+                        "VAL2",
+                    ],
+                ),
+            ],
+        ),
+        value: "BAZ;BAR",
+    },
+    ContentLine {
+        name: "X-BAZ2",
+        params: ContentLineParams(
+            [
+                (
+                    "PARAM1",
+                    [
+                        "VAL1",
+                    ],
+                ),
+                (
+                    "PARAM2",
+                    [
+                        "VAL2:FOO",
+                    ],
+                ),
+            ],
+        ),
+        value: "BAZ;BAR",
+    },
+    ContentLine {
+        name: "END",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VCALENDAR",
+    },
+    ContentLine {
+        name: "BEGIN",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VCALENDAR",
+    },
+    ContentLine {
+        name: "CALSCALE",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "GREGORIAN",
+    },
+    ContentLine {
+        name: "PRODID",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "-//Example Inc.//Example Calendar//EN",
+    },
+    ContentLine {
+        name: "VERSION",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "2.0",
+    },
+    ContentLine {
+        name: "BEGIN",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VEVENT",
+    },
+    ContentLine {
+        name: "DTSTAMP",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "20080205T191224Z",
+    },
+    ContentLine {
+        name: "DTSTART",
+        params: ContentLineParams(
+            [
+                (
+                    "VALUE",
+                    [
+                        "DATE",
+                    ],
+                ),
+            ],
+        ),
+        value: "20081006",
+    },
+    ContentLine {
+        name: "SUMMARY",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "Missing description value, but includes header",
+    },
+    ContentLine {
+        name: "DESCRIPTION",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "",
+    },
+    ContentLine {
+        name: "UID",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "4088E990AD89CB3DBB484909",
+    },
+    ContentLine {
+        name: "END",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VEVENT",
+    },
+    ContentLine {
+        name: "END",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VCALENDAR",
+    },
+]

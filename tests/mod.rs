@@ -119,20 +119,16 @@ pub mod property {
     fn ical() {
         let input = include_str!("./resources/ical_multiple.ics");
         let reader = ContentLineParser::from_slice(input.as_bytes());
-        for res in reader {
-            let prop = res.unwrap();
-            insta::assert_snapshot!(prop);
-        }
+        let lines = reader.collect::<Result<Vec<_>, _>>().unwrap();
+        insta::assert_debug_snapshot!(lines);
     }
 
     #[test]
     fn vcard() {
         let input = include_str!("./resources/vcard_input.vcf");
         let reader = ContentLineParser::from_slice(input.as_bytes());
-        for res in reader {
-            let prop = res.unwrap();
-            insta::assert_snapshot!(prop);
-        }
+        let lines = reader.collect::<Result<Vec<_>, _>>().unwrap();
+        insta::assert_debug_snapshot!(lines);
     }
 
     #[test]
@@ -451,10 +447,8 @@ pub mod parser {
     fn vcard() {
         let input = include_str!("./resources/vcard_input.vcf");
         let reader = VcardParser::from_slice(input.as_bytes());
-        for res in reader {
-            let card = res.unwrap();
-            insta::assert_debug_snapshot!(card);
-        }
+        let card = reader.expect_one().unwrap();
+        assert_eq!(card.get_uid(), Some("jdoelaskdjlaksjd"))
     }
 
     #[test]

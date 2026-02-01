@@ -3,6 +3,7 @@ VERSION:4.0
 ADR;TYPE=work:pobox;apt;street;city;state;zipcode;country
 ANNIVERSARY:19960415
 BDAY:--0203
+UID:jdoelaskdjlaksjd
 CALADRURI:http://example.com/calendar/jdoe
 CALURI;MEDIATYPE=text/calendar:ftp://ftp.example.com/calA.ics
 CLIENTPIDMAP:1;urn:uuid:3df403f4-5924-4bb7-b077-3c711d9eb34b

@@ -1,7 +1,327 @@
 ---
 source: tests/mod.rs
-expression: prop
+expression: lines
 ---
-name: BEGIN
-params: ContentLineParams([])
-value: "VCARD"
+[
+    ContentLine {
+        name: "BEGIN",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VCARD",
+    },
+    ContentLine {
+        name: "VERSION",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "4.0",
+    },
+    ContentLine {
+        name: "ADR",
+        params: ContentLineParams(
+            [
+                (
+                    "TYPE",
+                    [
+                        "work",
+                    ],
+                ),
+            ],
+        ),
+        value: "pobox;apt;street;city;state;zipcode;country",
+    },
+    ContentLine {
+        name: "ANNIVERSARY",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "19960415",
+    },
+    ContentLine {
+        name: "BDAY",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "--0203",
+    },
+    ContentLine {
+        name: "UID",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "jdoelaskdjlaksjd",
+    },
+    ContentLine {
+        name: "CALADRURI",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "http://example.com/calendar/jdoe",
+    },
+    ContentLine {
+        name: "CALURI",
+        params: ContentLineParams(
+            [
+                (
+                    "MEDIATYPE",
+                    [
+                        "text/calendar",
+                    ],
+                ),
+            ],
+        ),
+        value: "ftp://ftp.example.com/calA.ics",
+    },
+    ContentLine {
+        name: "CLIENTPIDMAP",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "1;urn:uuid:3df403f4-5924-4bb7-b077-3c711d9eb34b",
+    },
+    ContentLine {
+        name: "EMAIL",
+        params: ContentLineParams(
+            [
+                (
+                    "TYPE",
+                    [
+                        "work",
+                    ],
+                ),
+            ],
+        ),
+        value: "jqpublic@xyz.example.com",
+    },
+    ContentLine {
+        name: "FBURL",
+        params: ContentLineParams(
+            [
+                (
+                    "MEDIATYPE",
+                    [
+                        "text/calendar",
+                    ],
+                ),
+            ],
+        ),
+        value: "ftp://example.com/busy/project-a.ifb",
+    },
+    ContentLine {
+        name: "FN",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "J. Doe",
+    },
+    ContentLine {
+        name: "GENDER",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "M;Fellow",
+    },
+    ContentLine {
+        name: "GEO",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "geo:37.386013\\,-122.082932",
+    },
+    ContentLine {
+        name: "IMPP",
+        params: ContentLineParams(
+            [
+                (
+                    "PREF",
+                    [
+                        "1",
+                    ],
+                ),
+            ],
+        ),
+        value: "xmpp:alice@example.com",
+    },
+    ContentLine {
+        name: "KEY",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "http://www.example.com/keys/jdoe.cer",
+    },
+    ContentLine {
+        name: "KIND",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "individual",
+    },
+    ContentLine {
+        name: "LANG",
+        params: ContentLineParams(
+            [
+                (
+                    "PREF",
+                    [
+                        "1",
+                    ],
+                ),
+            ],
+        ),
+        value: "fr",
+    },
+    ContentLine {
+        name: "LOGO",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "http://www.example.com/pub/logos/abccorp.jpg",
+    },
+    ContentLine {
+        name: "MEMBER",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "urn:uuid:03a0e51f-d1aa-4385-8a53-e29025acd8af",
+    },
+    ContentLine {
+        name: "N",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.",
+    },
+    ContentLine {
+        name: "NICKNAME",
+        params: ContentLineParams(
+            [
+                (
+                    "TYPE",
+                    [
+                        "work",
+                    ],
+                ),
+            ],
+        ),
+        value: "Boss",
+    },
+    ContentLine {
+        name: "NOTE",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "This fax number is operational 0800 to 1715 EST\\, Mon-Fri",
+    },
+    ContentLine {
+        name: "ORG",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "ABC\\, Inc.;North American Division;Marketing",
+    },
+    ContentLine {
+        name: "PHOTO",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "http://www.example.com/pub/photos/jqpublic.gif",
+    },
+    ContentLine {
+        name: "RELATED",
+        params: ContentLineParams(
+            [
+                (
+                    "TYPE",
+                    [
+                        "friend",
+                    ],
+                ),
+            ],
+        ),
+        value: "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+    },
+    ContentLine {
+        name: "REV",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "19951031T222710Z",
+    },
+    ContentLine {
+        name: "ROLE",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "Project Leader",
+    },
+    ContentLine {
+        name: "SOUND",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "CID:JOHNQPUBLIC.part8.19960229T080000.xyzMail@example.com",
+    },
+    ContentLine {
+        name: "SOURCE",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "ldap://ldap.example.com/cn=Babs%20Jensen\\,%20o=Babsco\\,%20c=US",
+    },
+    ContentLine {
+        name: "TEL",
+        params: ContentLineParams(
+            [
+                (
+                    "VALUE",
+                    [
+                        "uri",
+                    ],
+                ),
+                (
+                    "TYPE",
+                    [
+                        "home",
+                    ],
+                ),
+            ],
+        ),
+        value: "tel:+33-01-23-45-67",
+    },
+    ContentLine {
+        name: "TITLE",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "Research Scientist",
+    },
+    ContentLine {
+        name: "TZ",
+        params: ContentLineParams(
+            [
+                (
+                    "VALUE",
+                    [
+                        "utc-offset",
+                    ],
+                ),
+            ],
+        ),
+        value: "-0500",
+    },
+    ContentLine {
+        name: "XML",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "<html xmlns=\"http://www.w3.org/1999/xhtml\"></html>",
+    },
+    ContentLine {
+        name: "END",
+        params: ContentLineParams(
+            [],
+        ),
+        value: "VCARD",
+    },
+]
