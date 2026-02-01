@@ -7,13 +7,9 @@ use crate::generator::Emitter;
 
 impl Emitter for IcalTimeZoneTransition {
     fn generate(&self) -> String {
-        use crate::component::IcalTimeZoneTransitionType::{DAYLIGHT, STANDARD};
-        let key = match &self.transition {
-            STANDARD => "STANDARD",
-            DAYLIGHT => "DAYLIGHT",
-        };
+        let compname = &crate::component::Component::get_comp_name(self);
         format!(
-            "BEGIN:{key}\r\n{inner}END:{key}\r\n",
+            "BEGIN:{compname}\r\n{inner}END:{compname}\r\n",
             inner = &self
                 .properties
                 .iter()
@@ -24,30 +20,30 @@ impl Emitter for IcalTimeZoneTransition {
 }
 
 macro_rules! generate_emitter {
-    ($struct:ty, $key:literal, $($prop:ident),*) => {
+    ($struct:ty, $($prop:ident),*) => {
         impl Emitter for $struct {
             fn generate(&self) -> String {
-                let mut text = format!("BEGIN:{key}\r\n", key = $key);
+                let compname = &crate::component::Component::get_comp_name(self);
+                let mut text = format!("BEGIN:{compname}\r\n");
                 text += &crate::component::Component::get_properties(self).generate();
                 $(text += &self.$prop.generate();)*
-                text + "END:" + $key + "\r\n"
+                text + "END:" + compname + "\r\n"
             }
         }
     };
 }
 
 use crate::component::VcardContact;
-generate_emitter!(VcardContact, "VCARD",);
+generate_emitter!(VcardContact,);
 
-generate_emitter!(IcalAlarm, "VALARM",);
-generate_emitter!(IcalFreeBusy, "VFREEBUSY",);
-generate_emitter!(IcalJournal, "VJOURNAL",);
-generate_emitter!(IcalEvent, "VEVENT", alarms);
-generate_emitter!(IcalTodo, "VTODO", alarms);
-generate_emitter!(IcalTimeZone<true>, "VTIMEZONE", transitions);
+generate_emitter!(IcalAlarm,);
+generate_emitter!(IcalFreeBusy,);
+generate_emitter!(IcalJournal,);
+generate_emitter!(IcalEvent, alarms);
+generate_emitter!(IcalTodo, alarms);
+generate_emitter!(IcalTimeZone<true>, transitions);
 generate_emitter!(
     IcalCalendar,
-    "VCALENDAR",
     vtimezones,
     events,
     alarms,
@@ -55,4 +51,4 @@ generate_emitter!(
     journals,
     free_busys
 );
-generate_emitter!(IcalCalendarObject, "VCALENDAR", vtimezones, inner);
+generate_emitter!(IcalCalendarObject, vtimezones, inner);
