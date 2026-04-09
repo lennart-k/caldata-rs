@@ -191,7 +191,10 @@ pub mod line {
 }
 
 pub mod calendar_object {
-    use caldata::{IcalObjectParser, IcalParser, generator::Emitter};
+    use caldata::{
+        IcalObjectParser, IcalParser, component::CalendarInnerData, generator::Emitter, types::Tz,
+    };
+    use chrono::{DateTime, Timelike};
     use itertools::Itertools;
 
     #[rstest::rstest]
@@ -206,6 +209,7 @@ pub mod calendar_object {
     // Calendar objects from Thunderbird are invalid since their VTIMEZONE object RRULEs contain an
     // UNTIL datetime in local time (this MUST be UTC)
     #[case(8, include_str!("./resources/ical_thunderbird.ics"), "Europe/Berlin")]
+    #[case(9, include_str!("./resources/ical_recurrence_date.ics"), "")]
     fn valid_objects(#[case] case: usize, #[case] input: &str, #[case] tzids: &str) {
         set_snapshot_suffix!("{case}");
         let generic_reader = IcalParser::from_slice(input.as_bytes());
@@ -228,9 +232,29 @@ pub mod calendar_object {
         }
     }
 
+    /// Expand a reccurent event across winter and summer time
+    /// This will fail if we wrongly expand in UTC
+    #[rstest::rstest]
+    fn rrule_expansion_timezones() {
+        let input = include_str!("./resources/ical_recurrence_winter_summer.ics");
+        let obj = IcalObjectParser::from_slice(input.as_bytes())
+            .expect_one()
+            .unwrap();
+        let CalendarInnerData::Event(event, _) = obj.get_inner() else {
+            panic!()
+        };
+        let expanded = event.expand_recurrence(None, None, &[]);
+        for recurrence in expanded {
+            let datetime: DateTime<Tz> = recurrence.dtstart.0.clone().into();
+            let datetime_local = datetime.with_timezone(&Tz::Olson(chrono_tz::Tz::Europe__Berlin));
+            assert_eq!(datetime_local.hour(), 9);
+        }
+    }
+
     #[rstest::rstest]
     #[case(0, include_str!("./resources/Recurring at 9am, third at 10am.ics"))]
     #[case(1, include_str!("./resources/recurring_wholeday.ics"))]
+    #[case(2, include_str!("./resources/ical_recurrence_date.ics"))]
     fn rrule_expansion(#[case] case: usize, #[case] input: &str) {
         set_snapshot_suffix!("{case}");
         let reader = IcalObjectParser::from_slice(input.as_bytes());
