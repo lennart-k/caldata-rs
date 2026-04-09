@@ -115,6 +115,7 @@ impl CalDateTime {
     pub fn date_floor(&self) -> NaiveDate {
         self.0.date_naive()
     }
+
     #[must_use]
     pub fn date_ceil(&self) -> NaiveDate {
         let date = self.0.date_naive();
