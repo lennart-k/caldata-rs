@@ -1,3 +1,5 @@
+use chrono::DateTime;
+
 use crate::{
     ContentLineParser,
     component::{Component, ComponentMut, IcalAlarmBuilder, IcalEvent},
@@ -108,12 +110,13 @@ impl ComponentMut for IcalEventBuilder {
         let duration = self.safe_get_optional::<IcalDURATIONProperty>(timezones)?;
 
         // OPTIONAL, allowed multiple times: attach / attendee / categories / comment / contact / exdate / rstatus / related / resources / rdate / x-prop / iana-prop
-        let rrule_dtstart = dtstart.0.utc().with_timezone(&Tz::UTC);
+        let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().into();
         let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
         let exdates = self.safe_get_all::<IcalEXDATEProperty>(timezones)?;
         let rrules = self
             .safe_get_all::<IcalRRULEProperty>(timezones)?
             .into_iter()
+            // RRules are crated against local times instead of UTC
             .map(|rrule| rrule.0.validate(rrule_dtstart))
             .collect::<Result<Vec<_>, _>>()?;
         let exrules = self

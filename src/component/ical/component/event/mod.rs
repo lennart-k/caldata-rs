@@ -6,7 +6,7 @@ use crate::{
         IcalEXDATEProperty, IcalRDATEProperty, IcalRECURIDProperty, IcalSUMMARYProperty,
         RecurIdRange,
     },
-    types::{CalDate, CalDateOrDateTime, CalDateTime, Tz},
+    types::{CalDate, CalDateOrDateTime, CalDateTime, Tz, Value},
 };
 use chrono::{DateTime, Duration, Utc};
 use std::collections::HashSet;
@@ -141,10 +141,12 @@ impl IcalEvent {
             || !self.exdates.is_empty()
     }
 
-    pub fn get_rruleset(&self, dtstart: DateTime<Tz>) -> Option<RRuleSet> {
+    pub fn get_rruleset(&self) -> Option<RRuleSet> {
         if !self.has_rruleset() {
             return None;
         }
+        // TODO: Remove clone
+        let dtstart = self.dtstart.0.clone().into();
         Some(
             RRuleSet::new(dtstart)
                 .set_rrules(self.rrules.to_owned())
@@ -185,14 +187,10 @@ impl IcalEvent {
         end: Option<DateTime<Utc>>,
         overrides: &[Self],
     ) -> Vec<Self> {
-        let main = self.clone().to_utc_or_local();
-        let mut overrides: Vec<Self> = overrides
-            .iter()
-            .map(|over| over.clone().to_utc_or_local())
-            .collect();
+        let main = self.clone();
+        let mut overrides: Vec<Self> = overrides.to_vec();
         overrides.sort_by_key(|over| over.recurid.as_ref().unwrap().0.clone());
-        let dtstart_utc = main.dtstart.0.utc().with_timezone(&Tz::UTC);
-        let Some(mut rrule_set) = main.get_rruleset(dtstart_utc) else {
+        let Some(mut rrule_set) = main.get_rruleset() else {
             return std::iter::once(main).chain(overrides).collect();
         };
 
@@ -207,11 +205,17 @@ impl IcalEvent {
 
         let mut template = &main;
         'recurrence: for instance in rrule_set.all(2048).dates {
+            // Is UTC or local
             let recurid = if main.dtstart.0.is_date() {
                 CalDateOrDateTime::Date(CalDate(instance.to_utc().date_naive(), Tz::utc()))
             } else {
-                CalDateOrDateTime::DateTime(CalDateTime::from(instance))
+                CalDateOrDateTime::DateTime(CalDateTime::from(instance)).utc_or_local()
             };
+
+            #[cfg(test)]
+            {
+                assert!(matches!(recurid.timezone(), Tz::Local | Tz::UTC));
+            }
 
             for over in &overrides {
                 let IcalRECURIDProperty(override_recurid, _, range) =
@@ -220,7 +224,7 @@ impl IcalEvent {
                     continue;
                 }
                 // RECURRENCE IDs match
-                events.push(over.clone());
+                events.push(over.clone().to_utc_or_local());
 
                 if range == &RecurIdRange::ThisAndFuture {
                     // Set this override as the base event for the future
@@ -266,6 +270,14 @@ impl IcalEvent {
             ));
             if let Some(duration) = template.get_duration() {
                 ev.replace_or_push_property(IcalDURATIONProperty(duration, Default::default()));
+            }
+
+            #[cfg(test)]
+            {
+                assert!(
+                    self.get_tzids().is_empty(),
+                    "Expanded events MUST NOT refer to timezones"
+                )
             }
 
             events.push(ev);

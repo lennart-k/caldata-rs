@@ -100,7 +100,7 @@ IcalCalendar {
                     by_week_no: [],
                     by_weekday: [],
                     by_hour: [
-                        10,
+                        11,
                     ],
                     by_minute: [
                         0,

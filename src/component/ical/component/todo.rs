@@ -1,3 +1,5 @@
+use chrono::DateTime;
+
 use crate::rrule::RRule;
 
 use crate::types::Tz;
@@ -163,16 +165,16 @@ impl ComponentMut for IcalTodoBuilder {
         let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
         let exdates = self.safe_get_all::<IcalEXDATEProperty>(timezones)?;
         let (rrules, exrules) = if let Some(dtstart) = dtstart.as_ref() {
-            let dtstart = dtstart.0.utc().with_timezone(&Tz::UTC);
+            let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().into();
             let rrules = self
                 .safe_get_all::<IcalRRULEProperty>(timezones)?
                 .into_iter()
-                .map(|rrule| rrule.0.validate(dtstart))
+                .map(|rrule| rrule.0.validate(rrule_dtstart))
                 .collect::<Result<Vec<_>, _>>()?;
             let exrules = self
                 .safe_get_all::<IcalEXRULEProperty>(timezones)?
                 .into_iter()
-                .map(|rrule| rrule.0.validate(dtstart))
+                .map(|rrule| rrule.0.validate(rrule_dtstart))
                 .collect::<Result<Vec<_>, _>>()?;
             (rrules, exrules)
         } else {

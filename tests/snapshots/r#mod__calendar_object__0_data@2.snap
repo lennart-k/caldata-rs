@@ -1,0 +1,181 @@
+---
+source: tests/mod.rs
+expression: recurrence.get_inner()
+---
+Todo(
+    IcalTodo {
+        uid: "0FA620BB-3AD9-4BDC-BF54-9DFDCDC32060",
+        dtstart: Some(
+            IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2026-03-26,
+                        Local,
+                    ),
+                ),
+                ContentLineParams(
+                    [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+        ),
+        due: Some(
+            IcalDUEProperty(
+                Date(
+                    CalDate(
+                        2026-03-26,
+                        Local,
+                    ),
+                ),
+                ContentLineParams(
+                    [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+        ),
+        duration: None,
+        dtstamp: IcalDTSTAMPProperty(
+            CalDateTime(
+                2026-03-26T18:04:37Olson(
+                    UTC,
+                ),
+            ),
+            ContentLineParams(
+                [],
+            ),
+        ),
+        properties: [
+            ContentLine {
+                name: "CREATED",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "20260326T180351Z",
+            },
+            ContentLine {
+                name: "DTSTAMP",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "20260326T180437Z",
+            },
+            ContentLine {
+                name: "DTSTART",
+                params: ContentLineParams(
+                    [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                ),
+                value: "20260326",
+            },
+            ContentLine {
+                name: "DUE",
+                params: ContentLineParams(
+                    [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                ),
+                value: "20260326",
+            },
+            ContentLine {
+                name: "LAST-MODIFIED",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "20260326T180437Z",
+            },
+            ContentLine {
+                name: "RRULE",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "FREQ=WEEKLY;UNTIL=20260430;BYDAY=SU,SA",
+            },
+            ContentLine {
+                name: "STATUS",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "NEEDS-ACTION",
+            },
+            ContentLine {
+                name: "SUMMARY",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "Neue Erinnerung",
+            },
+            ContentLine {
+                name: "UID",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "0FA620BB-3AD9-4BDC-BF54-9DFDCDC32060",
+            },
+        ],
+        alarms: [],
+        rdates: [],
+        rrules: [
+            RRule {
+                freq: Weekly,
+                interval: 1,
+                count: None,
+                until: Some(
+                    2026-04-30T00:00:00Local,
+                ),
+                week_start: Mon,
+                by_set_pos: [],
+                by_month: [],
+                by_month_day: [],
+                by_n_month_day: [],
+                by_year_day: [],
+                by_week_no: [],
+                by_weekday: [
+                    Every(
+                        Sat,
+                    ),
+                    Every(
+                        Sun,
+                    ),
+                ],
+                by_hour: [
+                    0,
+                ],
+                by_minute: [
+                    0,
+                ],
+                by_second: [
+                    0,
+                ],
+                by_easter: None,
+                stage: PhantomData<caldata::rrule::core::Validated>,
+            },
+        ],
+        exdates: [],
+        exrules: [],
+        recurid: None,
+    },
+    [],
+)
