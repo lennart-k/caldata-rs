@@ -22,5 +22,5 @@ Put this in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-caldata = "0.15"
+caldata = "0.16"
 ```
