@@ -1,0 +1,215 @@
+---
+source: tests/mod.rs
+expression: recurrence.get_inner()
+---
+Event(
+    IcalEvent {
+        uid: "040000008200E000*************00800000000*****************00000000000000010000000********************************",
+        dtstamp: IcalDTSTAMPProperty(
+            CalDateTime(
+                2021-05-11T06:38:45Olson(
+                    UTC,
+                ),
+            ),
+            ContentLineParams(
+                [],
+            ),
+        ),
+        dtstart: IcalDTSTARTProperty(
+            DateTime(
+                CalDateTime(
+                    2021-05-27T08:30:00Olson(
+                        UTC,
+                    ),
+                ),
+            ),
+            ContentLineParams(
+                [],
+            ),
+        ),
+        dtend: Some(
+            IcalDTENDProperty(
+                DateTime(
+                    CalDateTime(
+                        2021-05-27T10:00:00Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+        ),
+        duration: None,
+        rdates: [],
+        rrules: [],
+        exdates: [],
+        exrules: [],
+        recurid: None,
+        summary: Some(
+            IcalSUMMARYProperty(
+                "Software-QS-Cast Application Performance Monitoring",
+                ContentLineParams(
+                    [
+                        (
+                            "LANGUAGE",
+                            [
+                                "de",
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+        ),
+        properties: [
+            ContentLine {
+                name: "CLASS",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "PUBLIC",
+            },
+            ContentLine {
+                name: "CREATED",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "20210511T063845Z",
+            },
+            ContentLine {
+                name: "DESCRIPTION",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "Einwahldaten folgen in der Veranstaltungswoche \\nSeminartitel: Software-QS-Cast - Application Performance Monitoring\\nDatum: 27.Mai 2021\\nUhrzeit: 10:30 - ca.12:00 Uhr  \\n \\n",
+            },
+            ContentLine {
+                name: "DTEND",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "20210527T100000Z",
+            },
+            ContentLine {
+                name: "DTSTAMP",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "20210511T063845Z",
+            },
+            ContentLine {
+                name: "DTSTART",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "20210527T083000Z",
+            },
+            ContentLine {
+                name: "LAST-MODIFIED",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "20210511T063845Z",
+            },
+            ContentLine {
+                name: "PRIORITY",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "5",
+            },
+            ContentLine {
+                name: "SEQUENCE",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "0",
+            },
+            ContentLine {
+                name: "SUMMARY",
+                params: ContentLineParams(
+                    [
+                        (
+                            "LANGUAGE",
+                            [
+                                "de",
+                            ],
+                        ),
+                    ],
+                ),
+                value: "Software-QS-Cast Application Performance Monitoring",
+            },
+            ContentLine {
+                name: "TRANSP",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "OPAQUE",
+            },
+            ContentLine {
+                name: "UID",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "040000008200E000*************00800000000*****************00000000000000010000000********************************",
+            },
+            ContentLine {
+                name: "X-MICROSOFT-CDO-BUSYSTATUS",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "BUSY",
+            },
+            ContentLine {
+                name: "X-MICROSOFT-CDO-IMPORTANCE",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "1",
+            },
+            ContentLine {
+                name: "X-MICROSOFT-DISALLOW-COUNTER",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "FALSE",
+            },
+            ContentLine {
+                name: "X-MS-OLK-CONFTYPE",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "0",
+            },
+        ],
+        alarms: [
+            IcalAlarm {
+                properties: [
+                    ContentLine {
+                        name: "TRIGGER",
+                        params: ContentLineParams(
+                            [],
+                        ),
+                        value: "-PT15M",
+                    },
+                    ContentLine {
+                        name: "ACTION",
+                        params: ContentLineParams(
+                            [],
+                        ),
+                        value: "DISPLAY",
+                    },
+                    ContentLine {
+                        name: "DESCRIPTION",
+                        params: ContentLineParams(
+                            [],
+                        ),
+                        value: "Reminder",
+                    },
+                ],
+            },
+        ],
+    },
+    [],
+)

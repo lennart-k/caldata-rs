@@ -257,12 +257,15 @@ pub mod calendar_object {
     #[case(1, include_str!("./resources/recurring_wholeday.ics"))]
     #[case(2, include_str!("./resources/ical_recurrence_date.ics"))]
     #[case(3, include_str!("./resources/ical_recurrence_date_2.ics"))]
+    // Has no RRULE
+    #[case(4, include_str!("./resources/ical_example_1.ics"))]
     fn rrule_expansion(#[case] case: usize, #[case] input: &str) {
         set_snapshot_suffix!("{case}");
         let reader = IcalObjectParser::from_slice(input.as_bytes());
         for (i, res) in reader.enumerate() {
             let cal = res.unwrap();
             let recurrence = cal.expand_recurrence(None, None);
+            assert!(recurrence.get_tzids().is_empty());
             insta::assert_snapshot!(format!("{i}_ics"), recurrence.generate());
             insta::assert_debug_snapshot!(format!("{i}_data"), recurrence.get_inner());
         }

@@ -191,7 +191,10 @@ impl IcalEvent {
         let mut overrides: Vec<Self> = overrides.to_vec();
         overrides.sort_by_key(|over| over.recurid.as_ref().unwrap().0.clone());
         let Some(mut rrule_set) = main.get_rruleset() else {
-            return std::iter::once(main).chain(overrides).collect();
+            return std::iter::once(main)
+                .chain(overrides)
+                .map(|ev| ev.to_utc_or_local())
+                .collect();
         };
 
         if let Some(start) = start {
@@ -240,11 +243,14 @@ impl IcalEvent {
                 !["RRULE", "RDATE", "EXRULE", "EXDATE"].contains(&prop.name.as_str())
             });
             properties.retain(|prop| prop.name != "DTEND");
+
+            let dtstart = IcalDTSTARTProperty(recurid.clone(), Default::default());
+
             let mut ev = IcalEvent {
                 uid: template.uid.clone(),
                 dtstamp: template.dtstamp.clone(),
                 summary: template.summary.clone(),
-                dtstart: IcalDTSTARTProperty(recurid.clone(), Default::default()),
+                dtstart: dtstart.clone(),
                 recurid: Some(IcalRECURIDProperty(
                     recurid.clone(),
                     Default::default(),
@@ -261,7 +267,7 @@ impl IcalEvent {
                 exrules: vec![],
                 properties,
             };
-            ev.replace_or_push_property(IcalDTSTARTProperty(recurid.clone(), Default::default()));
+            ev.replace_or_push_property(dtstart);
             ev.replace_or_push_property(IcalRECURIDProperty(
                 recurid,
                 // This is fine since this is UTC anyway
