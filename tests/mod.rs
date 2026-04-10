@@ -210,6 +210,7 @@ pub mod calendar_object {
     // UNTIL datetime in local time (this MUST be UTC)
     #[case(8, include_str!("./resources/ical_thunderbird.ics"), "Europe/Berlin")]
     #[case(9, include_str!("./resources/ical_recurrence_date.ics"), "")]
+    #[case(10, include_str!("./resources/ical_recurrence_date_2.ics"), "")]
     fn valid_objects(#[case] case: usize, #[case] input: &str, #[case] tzids: &str) {
         set_snapshot_suffix!("{case}");
         let generic_reader = IcalParser::from_slice(input.as_bytes());
@@ -255,6 +256,7 @@ pub mod calendar_object {
     #[case(0, include_str!("./resources/Recurring at 9am, third at 10am.ics"))]
     #[case(1, include_str!("./resources/recurring_wholeday.ics"))]
     #[case(2, include_str!("./resources/ical_recurrence_date.ics"))]
+    #[case(3, include_str!("./resources/ical_recurrence_date_2.ics"))]
     fn rrule_expansion(#[case] case: usize, #[case] input: &str) {
         set_snapshot_suffix!("{case}");
         let reader = IcalObjectParser::from_slice(input.as_bytes());

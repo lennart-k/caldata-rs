@@ -1,0 +1,1628 @@
+---
+source: tests/mod.rs
+expression: recurrence.get_inner()
+---
+Event(
+    IcalEvent {
+        uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+        dtstamp: IcalDTSTAMPProperty(
+            CalDateTime(
+                2026-04-09T09:15:06Olson(
+                    UTC,
+                ),
+            ),
+            ContentLineParams(
+                [],
+            ),
+        ),
+        dtstart: IcalDTSTARTProperty(
+            Date(
+                CalDate(
+                    2025-11-10,
+                    Olson(
+                        UTC,
+                    ),
+                ),
+            ),
+            ContentLineParams(
+                [],
+            ),
+        ),
+        dtend: Some(
+            IcalDTENDProperty(
+                DateTime(
+                    CalDateTime(
+                        2025-11-15T00:00:00Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+        ),
+        duration: None,
+        rdates: [],
+        rrules: [],
+        exdates: [],
+        exrules: [],
+        recurid: Some(
+            IcalRECURIDProperty(
+                Date(
+                    CalDate(
+                        2025-11-10,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+                This,
+            ),
+        ),
+        summary: Some(
+            IcalSUMMARYProperty(
+                "Test_weekly",
+                ContentLineParams(
+                    [],
+                ),
+            ),
+        ),
+        properties: [
+            ContentLine {
+                name: "DTSTAMP",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "20260409T091506Z",
+            },
+            ContentLine {
+                name: "UID",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            },
+            ContentLine {
+                name: "SUMMARY",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "Test_weekly",
+            },
+            ContentLine {
+                name: "DTSTART",
+                params: ContentLineParams(
+                    [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                ),
+                value: "20251110",
+            },
+            ContentLine {
+                name: "STATUS",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "CONFIRMED",
+            },
+            ContentLine {
+                name: "RECURRENCE-ID",
+                params: ContentLineParams(
+                    [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                ),
+                value: "20251110",
+            },
+            ContentLine {
+                name: "DURATION",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: "P5D",
+            },
+        ],
+        alarms: [],
+    },
+    [
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2025-11-17,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2025-11-22T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2025-11-17,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251117",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251117",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2025-11-24,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2025-11-29T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2025-11-24,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251124",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251124",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2025-12-01,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2025-12-06T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2025-12-01,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251201",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251201",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2025-12-08,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2025-12-13T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2025-12-08,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251208",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251208",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2025-12-15,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2025-12-20T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2025-12-15,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251215",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251215",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2025-12-22,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2025-12-27T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2025-12-22,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251222",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251222",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2025-12-29,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2026-01-03T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2025-12-29,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251229",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20251229",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2026-01-05,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2026-01-10T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2026-01-05,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20260105",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20260105",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2026-01-12,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2026-01-17T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2026-01-12,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20260112",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20260112",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2026-01-19,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2026-01-24T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2026-01-19,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20260119",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20260119",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            uid: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+            dtstamp: IcalDTSTAMPProperty(
+                CalDateTime(
+                    2026-04-09T09:15:06Olson(
+                        UTC,
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2026-01-26,
+                        Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2026-01-31T00:00:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: Some(
+                IcalRECURIDProperty(
+                    Date(
+                        CalDate(
+                            2026-01-26,
+                            Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                    This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Test_weekly",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "20260409T091506Z",
+                },
+                ContentLine {
+                    name: "UID",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "d4f6dfd5-981f-46d8-a962-afa42bc29d48",
+                },
+                ContentLine {
+                    name: "SUMMARY",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "Test_weekly",
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20260126",
+                },
+                ContentLine {
+                    name: "STATUS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "CONFIRMED",
+                },
+                ContentLine {
+                    name: "RECURRENCE-ID",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                    value: "20260126",
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: "P5D",
+                },
+            ],
+            alarms: [],
+        },
+    ],
+)
