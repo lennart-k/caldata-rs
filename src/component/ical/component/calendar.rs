@@ -136,7 +136,8 @@ impl ComponentMut for IcalCalendarBuilder {
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self::Verified, ParserError> {
         let _version: IcalVERSIONProperty = self.safe_get_required(None)?;
-        let _prodid: IcalPRODIDProperty = self.safe_get_required(None)?;
+        // This should technically be REQUIRED but Apple Calendar doesn't adhere to the spec. :(
+        let _prodid: Option<IcalPRODIDProperty> = self.safe_get_optional(None)?;
         let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(None)?;
 
         #[allow(unused_mut)]
