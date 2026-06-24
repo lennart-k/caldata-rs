@@ -34,6 +34,10 @@ pub trait Component: Clone {
     fn get_named_properties<'c>(&'c self, name: &'c str) -> impl Iterator<Item = &'c ContentLine> {
         self.get_properties().iter().filter(move |p| p.name == name)
     }
+
+    fn builder() -> Self::Unverified {
+        Default::default()
+    }
 }
 
 /// A mutable interface for an Ical/Vcard component.

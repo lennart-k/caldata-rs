@@ -3,7 +3,7 @@ use std::{
     ops::{Add, Sub},
 };
 
-use chrono::{DateTime, Duration, NaiveDate, NaiveTime, Utc};
+use chrono::{DateTime, Duration, Local, NaiveDate, NaiveTime, Utc};
 use derive_more::From;
 
 use crate::{
@@ -16,6 +16,24 @@ use crate::{
 pub enum CalDateOrDateTime {
     DateTime(CalDateTime),
     Date(CalDate),
+}
+
+impl From<DateTime<Tz>> for CalDateOrDateTime {
+    fn from(value: DateTime<Tz>) -> Self {
+        Self::DateTime(value.into())
+    }
+}
+
+impl From<DateTime<Local>> for CalDateOrDateTime {
+    fn from(value: DateTime<Local>) -> Self {
+        Self::DateTime(value.into())
+    }
+}
+
+impl From<DateTime<Utc>> for CalDateOrDateTime {
+    fn from(value: DateTime<Utc>) -> Self {
+        Self::DateTime(value.into())
+    }
 }
 
 impl CalDateOrDateTime {

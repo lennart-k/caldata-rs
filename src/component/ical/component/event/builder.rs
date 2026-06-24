@@ -5,11 +5,12 @@ use crate::{
     component::{Component, ComponentMut, IcalAlarmBuilder, IcalEvent},
     parser::{ContentLine, ParserError, ParserOptions},
     property::{
-        GetProperty, IcalDTENDProperty, IcalDTSTARTProperty, IcalDURATIONProperty,
-        IcalEXDATEProperty, IcalEXRULEProperty, IcalMETHODProperty, IcalRDATEProperty,
-        IcalRECURIDProperty, IcalRRULEProperty, IcalSUMMARYProperty, IcalUIDProperty,
+        GetProperty, IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
+        IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty, IcalMETHODProperty,
+        IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty, IcalSUMMARYProperty,
+        IcalUIDProperty,
     },
-    types::Tz,
+    types::{CalDateOrDateTime, CalDateTime, Tz},
 };
 use std::{
     borrow::Cow,
@@ -35,6 +36,29 @@ impl IcalEventBuilder {
             .iter()
             .filter_map(|prop| prop.params.get_tzid())
             .collect()
+    }
+
+    pub fn with_summary(mut self, summary: String) -> Self {
+        self.properties
+            .push(IcalSUMMARYProperty(summary, Default::default()).into());
+        self
+    }
+
+    pub fn with_dtstamp(mut self, dtstamp: CalDateTime) -> Self {
+        self.properties
+            .push(IcalDTSTAMPProperty(dtstamp, Default::default()).into());
+        self
+    }
+
+    pub fn with_dtstart(mut self, dtstart: CalDateOrDateTime) -> Self {
+        self.properties
+            .push(IcalDTSTARTProperty(dtstart, Default::default()).into());
+        self
+    }
+
+    pub fn with_uid(mut self, uid: String) -> Self {
+        self.properties.push(IcalUIDProperty::from(uid).into());
+        self
     }
 }
 
@@ -144,5 +168,27 @@ impl ComponentMut for IcalEventBuilder {
                 .map(|alarm| alarm.build(options, timezones))
                 .collect::<Result<Vec<_>, _>>()?,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        component::{Component, ComponentMut, IcalEvent},
+        generator::Emitter,
+        parser::ParserOptions,
+    };
+    use chrono::Utc;
+
+    #[test]
+    fn test_builder() {
+        let ical_event = IcalEvent::builder()
+            .with_dtstamp(Utc::now().into())
+            .with_dtstart(Utc::now().into())
+            .with_uid("alskdj".to_string())
+            .with_summary("Hello World!".to_string())
+            .build(&ParserOptions { rfc7809: false }, None)
+            .unwrap();
+        similar_asserts::assert_eq!(ical_event.generate(), "asd".to_string());
     }
 }
