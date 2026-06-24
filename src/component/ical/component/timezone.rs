@@ -5,7 +5,7 @@ use crate::{
     property::{GetProperty, IcalDTSTARTProperty, IcalRRULEProperty, IcalTZRDATEProperty},
     types::Tz,
 };
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDate, Utc};
 #[cfg(not(tarpaulin_include))]
 use std::borrow::Cow;
 use std::collections::HashMap;
@@ -26,6 +26,15 @@ impl IcalTimeZone {
             .get_property("TZID")
             .expect("we already verified this exists")
             .value
+    }
+
+    /// Returns the day of the first
+    pub fn get_first_occurence(&self) -> NaiveDate {
+        self.transitions
+            .iter()
+            .map(|transition| transition.dtstart.0.date_floor())
+            .min()
+            .unwrap_or(NaiveDate::MAX)
     }
 
     /// This is a common property containing a timezone identifier from the IANA TZDB
