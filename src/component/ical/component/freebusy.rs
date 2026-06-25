@@ -34,26 +34,26 @@ impl IcalFreeBusyBuilder {
 
 impl Component for IcalFreeBusyBuilder {
     const NAMES: &[&str] = &["VFREEBUSY"];
-    type Unverified = IcalFreeBusyBuilder;
+    type Builder = IcalFreeBusyBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         self
     }
 }
 
 impl Component for IcalFreeBusy {
     const NAMES: &[&str] = &["VFREEBUSY"];
-    type Unverified = IcalFreeBusyBuilder;
+    type Builder = IcalFreeBusyBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         IcalFreeBusyBuilder {
             properties: self.properties,
         }

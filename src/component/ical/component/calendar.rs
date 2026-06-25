@@ -46,13 +46,13 @@ pub type IcalCalendarBuilder = IcalCalendar<
 
 impl Component for IcalCalendar {
     const NAMES: &[&str] = &["VCALENDAR"];
-    type Unverified = IcalCalendarBuilder;
+    type Builder = IcalCalendarBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         IcalCalendarBuilder {
             properties: self.properties,
             events: self.events.into_iter().map(Component::mutable).collect(),
@@ -72,13 +72,13 @@ impl Component for IcalCalendar {
 
 impl Component for IcalCalendarBuilder {
     const NAMES: &[&str] = &["VCALENDAR"];
-    type Unverified = IcalCalendarBuilder;
+    type Builder = IcalCalendarBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         self
     }
 }

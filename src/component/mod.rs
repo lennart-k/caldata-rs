@@ -22,10 +22,10 @@ pub trait Component: Clone {
         Self::NAMES[0]
     }
 
-    type Unverified: ComponentMut;
+    type Builder: ComponentMut;
 
     fn get_properties(&self) -> &Vec<ContentLine>;
-    fn mutable(self) -> Self::Unverified;
+    fn mutable(self) -> Self::Builder;
 
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c ContentLine> {
         self.get_properties().iter().find(|p| p.name == name)
@@ -35,7 +35,7 @@ pub trait Component: Clone {
         self.get_properties().iter().filter(move |p| p.name == name)
     }
 
-    fn builder() -> Self::Unverified {
+    fn builder() -> Self::Builder {
         Default::default()
     }
 }
@@ -45,7 +45,7 @@ pub trait Component: Clone {
 /// It takes a `ContentLineParser` and fills the component with. It's also able to create
 /// sub-component used by event and alarms.
 pub trait ComponentMut: Component + Default {
-    type Verified: Component<Unverified = Self>;
+    type Verified: Component<Builder = Self>;
 
     /// Add the givent sub component.
     fn add_sub_component<'a, T: Iterator<Item = Cow<'a, [u8]>>>(

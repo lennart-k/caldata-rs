@@ -28,26 +28,26 @@ impl IcalAlarmBuilder {
 
 impl Component for IcalAlarmBuilder {
     const NAMES: &[&str] = &["VALARM"];
-    type Unverified = IcalAlarmBuilder;
+    type Builder = IcalAlarmBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         self
     }
 }
 
 impl Component for IcalAlarm {
     const NAMES: &[&str] = &["VALARM"];
-    type Unverified = IcalAlarmBuilder;
+    type Builder = IcalAlarmBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         IcalAlarmBuilder {
             properties: self.properties,
         }

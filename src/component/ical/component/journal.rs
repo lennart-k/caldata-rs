@@ -63,26 +63,26 @@ impl IcalJournal {
 
 impl Component for IcalJournalBuilder {
     const NAMES: &[&str] = &["VJOURNAL"];
-    type Unverified = IcalJournalBuilder;
+    type Builder = IcalJournalBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         self
     }
 }
 
 impl Component for IcalJournal {
     const NAMES: &[&str] = &["VJOURNAL"];
-    type Unverified = IcalJournalBuilder;
+    type Builder = IcalJournalBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         IcalJournalBuilder {
             properties: self.properties,
         }

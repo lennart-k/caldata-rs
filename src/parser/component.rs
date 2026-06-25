@@ -50,7 +50,7 @@ impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> ComponentParser<'a, C,
         Ok(Some(()))
     }
 
-    pub fn expect_one(mut self) -> Result<<C::Unverified as ComponentMut>::Verified, ParserError> {
+    pub fn expect_one(mut self) -> Result<<C::Builder as ComponentMut>::Verified, ParserError> {
         let item = self.next().ok_or(ParserError::EmptyInput)??;
         if self.next().is_some() {
             return Err(ParserError::TooManyComponents);
@@ -60,7 +60,7 @@ impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> ComponentParser<'a, C,
 }
 
 impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> Iterator for ComponentParser<'a, C, I> {
-    type Item = Result<<C::Unverified as ComponentMut>::Verified, ParserError>;
+    type Item = Result<<C::Builder as ComponentMut>::Verified, ParserError>;
 
     fn next(&mut self) -> Option<Self::Item> {
         match self.check_header() {
@@ -68,7 +68,7 @@ impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> Iterator for Component
             Err(err) => return Some(Err(err)),
         };
 
-        let mut comp = C::Unverified::default();
+        let mut comp = C::Builder::default();
         let result = match comp.parse(&mut self.line_parser, &self.options) {
             Ok(_) => comp.build(&self.options, None),
             Err(err) => Err(err),

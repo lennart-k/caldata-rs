@@ -78,13 +78,13 @@ impl IcalTodo {
 
 impl Component for IcalTodo {
     const NAMES: &[&str] = &["VTODO"];
-    type Unverified = IcalTodoBuilder;
+    type Builder = IcalTodoBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         IcalTodoBuilder {
             properties: self.properties,
             alarms: self
@@ -98,13 +98,13 @@ impl Component for IcalTodo {
 
 impl Component for IcalTodoBuilder {
     const NAMES: &[&str] = &["VTODO"];
-    type Unverified = IcalTodoBuilder;
+    type Builder = IcalTodoBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         self
     }
 }

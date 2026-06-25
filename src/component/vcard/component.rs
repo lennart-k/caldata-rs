@@ -30,26 +30,26 @@ impl VcardContact {
 
 impl Component for VcardContactBuilder {
     const NAMES: &[&str] = &["VCARD"];
-    type Unverified = VcardContactBuilder;
+    type Builder = VcardContactBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         self
     }
 }
 
 impl Component for VcardContact {
     const NAMES: &[&str] = &["VCARD"];
-    type Unverified = VcardContactBuilder;
+    type Builder = VcardContactBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         VcardContactBuilder {
             properties: self.properties,
         }

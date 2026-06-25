@@ -338,13 +338,13 @@ impl IcalCalendarObjectBuilder {
 
 impl Component for IcalCalendarObject {
     const NAMES: &[&str] = &["VCALENDAR"];
-    type Unverified = IcalCalendarObjectBuilder;
+    type Builder = IcalCalendarObjectBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         IcalCalendarObjectBuilder {
             properties: self.properties,
             vtimezones: self.vtimezones,
@@ -355,13 +355,13 @@ impl Component for IcalCalendarObject {
 
 impl Component for IcalCalendarObjectBuilder {
     const NAMES: &[&str] = &["VCALENDAR"];
-    type Unverified = Self;
+    type Builder = Self;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         self
     }
 }

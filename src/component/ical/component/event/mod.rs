@@ -44,13 +44,13 @@ impl IcalEvent {
 
 impl Component for IcalEvent {
     const NAMES: &[&str] = &["VEVENT"];
-    type Unverified = IcalEventBuilder;
+    type Builder = IcalEventBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         IcalEventBuilder {
             properties: self.properties,
             alarms: self.alarms.into_iter().map(Component::mutable).collect(),
