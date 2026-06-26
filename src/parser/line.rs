@@ -159,12 +159,10 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> Iterator for LineReader<'a, T> {
             }
         };
 
-        loop {
-            let Some(next) = self.lines.next_if(|line| {
-                line.starts_with(b" ") || line.starts_with(b"\t") || line.is_empty()
-            }) else {
-                break;
-            };
+        while let Some(next) = self
+            .lines
+            .next_if(|line| line.starts_with(b" ") || line.starts_with(b"\t") || line.is_empty())
+        {
             self.number += 1;
             if !next.is_empty() {
                 // String cannot be empty so this cannot panic
