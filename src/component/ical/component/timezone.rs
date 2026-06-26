@@ -97,13 +97,13 @@ impl From<&IcalTimeZone> for Option<chrono_tz::Tz> {
 
 impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
     const NAMES: &[&str] = &["VTIMEZONE"];
-    type Unverified = IcalTimeZone<false>;
+    type Builder = IcalTimeZone<false>;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         IcalTimeZone::<false> {
             properties: self.properties,
             transitions: self.transitions,
@@ -203,7 +203,7 @@ impl IcalTimeZoneTransitionBuilder {
 
 impl Component for IcalTimeZoneTransition {
     const NAMES: &[&str] = &["STANDARD", "DAYLIGHT"];
-    type Unverified = IcalTimeZoneTransitionBuilder;
+    type Builder = IcalTimeZoneTransitionBuilder;
 
     fn get_comp_name(&self) -> &'static str {
         match self.transition {
@@ -216,7 +216,7 @@ impl Component for IcalTimeZoneTransition {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         IcalTimeZoneTransitionBuilder {
             transition: self.transition,
             properties: self.properties,
@@ -226,7 +226,7 @@ impl Component for IcalTimeZoneTransition {
 
 impl Component for IcalTimeZoneTransitionBuilder {
     const NAMES: &[&str] = &["STANDARD", "DAYLIGHT"];
-    type Unverified = IcalTimeZoneTransitionBuilder;
+    type Builder = IcalTimeZoneTransitionBuilder;
 
     fn get_comp_name(&self) -> &'static str {
         match self.transition {
@@ -239,7 +239,7 @@ impl Component for IcalTimeZoneTransitionBuilder {
         &self.properties
     }
 
-    fn mutable(self) -> Self::Unverified {
+    fn mutable(self) -> Self::Builder {
         self
     }
 }
