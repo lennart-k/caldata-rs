@@ -6,7 +6,9 @@ use crate::{
     },
     generator::Emitter,
     parser::{ContentLine, ParserError, ParserOptions},
-    property::{GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
+    property::{
+        GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty, IcalVersion,
+    },
     types::CalDateTime,
 };
 use chrono::{DateTime, NaiveDate, Utc};
@@ -346,6 +348,18 @@ impl IcalCalendarObjectBuilder {
             vtimezones: BTreeMap::new(),
             inner: None,
         }
+    }
+
+    pub fn with_prodid(mut self, prodid: String) -> Self {
+        self.properties
+            .push(IcalPRODIDProperty(prodid, Default::default()).into());
+        self
+    }
+
+    pub fn with_version(mut self, version: IcalVersion) -> Self {
+        self.properties
+            .push(IcalVERSIONProperty(version, Default::default()).into());
+        self
     }
 }
 
