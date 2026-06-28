@@ -189,6 +189,13 @@ mod tests {
             .with_summary("Hello World!".to_string())
             .build(&ParserOptions { rfc7809: false }, None)
             .unwrap();
-        similar_asserts::assert_eq!(ical_event.generate(), "asd".to_string());
+        insta::assert_snapshot!(ical_event.generate(), @r"
+        BEGIN:VEVENT
+        DTSTAMP:20260628T100312Z
+        DTSTART:20260628T100312Z
+        UID:alskdj
+        SUMMARY:Hello World!
+        END:VEVENT
+        ");
     }
 }
