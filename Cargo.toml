@@ -33,7 +33,7 @@ derive_more = { version = "2.1", features = [
   "into",
 ] }
 phf = { version = "0.13", features = ["macros"] }
-vtimezones-rs = { version = "0.3", optional = true }
+vtimezones-rs = { version = "0.3" }
 log = "0.4"
 
 [dev-dependencies]
@@ -48,7 +48,6 @@ harness = false
 
 [features]
 default = ["chrono-tz"]
-vtimezones-rs = ["dep:vtimezones-rs"]
 chrono-tz = ["dep:chrono-tz"]
 test = []
 rkyv = ["dep:rkyv"]

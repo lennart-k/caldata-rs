@@ -9,11 +9,9 @@ use chrono::{DateTime, Utc};
 #[cfg(not(tarpaulin_include))]
 use std::borrow::Cow;
 use std::collections::HashMap;
-#[cfg(feature = "vtimezones-rs")]
 use std::sync::OnceLock;
 
 // Memoise generated vtimezones
-#[cfg(feature = "vtimezones-rs")]
 static TIMEZONES_CACHE: OnceLock<HashMap<String, OnceLock<IcalTimeZone>>> = OnceLock::new();
 
 #[derive(Debug, Clone, Default)]
@@ -36,7 +34,6 @@ impl IcalTimeZone {
             .map(|prop| prop.value.as_str())
     }
 
-    #[cfg(feature = "vtimezones-rs")]
     pub fn from_tzid(tzid: &str) -> Option<&Self> {
         let timezones = TIMEZONES_CACHE.get_or_init(|| {
             let mut timezones = HashMap::new();
@@ -337,7 +334,7 @@ impl IcalTimeZoneTransition {
     }
 }
 
-#[cfg(all(test, feature = "vtimezones-rs"))]
+#[cfg(test)]
 mod tests {
     use chrono::{TimeZone, Utc};
     use insta::assert_snapshot;

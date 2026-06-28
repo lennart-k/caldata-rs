@@ -448,7 +448,6 @@ impl ComponentMut for IcalCalendarObjectBuilder {
                 .map(|(name, value)| (name.clone(), value.into())),
         );
 
-        #[cfg(feature = "vtimezones-rs")]
         if options.rfc7809 {
             // Populate our map of chrono timezones with those we can populate ourselves
             use std::str::FromStr;
@@ -459,7 +458,6 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             }
         }
         let inner = inner.build(options, Some(&timezones))?;
-        #[cfg(feature = "vtimezones-rs")]
         if options.rfc7809 {
             for tzid in inner.get_tzids() {
                 if !vtimezones.contains_key(tzid)

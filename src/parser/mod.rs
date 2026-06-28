@@ -19,16 +19,12 @@ pub struct ParserOptions {
     /// RFC 7809 allows the omission of VTIMEZONE components for standard timezones
     /// When true, we try to automatically insert missing VTIMEZONE components from the IANA
     /// timezone database.
-    #[cfg(feature = "vtimezones-rs")]
     pub rfc7809: bool,
 }
 
 #[allow(clippy::derivable_impls)]
 impl Default for ParserOptions {
     fn default() -> Self {
-        Self {
-            #[cfg(feature = "vtimezones-rs")]
-            rfc7809: false,
-        }
+        Self { rfc7809: false }
     }
 }

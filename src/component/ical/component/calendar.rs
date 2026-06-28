@@ -147,7 +147,6 @@ impl ComponentMut for IcalCalendarBuilder {
                 .map(|(tzid, tz)| (tzid.to_owned(), tz.into())),
         );
 
-        #[cfg(feature = "vtimezones-rs")]
         let used_tzids: HashSet<&str> = self
             .events
             .iter()
@@ -157,9 +156,8 @@ impl ComponentMut for IcalCalendarBuilder {
             .chain(self.journals.iter().flat_map(|object| object.get_tzids()))
             .chain(self.free_busys.iter().flat_map(|object| object.get_tzids()))
             .collect();
-        #[allow(unused_mut)]
+
         let mut vtimezones = self.vtimezones;
-        #[cfg(feature = "vtimezones-rs")]
         if options.rfc7809 {
             // Populate our map of chrono timezones with those we can populate ourselves
             use std::str::FromStr;

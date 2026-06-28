@@ -272,7 +272,6 @@ pub mod calendar_object {
     }
 }
 
-#[cfg(feature = "vtimezones-rs")]
 pub mod rfc7809 {
     use caldata::{IcalObjectParser, IcalParser, generator::Emitter, parser::ParserOptions};
 
