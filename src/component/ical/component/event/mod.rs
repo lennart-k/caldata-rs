@@ -1,15 +1,16 @@
 use crate::{
-    component::{Component, IcalAlarm},
-    parser::{ContentLine, ICalProperty},
+    ParserError,
+    component::{Component, ComponentMut, IcalAlarm, IcalCalendarObject},
+    parser::{ContentLine, ICalProperty, ParserOptions},
     property::{
         IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDURATIONProperty,
         IcalEXDATEProperty, IcalRDATEProperty, IcalRECURIDProperty, IcalSUMMARYProperty,
-        RecurIdRange,
+        IcalVersion, RecurIdRange,
     },
     types::{CalDate, CalDateOrDateTime, CalDateTime, Tz, Value},
 };
 use chrono::{DateTime, Duration, Utc};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use crate::rrule::{RRule, RRuleSet};
 pub use builder::IcalEventBuilder;
@@ -40,6 +41,18 @@ impl IcalEvent {
     pub fn get_alarms(&self) -> &[IcalAlarm] {
         &self.alarms
     }
+
+    pub fn into_calendar_object(self, prodid: String) -> Result<IcalCalendarObject, ParserError> {
+        let mut obj = IcalCalendarObject::builder()
+            .with_version(IcalVersion::Version2_0)
+            .with_prodid(prodid);
+        obj.inner = Some(crate::component::CalendarInnerDataBuilder::Event(vec![
+            self.mutable(),
+        ]));
+
+        // The RFC 7809 flag will ensure that the necessary vtimezones are inserted
+        obj.build(&ParserOptions { rfc7809: true }, None)
+    }
 }
 
 impl Component for IcalEvent {
@@ -54,6 +67,7 @@ impl Component for IcalEvent {
         IcalEventBuilder {
             properties: self.properties,
             alarms: self.alarms.into_iter().map(Component::mutable).collect(),
+            timezones: HashMap::new(),
         }
     }
 }

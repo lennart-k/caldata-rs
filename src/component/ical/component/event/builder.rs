@@ -3,7 +3,7 @@ use chrono::DateTime;
 use crate::{
     ContentLineParser,
     component::{Component, ComponentMut, IcalAlarmBuilder, IcalEvent},
-    parser::{ContentLine, ParserError, ParserOptions},
+    parser::{ContentLine, ContentLineParams, ParserError, ParserOptions},
     property::{
         GetProperty, IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
         IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty, IcalMETHODProperty,
@@ -21,6 +21,8 @@ use std::{
 pub struct IcalEventBuilder {
     pub properties: Vec<ContentLine>,
     pub alarms: Vec<IcalAlarmBuilder>,
+    // timezones that will need to be inserted on build
+    pub timezones: HashMap<String, Option<chrono_tz::Tz>>,
 }
 
 impl IcalEventBuilder {
@@ -28,6 +30,7 @@ impl IcalEventBuilder {
         Self {
             properties: Vec::new(),
             alarms: Vec::new(),
+            timezones: HashMap::default(),
         }
     }
 
@@ -51,8 +54,18 @@ impl IcalEventBuilder {
     }
 
     pub fn with_dtstart(mut self, dtstart: CalDateOrDateTime) -> Self {
+        if let Some(tzid) = dtstart.timezone().tzid()
+            && let Tz::Olson(tz) = dtstart.timezone()
+        {
+            self.timezones.insert(tzid.to_owned(), Some(tz));
+        }
+        let params = dtstart
+            .timezone()
+            .tzid()
+            .map(|tzid| ContentLineParams(vec![("TZID".to_owned(), vec![tzid.to_owned()])]))
+            .unwrap_or_default();
         self.properties
-            .push(IcalDTSTARTProperty(dtstart, Default::default()).into());
+            .push(IcalDTSTARTProperty(dtstart, params).into());
         self
     }
 
@@ -102,10 +115,18 @@ impl ComponentMut for IcalEventBuilder {
     }
 
     fn build(
-        self,
+        mut self,
         options: &ParserOptions,
-        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
+        input_timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalEvent, ParserError> {
+        {
+            let mut_timezones = &mut self.timezones;
+            if let Some(input_timezones) = input_timezones {
+                mut_timezones.extend(input_timezones.to_owned());
+            }
+        }
+        let timezones = Some(&self.timezones);
+
         // The following are REQUIRED, but MUST NOT occur more than once: dtstamp / uid
         let dtstamp = self.safe_get_required(timezones)?;
         let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;
@@ -178,21 +199,24 @@ mod tests {
         generator::Emitter,
         parser::ParserOptions,
     };
-    use chrono::Utc;
+    use chrono::{TimeZone, Utc};
 
     #[test]
     fn test_builder() {
+        let datetime = chrono_tz::Europe::Berlin
+            .with_ymd_and_hms(2021, 1, 1, 0, 0, 0)
+            .unwrap();
         let ical_event = IcalEvent::builder()
-            .with_dtstamp(Utc::now().into())
-            .with_dtstart(Utc::now().into())
+            .with_dtstamp(Utc.with_ymd_and_hms(2020, 2, 3, 0, 3, 5).unwrap().into())
+            .with_dtstart(datetime.into())
             .with_uid("alskdj".to_string())
             .with_summary("Hello World!".to_string())
-            .build(&ParserOptions { rfc7809: false }, None)
+            .build(&ParserOptions { rfc7809: true }, None)
             .unwrap();
-        insta::assert_snapshot!(ical_event.generate(), @r"
+        insta::assert_snapshot!(ical_event.generate(), @"
         BEGIN:VEVENT
-        DTSTAMP:20260628T100312Z
-        DTSTART:20260628T100312Z
+        DTSTAMP:20200203T000305Z
+        DTSTART;TZID=Europe/Berlin:20210101T000000
         UID:alskdj
         SUMMARY:Hello World!
         END:VEVENT

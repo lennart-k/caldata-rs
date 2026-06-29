@@ -6,10 +6,12 @@ use crate::{
     },
     generator::Emitter,
     parser::{ContentLine, ParserError, ParserOptions},
-    property::{GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
+    property::{
+        GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty, IcalVersion,
+    },
     types::CalDateTime,
 };
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDate, Utc};
 use std::{
     borrow::Cow,
     collections::{BTreeMap, HashMap, HashSet},
@@ -313,7 +315,20 @@ impl IcalCalendarObject {
                 cal.todos.extend_from_slice(&overrides);
             }
         }
-        cal.vtimezones.extend(self.vtimezones);
+
+        // Insert VTIMEZONEs from object into calendar but on conflict keep the one that was
+        // truncated at the earlier date
+        for (name, vtimezone) in self.vtimezones {
+            if cal
+                .vtimezones
+                .get(&name)
+                .map(IcalTimeZone::get_first_occurence)
+                .unwrap_or(NaiveDate::MAX)
+                > vtimezone.get_first_occurence()
+            {
+                cal.vtimezones.insert(name, vtimezone);
+            }
+        }
         cal.timezones.extend(self.timezones);
     }
 }
@@ -333,6 +348,18 @@ impl IcalCalendarObjectBuilder {
             vtimezones: BTreeMap::new(),
             inner: None,
         }
+    }
+
+    pub fn with_prodid(mut self, prodid: String) -> Self {
+        self.properties
+            .push(IcalPRODIDProperty(prodid, Default::default()).into());
+        self
+    }
+
+    pub fn with_version(mut self, version: IcalVersion) -> Self {
+        self.properties
+            .push(IcalVERSIONProperty(version, Default::default()).into());
+        self
     }
 }
 

@@ -18,6 +18,13 @@ pub enum CalDateOrDateTime {
     Date(CalDate),
 }
 
+#[cfg(feature = "chrono-tz")]
+impl From<DateTime<chrono_tz::Tz>> for CalDateOrDateTime {
+    fn from(value: DateTime<chrono_tz::Tz>) -> Self {
+        Self::DateTime(value.with_timezone(&Tz::Olson(value.timezone())).into())
+    }
+}
+
 impl From<DateTime<Tz>> for CalDateOrDateTime {
     fn from(value: DateTime<Tz>) -> Self {
         Self::DateTime(value.into())

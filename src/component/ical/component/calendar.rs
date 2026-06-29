@@ -336,3 +336,38 @@ impl IcalCalendar {
         Ok(out)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use crate::{
+        component::{Component, ComponentMut, IcalEvent},
+        generator::Emitter,
+    };
+    use chrono::{TimeZone, Utc};
+
+    #[test]
+    fn check_timezone_order() {
+        let e1 = IcalEvent::builder()
+            .with_uid("1".to_owned())
+            .with_dtstamp(Utc::now().into())
+            .with_dtstart(
+                chrono_tz::Europe::Berlin
+                    .with_ymd_and_hms(1800, 1, 1, 0, 0, 0)
+                    .unwrap()
+                    .into(),
+            )
+            .build(&Default::default(), None)
+            .unwrap();
+        let obj1 = e1.into_calendar_object("caldata-rs".to_owned()).unwrap();
+        let e2 = IcalEvent::builder()
+            .with_uid("2".to_owned())
+            .with_dtstamp(Utc::now().into())
+            .with_dtstart(Utc::now().with_timezone(&chrono_tz::Europe::Berlin).into())
+            .build(&Default::default(), None)
+            .unwrap();
+        let obj2 = e2.into_calendar_object("caldata-rs".to_owned()).unwrap();
+        similar_asserts::assert_eq!(obj1.generate(), "");
+    }
+}
