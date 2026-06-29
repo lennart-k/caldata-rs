@@ -10,7 +10,7 @@ use crate::{
     types::{CalDate, CalDateOrDateTime, CalDateTime, Tz, Value},
 };
 use chrono::{DateTime, Duration, Utc};
-use std::{collections::HashSet, convert::Infallible};
+use std::collections::{HashMap, HashSet};
 
 use crate::rrule::{RRule, RRuleSet};
 pub use builder::IcalEventBuilder;
@@ -67,6 +67,7 @@ impl Component for IcalEvent {
         IcalEventBuilder {
             properties: self.properties,
             alarms: self.alarms.into_iter().map(Component::mutable).collect(),
+            timezones: HashMap::new(),
         }
     }
 }
