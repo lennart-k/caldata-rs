@@ -64,21 +64,18 @@ fn validate_until(
                     let allowed_timezones = vec![Tz::Local, Tz::UTC];
                     if !allowed_timezones.contains(&until.timezone()) {
                         return Err(ValidationError::DtStartUntilMismatchTimezone {
-                            dt_start_tz: dt_start.timezone().name().into(),
-                            until_tz: until.timezone().name().into(),
-                            expected: allowed_timezones
-                                .into_iter()
-                                .map(|tz| tz.name().into())
-                                .collect(),
+                            dt_start_tz: dt_start.timezone().name(),
+                            until_tz: until.timezone().name(),
+                            expected: allowed_timezones.into_iter().map(|tz| tz.name()).collect(),
                         });
                     }
                 }
                 Tz::Olson(_) => {
                     if until.timezone() != Tz::UTC {
                         return Err(ValidationError::DtStartUntilMismatchTimezone {
-                            dt_start_tz: dt_start.timezone().name().into(),
-                            until_tz: until.timezone().name().into(),
-                            expected: vec!["UTC".into()],
+                            dt_start_tz: dt_start.timezone().name(),
+                            until_tz: until.timezone().name(),
+                            expected: vec![Some("UTC")],
                         });
                     }
                 }

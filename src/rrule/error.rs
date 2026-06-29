@@ -85,11 +85,11 @@ pub enum ValidationError {
     #[error("`BYEASTER` can only be used when `BYHOUR`, `BYMINUTE` and `BYSECOND` are set.")]
     InvalidByRuleWithByEaster,
     #[error(
-        "The value of `DTSTART` was specified in {dt_start_tz} timezone, but `UNTIL` was specified in timezone {until_tz}. Allowed timezones for `UNTIL` with the given start date timezone are: `{expected:?}`"
+        "The value of `DTSTART` was specified in {dt_start_tz:?} timezone, but `UNTIL` was specified in timezone {until_tz:?}. Allowed timezones for `UNTIL` with the given start date timezone are: `{expected:?}`"
     )]
     DtStartUntilMismatchTimezone {
-        dt_start_tz: String,
-        until_tz: String,
-        expected: Vec<String>,
+        dt_start_tz: Option<&'static str>,
+        until_tz: Option<&'static str>,
+        expected: Vec<Option<&'static str>>,
     },
 }

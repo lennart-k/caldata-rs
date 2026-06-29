@@ -15,10 +15,18 @@ impl Tz {
     }
 
     #[must_use]
-    pub fn name(&self) -> &str {
+    pub fn name(&self) -> Option<&'static str> {
         match self {
-            Self::Local => "Local",
-            Self::Olson(tz) => tz.name(),
+            Self::Local => None,
+            Self::Olson(tz) => Some(tz.name()),
+        }
+    }
+
+    #[must_use]
+    pub fn tzid(&self) -> Option<&'static str> {
+        match self {
+            Self::Local | Self::Olson(chrono_tz::UTC) => None,
+            Self::Olson(tz) => Some(tz.name()),
         }
     }
 
