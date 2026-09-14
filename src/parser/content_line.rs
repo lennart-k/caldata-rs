@@ -1,35 +1,5 @@
-//! Parse the result of `LineReader` into parts.
-//!
-//! Split the result of `LineReader` into property. A property contains:
-//! - A name formated in uppercase.
-//! - An optional list of parameters represented by a vector of `(key/value)` tuple . The key is
-//!   formatted in uppercase and the value stay untouched.
-//! - A value stay untouched.
-//!
-//! It work for both the Vcard and Ical format.
-//!
-//! #### Warning
-//!   The parsers `ContentLineParser` only parse the content and set to uppercase the case-insensitive
-//!   fields. No checks are made on the fields validity.
-//!
-//! # Examples
-//!
-//! ```rust
-//! use std::fs::read_to_string;
-//!
-//! let buf = read_to_string("./tests/resources/vcard_input.vcf")
-//!     .unwrap();
-//!
-//! let reader = caldata::ContentLineParser::from_slice(buf.as_bytes());
-//!
-//! for line in reader {
-//!     println!("{:?}", line);
-//! }
-//! ```
-
 use derive_more::From;
 use std::borrow::Cow;
-use std::fmt;
 use std::iter::Iterator;
 
 use super::{BytesLines, Line, LineError, LineReader};
@@ -106,30 +76,8 @@ pub struct ContentLine {
     pub value: String,
 }
 
-impl fmt::Display for ContentLine {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "name: {}\nparams: {:?}\nvalue: {:?}",
-            self.name, self.params, self.value
-        )
-    }
-}
-
-pub struct ContentLineParser<'a, T: Iterator<Item = Cow<'a, [u8]>>>(LineReader<'a, T>);
-
-impl<'a> ContentLineParser<'a, BytesLines<'a>> {
-    pub fn from_slice(slice: &'a [u8]) -> Self {
-        ContentLineParser(LineReader::from_slice(slice))
-    }
-}
-
-impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
-    pub fn new(line_reader: LineReader<'a, T>) -> Self {
-        ContentLineParser(line_reader)
-    }
-
-    fn parse(&self, line: Line) -> Result<ContentLine, ContentLineError> {
+impl ContentLine {
+    pub fn parse_line(line: Line) -> Result<Self, ContentLineError> {
         let mut to_parse = line.as_str();
 
         // Find end of parameter name
@@ -172,6 +120,7 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
                     let Some((content, remainder)) = to_parse.split_once('"') else {
                         return Err(ContentLineError::MissingClosingQuote(line.number()));
                     };
+                    // TODO: Unescape content
                     values.push(content.to_owned());
                     to_parse = remainder;
                 } else {
@@ -187,6 +136,7 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
                     };
                     let (content, remainder) = to_parse.split_at(delim_pos);
 
+                    // TODO: Unescape content
                     values.push(content.to_owned());
                     to_parse = remainder;
                 }
@@ -213,14 +163,47 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
     }
 }
 
+pub struct ContentLineParser<'a, T: Iterator<Item = Cow<'a, [u8]>>>(LineReader<'a, T>);
+
+impl<'a> ContentLineParser<'a, BytesLines<'a>> {
+    pub fn from_slice(slice: &'a [u8]) -> Self {
+        ContentLineParser(LineReader::from_slice(slice))
+    }
+}
+
+impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
+    pub fn new(line_reader: LineReader<'a, T>) -> Self {
+        ContentLineParser(line_reader)
+    }
+}
+
 impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> Iterator for ContentLineParser<'a, T> {
     type Item = Result<ContentLine, ContentLineError>;
 
     fn next(&mut self) -> Option<Self::Item> {
         match self.0.next() {
-            Some(Ok(line)) => Some(self.parse(line)),
+            Some(Ok(line)) => Some(ContentLine::parse_line(line)),
             Some(Err(err)) => Some(Err(err.into())),
             None => None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::parser::{ContentLine, Line};
+
+    #[test]
+    fn test_parse_content_line() {
+        assert_eq!(
+            ContentLine::parse_line(Line {
+                inner: r#"HALLO;ASD=o^"kay:NICE"#.into(),
+                number: 1,
+            })
+            .unwrap()
+            .params
+            .get_param("ASD"),
+            Some("okay")
+        );
     }
 }
