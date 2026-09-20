@@ -24,16 +24,7 @@ pub trait Component: Clone {
 
     type Builder: ComponentMut;
 
-    fn get_properties(&self) -> &Vec<ContentLine>;
     fn mutable(self) -> Self::Builder;
-
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c ContentLine> {
-        self.get_properties().iter().find(|p| p.name == name)
-    }
-
-    fn get_named_properties<'c>(&'c self, name: &'c str) -> impl Iterator<Item = &'c ContentLine> {
-        self.get_properties().iter().filter(move |p| p.name == name)
-    }
 
     fn builder() -> Self::Builder {
         Default::default()
