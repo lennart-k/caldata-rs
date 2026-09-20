@@ -509,6 +509,43 @@ pub mod parser {
             assert!(res.is_err());
         }
     }
+
+    /// Some address books write an unpadded month or day in extended notation - `1995-6-4` rather
+    /// than `1995-06-04`. It is invalid per ISO 8601, so by default it is rejected.
+    #[cfg(not(feature = "lenient-dates"))]
+    #[test]
+    fn vcard_unpadded_date_rejected_by_default() {
+        let input = include_str!("./resources/vcard_unpadded_date.vcf");
+        let reader = VcardParser::from_slice(input.as_bytes());
+        for res in reader {
+            assert!(res.is_err());
+        }
+    }
+
+    /// With `lenient-dates` the same cards parse, and the date is available as a proper typed
+    /// value. Note that `generate()` re-emits the original content line verbatim, so the
+    /// non-conformant spelling is preserved rather than rewritten - leniency here is about being
+    /// able to READ the card, not about correcting it.
+    #[cfg(feature = "lenient-dates")]
+    #[test]
+    fn vcard_unpadded_date_parses() {
+        use caldata::types::{PartialDate, Value};
+
+        let input = include_str!("./resources/vcard_unpadded_date.vcf");
+        let reader = VcardParser::from_slice(input.as_bytes());
+        let cards = reader.collect::<Result<Vec<_>, _>>().unwrap();
+        assert_eq!(cards.len(), 2);
+
+        let bday = |card: &caldata::component::VcardContact| {
+            card.birthday.as_ref().unwrap().0.date.clone().unwrap()
+        };
+        assert_eq!(bday(&cards[0]), PartialDate::parse("1995-06-04").unwrap());
+        assert_eq!(bday(&cards[1]), PartialDate::parse("1985-04-02").unwrap());
+        let anniversary = cards[1].anniversary.as_ref().unwrap().0.date.clone();
+        assert_eq!(anniversary.unwrap(), PartialDate::parse("--0412").unwrap());
+        // The typed value renders in the strict form even though the source was unpadded.
+        assert_eq!(bday(&cards[0]).value(), "1995-06-04");
+    }
 }
 
 pub mod generator {

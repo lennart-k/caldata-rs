@@ -50,6 +50,10 @@ harness = false
 default = ["chrono-tz"]
 chrono-tz = ["dep:chrono-tz"]
 test = []
+# Accept a narrow, unambiguous deviation from ISO 8601 in vCard date values:
+# an unpadded month or day in extended notation, e.g. `1995-6-4`. Off by default;
+# strict parsing is unchanged unless this is enabled.
+lenient-dates = []
 rkyv = ["dep:rkyv"]
 bench = []
 
