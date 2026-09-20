@@ -20,13 +20,13 @@ impl Emitter for IcalTimeZoneTransition {
 }
 
 macro_rules! generate_emitter {
-    ($struct:ty, $($prop:ident),*) => {
+    ($struct:ty, $($child:ident),*) => {
         impl Emitter for $struct {
             fn generate(&self) -> String {
                 let compname = &crate::component::Component::get_comp_name(self);
                 let mut text = format!("BEGIN:{compname}\r\n");
                 text += &crate::component::Component::get_properties(self).generate();
-                $(text += &self.$prop.generate();)*
+                $(text += &self.$child.generate();)*
                 text + "END:" + compname + "\r\n"
             }
         }
