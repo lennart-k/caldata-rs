@@ -62,6 +62,11 @@ impl ComponentMut for VcardContactBuilder {
         self.properties.push(content_line);
     }
 
+    fn remove_property(&mut self, name: &str) {
+        self.properties
+            .retain(|content_line| content_line.name != name);
+    }
+
     fn build(
         self,
         _options: &ParserOptions,

@@ -60,6 +60,8 @@ pub trait ComponentMut: Component + Default {
     /// Add the given property.
     fn add_content_line(&mut self, content_line: ContentLine);
 
+    fn remove_property(&mut self, name: &str);
+
     fn build(
         self,
         options: &ParserOptions,

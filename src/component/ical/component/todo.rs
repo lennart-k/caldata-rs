@@ -116,6 +116,11 @@ impl ComponentMut for IcalTodoBuilder {
         self.properties.push(content_line);
     }
 
+    fn remove_property(&mut self, name: &str) {
+        self.properties
+            .retain(|content_line| content_line.name != name);
+    }
+
     #[inline]
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
