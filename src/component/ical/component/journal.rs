@@ -1,7 +1,6 @@
 use crate::rrule::RRule;
 use crate::types::Tz;
 use crate::{
-    ContentLineParser,
     component::{Component, ComponentMut},
     parser::{ContentLine, ParserError, ParserOptions},
     property::{
@@ -10,10 +9,7 @@ use crate::{
         IcalUIDProperty,
     },
 };
-use std::{
-    borrow::Cow,
-    collections::{HashMap, HashSet},
-};
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalJournalBuilder {
@@ -92,18 +88,8 @@ impl Component for IcalJournal {
 impl ComponentMut for IcalJournalBuilder {
     type Verified = IcalJournal;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
-        &mut self.properties
-    }
-
-    #[inline]
-    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
-        &mut self,
-        value: &str,
-        _: &mut ContentLineParser<'a, I>,
-        _options: &ParserOptions,
-    ) -> Result<(), ParserError> {
-        Err(ParserError::InvalidComponent(value.to_owned()))
+    fn add_content_line(&mut self, content_line: ContentLine) {
+        self.properties.push(content_line);
     }
 
     fn build(

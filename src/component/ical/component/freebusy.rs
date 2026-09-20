@@ -1,15 +1,12 @@
 #[cfg(not(tarpaulin_include))]
 use crate::parser::ParserOptions;
 use crate::{
-    ContentLineParser,
     component::{Component, ComponentMut},
     parser::{ContentLine, ParserError},
     property::{
         GetProperty, IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalUIDProperty,
     },
 };
-#[cfg(not(tarpaulin_include))]
-use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, Default)]
@@ -63,19 +60,8 @@ impl Component for IcalFreeBusy {
 impl ComponentMut for IcalFreeBusyBuilder {
     type Verified = IcalFreeBusy;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
-        &mut self.properties
-    }
-
-    #[cfg(not(tarpaulin_include))]
-    #[inline]
-    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
-        &mut self,
-        value: &str,
-        _: &mut ContentLineParser<'a, I>,
-        _options: &ParserOptions,
-    ) -> Result<(), ParserError> {
-        Err(ParserError::InvalidComponent(value.to_owned()))
+    fn add_content_line(&mut self, content_line: ContentLine) {
+        self.properties.push(content_line);
     }
 
     fn build(

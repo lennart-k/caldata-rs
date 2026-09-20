@@ -112,8 +112,8 @@ impl Component for IcalTodoBuilder {
 impl ComponentMut for IcalTodoBuilder {
     type Verified = IcalTodo;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
-        &mut self.properties
+    fn add_content_line(&mut self, content_line: ContentLine) {
+        self.properties.push(content_line);
     }
 
     #[inline]

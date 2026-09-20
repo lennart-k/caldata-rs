@@ -111,8 +111,8 @@ impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
 impl ComponentMut for IcalTimeZone<false> {
     type Verified = IcalTimeZone;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
-        &mut self.properties
+    fn add_content_line(&mut self, content_line: ContentLine) {
+        self.properties.push(content_line);
     }
 
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
@@ -244,18 +244,8 @@ impl Component for IcalTimeZoneTransitionBuilder {
 impl ComponentMut for IcalTimeZoneTransitionBuilder {
     type Verified = IcalTimeZoneTransition;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
-        &mut self.properties
-    }
-
-    #[cfg(not(tarpaulin_include))]
-    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
-        &mut self,
-        value: &str,
-        _: &mut ContentLineParser<'a, I>,
-        _options: &ParserOptions,
-    ) -> Result<(), ParserError> {
-        Err(ParserError::InvalidComponent(value.to_owned()))
+    fn add_content_line(&mut self, content_line: ContentLine) {
+        self.properties.push(content_line);
     }
 
     fn build(

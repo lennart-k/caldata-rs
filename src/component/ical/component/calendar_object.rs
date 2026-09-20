@@ -102,16 +102,12 @@ impl CalendarInnerData {
                 .min(),
             Self::Todo(main, overrides) => std::iter::once(main.dtstart.as_ref().map(|dt| &dt.0))
                 .chain(std::iter::once(main.due.as_ref().map(|dt| &dt.0)))
-                .chain(
-                    overrides
-                        .iter()
-                        .flat_map(|over| {
-                            [
-                                over.dtstart.as_ref().map(|dt| &dt.0),
-                                over.due.as_ref().map(|dt| &dt.0),
-                            ]
-                        }),
-                )
+                .chain(overrides.iter().flat_map(|over| {
+                    [
+                        over.dtstart.as_ref().map(|dt| &dt.0),
+                        over.due.as_ref().map(|dt| &dt.0),
+                    ]
+                }))
                 .flatten()
                 .min(),
             Self::Journal(main, overrides) => {
@@ -378,8 +374,8 @@ impl Component for IcalCalendarObjectBuilder {
 impl ComponentMut for IcalCalendarObjectBuilder {
     type Verified = IcalCalendarObject;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
-        &mut self.properties
+    fn add_content_line(&mut self, content_line: ContentLine) {
+        self.properties.push(content_line);
     }
 
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(

@@ -2,10 +2,8 @@
 use crate::parser::ParserOptions;
 use crate::{
     component::{Component, ComponentMut},
-    parser::{ContentLine, ContentLineParser, ParserError},
+    parser::{ContentLine, ParserError},
 };
-#[cfg(not(tarpaulin_include))]
-use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, Default)]
@@ -57,18 +55,8 @@ impl Component for IcalAlarm {
 impl ComponentMut for IcalAlarmBuilder {
     type Verified = IcalAlarm;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
-        &mut self.properties
-    }
-
-    #[cfg(not(tarpaulin_include))]
-    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
-        &mut self,
-        value: &str,
-        _: &mut ContentLineParser<'a, I>,
-        _options: &ParserOptions,
-    ) -> Result<(), ParserError> {
-        Err(ParserError::InvalidComponent(value.to_owned()))
+    fn add_content_line(&mut self, content_line: ContentLine) {
+        self.properties.push(content_line);
     }
 
     fn build(

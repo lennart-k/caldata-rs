@@ -50,22 +50,15 @@ pub trait ComponentMut: Component + Default {
     /// Add the givent sub component.
     fn add_sub_component<'a, T: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
-        value: &str,
-        line_parser: &mut ContentLineParser<'a, T>,
-        options: &ParserOptions,
-    ) -> Result<(), ParserError>;
-
-    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine>;
-
-    fn remove_property(&mut self, name: &str) {
-        self.get_properties_mut().retain(|prop| prop.name != name);
+        name: &str,
+        _line_parser: &mut ContentLineParser<'a, T>,
+        _options: &ParserOptions,
+    ) -> Result<(), ParserError> {
+        Err(ParserError::InvalidComponent(name.to_owned()))
     }
 
     /// Add the given property.
-    #[inline]
-    fn add_content_line(&mut self, property: ContentLine) {
-        self.get_properties_mut().push(property);
-    }
+    fn add_content_line(&mut self, content_line: ContentLine);
 
     fn build(
         self,
