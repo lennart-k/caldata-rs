@@ -60,7 +60,7 @@ pub enum LineError {
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Line<'a> {
     pub inner: Cow<'a, str>,
-    number: usize,
+    pub number: usize,
 }
 
 impl<'a> PartialOrd for Line<'a> {

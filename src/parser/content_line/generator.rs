@@ -1,7 +1,19 @@
 use crate::generator::Emitter;
-use crate::parser::{ContentLine, ContentLineParams};
-use crate::{PARAM_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_DELIMITER};
-use itertools::Itertools;
+use crate::parser::ContentLine;
+use crate::{PARAM_DELIMITER, VALUE_DELIMITER};
+
+impl Emitter for ContentLine {
+    fn generate(&self) -> String {
+        let mut output = self.name.to_owned();
+        if !self.params.is_empty() {
+            output.push(PARAM_DELIMITER);
+            output.push_str(&self.params.generate());
+        }
+        output.push(VALUE_DELIMITER);
+        output.push_str(&self.value);
+        split_line(output)
+    }
+}
 
 pub(crate) fn split_line(line: String) -> String {
     let break_estimate = line.len().div_ceil(74);
@@ -58,52 +70,9 @@ pub(crate) fn split_line(line: String) -> String {
     output
 }
 
-//
-// @see: https://tools.ietf.org/html/rfc5545#section-3.3.11
-//
-// `text = *(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)`
-//     Folded according to description above
-//
-// `ESCAPED-CHAR = ("\\" / "\;" / "\," / "\N" / "\n")`
-//     \\ encodes \, \N or \n encodes newline
-//     \; encodes ;, \, encodes ,
-//
-// `TSAFE-CHAR = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-5B /
-//              %x5D-7E / NON-US-ASCII`
-//     Any character except CONTROLs not needed by the current
-//     character set, DQUOTE, ";", ":", "\", ","
-//
-pub(crate) fn protect_param(param: &str) -> String {
-    // let len = param.len() - 1;
-    // starts and ends the param with quotes?
-    let in_quotes = param.len() > 1 && param.starts_with('"') && param.ends_with('"');
-
-    let mut escaped = String::with_capacity(param.len());
-    let mut previous_char = None;
-    for (pos, char) in param.chars().enumerate() {
-        match char {
-            '\n' => {
-                escaped.push_str("\\n");
-            }
-            '"' if !in_quotes || (pos > 0 && pos < param.len() - 1) => {
-                escaped.push_str("\\\"");
-            }
-            ';' | ':' | ',' | '\\' if !in_quotes && previous_char != Some('\\') => {
-                escaped.push('\\');
-                escaped.push(char)
-            }
-            _ => {
-                escaped.push(char);
-            }
-        }
-        previous_char = Some(char);
-    }
-    escaped
-}
-
 #[allow(unused)]
 mod should {
-    use super::{protect_param, split_line};
+    use super::split_line;
 
     #[test]
     fn split_line_75() {
@@ -150,62 +119,5 @@ mod should {
             text,
             split_line(text.replace("\r\n ", "").replace("\r\n", ""))
         );
-    }
-
-    #[test]
-    fn protect_chars_in_param() {
-        assert_eq!(
-            protect_param("\"value: in quotes;\""),
-            "\"value: in quotes;\""
-        );
-        assert_eq!(
-            protect_param("\"value, in quotes\""),
-            "\"value, in quotes\""
-        );
-        assert_eq!(
-            protect_param("value, \"with\" something"),
-            "value\\, \\\"with\\\" something"
-        );
-        assert_eq!(
-            protect_param("\"Directory; C:\\\\Programme\""),
-            "\"Directory; C:\\\\Programme\""
-        );
-        assert_eq!(protect_param("First\nSecond"), "First\\nSecond");
-        assert_eq!(
-            protect_param(
-                "\"42 Plantation St.\\nBaytown\\, LA 30314\\nUnited States o\r\nf America\""
-            ),
-            "\"42 Plantation St.\\nBaytown\\, LA 30314\\nUnited States o\r\\nf America\""
-        );
-        assert_eq!(protect_param("ÄÖÜßø"), "ÄÖÜßø");
-        assert_eq!(protect_param("\""), "\\\"");
-        assert_eq!(protect_param("ÄÖsÜa,ßø"), "ÄÖsÜa\\,ßø");
-    }
-}
-
-fn get_params(params: &ContentLineParams) -> String {
-    params
-        .0
-        .iter()
-        .map(|(name, values)| {
-            let value: String = values
-                .iter()
-                .map(|value| protect_param(value))
-                .join(&PARAM_VALUE_DELIMITER.to_string());
-            format!("{name}={value}")
-        })
-        .join(&PARAM_DELIMITER.to_string())
-}
-
-impl Emitter for ContentLine {
-    fn generate(&self) -> String {
-        let mut output = self.name.to_owned();
-        if !self.params.is_empty() {
-            output.push(PARAM_DELIMITER);
-            output.push_str(&get_params(&self.params));
-        }
-        output.push(VALUE_DELIMITER);
-        output.push_str(&self.value);
-        split_line(output)
     }
 }

@@ -1,39 +1,12 @@
-//! Parse the result of `LineReader` into parts.
-//!
-//! Split the result of `LineReader` into property. A property contains:
-//! - A name formated in uppercase.
-//! - An optional list of parameters represented by a vector of `(key/value)` tuple . The key is
-//!   formatted in uppercase and the value stay untouched.
-//! - A value stay untouched.
-//!
-//! It work for both the Vcard and Ical format.
-//!
-//! #### Warning
-//!   The parsers `ContentLineParser` only parse the content and set to uppercase the case-insensitive
-//!   fields. No checks are made on the fields validity.
-//!
-//! # Examples
-//!
-//! ```rust
-//! use std::fs::read_to_string;
-//!
-//! let buf = read_to_string("./tests/resources/vcard_input.vcf")
-//!     .unwrap();
-//!
-//! let reader = caldata::ContentLineParser::from_slice(buf.as_bytes());
-//!
-//! for line in reader {
-//!     println!("{:?}", line);
-//! }
-//! ```
-
-use derive_more::From;
 use std::borrow::Cow;
-use std::fmt;
 use std::iter::Iterator;
 
 use super::{BytesLines, Line, LineError, LineReader};
 use crate::{PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_DELIMITER};
+
+mod generator;
+mod params;
+pub use params::*;
 
 /// Error arising when trying to parse a content line
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
@@ -54,47 +27,6 @@ pub enum ContentLineError {
     LineError(#[from] LineError),
 }
 
-#[derive(Debug, Clone, Default, Eq, PartialEq, Hash, From)]
-pub struct ContentLineParams(pub(crate) Vec<(String, Vec<String>)>);
-
-impl ContentLineParams {
-    #[inline]
-    pub fn get_param(&self, name: &str) -> Option<&str> {
-        self.0
-            .iter()
-            .find(|(key, _)| name == key)
-            .and_then(|(_, value)| value.iter().map(String::as_ref).next())
-    }
-
-    #[inline]
-    pub fn get_tzid(&self) -> Option<&str> {
-        self.get_param("TZID")
-    }
-
-    #[inline]
-    pub fn get_value_type(&self) -> Option<&str> {
-        self.get_param("VALUE")
-    }
-
-    pub fn replace_param(&mut self, name: String, value: String) {
-        if let Some(pos) = self.0.iter().position(|(n, _)| n == &name) {
-            self.0[pos] = (name, vec![value]);
-        } else {
-            self.0.push((name, vec![value]));
-        }
-    }
-
-    #[inline]
-    pub fn remove(&mut self, name: &str) {
-        self.0.retain(|(n, _)| n != name);
-    }
-
-    #[inline]
-    pub fn is_empty(&self) -> bool {
-        self.0.is_empty()
-    }
-}
-
 /// A VCARD/ICAL property.
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
 pub struct ContentLine {
@@ -106,30 +38,8 @@ pub struct ContentLine {
     pub value: String,
 }
 
-impl fmt::Display for ContentLine {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "name: {}\nparams: {:?}\nvalue: {:?}",
-            self.name, self.params, self.value
-        )
-    }
-}
-
-pub struct ContentLineParser<'a, T: Iterator<Item = Cow<'a, [u8]>>>(LineReader<'a, T>);
-
-impl<'a> ContentLineParser<'a, BytesLines<'a>> {
-    pub fn from_slice(slice: &'a [u8]) -> Self {
-        ContentLineParser(LineReader::from_slice(slice))
-    }
-}
-
-impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
-    pub fn new(line_reader: LineReader<'a, T>) -> Self {
-        ContentLineParser(line_reader)
-    }
-
-    fn parse(&self, line: Line) -> Result<ContentLine, ContentLineError> {
+impl ContentLine {
+    pub fn parse_line(line: Line) -> Result<Self, ContentLineError> {
         let mut to_parse = line.as_str();
 
         // Find end of parameter name
@@ -172,7 +82,7 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
                     let Some((content, remainder)) = to_parse.split_once('"') else {
                         return Err(ContentLineError::MissingClosingQuote(line.number()));
                     };
-                    values.push(content.to_owned());
+                    values.push(unescape_param(content));
                     to_parse = remainder;
                 } else {
                     // This is a 'raw' value. (NAME;Foo=Bar:value)
@@ -187,7 +97,7 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
                     };
                     let (content, remainder) = to_parse.split_at(delim_pos);
 
-                    values.push(content.to_owned());
+                    values.push(unescape_param(content));
                     to_parse = remainder;
                 }
 
@@ -213,12 +123,50 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
     }
 }
 
+fn unescape_param(s: &str) -> String {
+    let mut result = String::with_capacity(s.len()); // Pre-allocate
+    let mut chars = s.chars();
+
+    while let Some(ch) = chars.next() {
+        if ch == '^' {
+            match chars.next() {
+                Some('n') => result.push('\n'),
+                Some('^') => result.push('^'),
+                Some('\'') => result.push('"'),
+                Some(other) => {
+                    result.push('^');
+                    result.push(other);
+                }
+                None => result.push('^'),
+            }
+        } else {
+            result.push(ch);
+        }
+    }
+
+    result
+}
+
+pub struct ContentLineParser<'a, T: Iterator<Item = Cow<'a, [u8]>>>(LineReader<'a, T>);
+
+impl<'a> ContentLineParser<'a, BytesLines<'a>> {
+    pub fn from_slice(slice: &'a [u8]) -> Self {
+        ContentLineParser(LineReader::from_slice(slice))
+    }
+}
+
+impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> ContentLineParser<'a, T> {
+    pub fn new(line_reader: LineReader<'a, T>) -> Self {
+        ContentLineParser(line_reader)
+    }
+}
+
 impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> Iterator for ContentLineParser<'a, T> {
     type Item = Result<ContentLine, ContentLineError>;
 
     fn next(&mut self) -> Option<Self::Item> {
         match self.0.next() {
-            Some(Ok(line)) => Some(self.parse(line)),
+            Some(Ok(line)) => Some(ContentLine::parse_line(line)),
             Some(Err(err)) => Some(Err(err.into())),
             None => None,
         }
