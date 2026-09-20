@@ -1,16 +1,27 @@
+[workspace.package]
+version = "0.18.0"
+edition = "2024"
+readme = "./README.md"
+repository = "https://github.com/lennart-k/caldata-rs"
+documentation = "https://docs.rs/caldata"
+homepage = "https://github.com/lennart-k/caldata-rs"
+license-file = "./LICENSE"
+keywords = ["ical", "vcard", "parser"]
+
+
 [package]
 authors = ["Lennart Kämmle", "Peltoche <dev@halium.fr>"]
 categories = ["parsing"]
 description = "Ical/Vcard parser for Rust"
-documentation = "https://docs.rs/caldata"
-homepage = "https://github.com/lennart-k/caldata-rs"
-keywords = ["ical", "vcard", "parser"]
-license-file = "./LICENSE"
 name = "caldata"
-readme = "./README.md"
-repository = "https://github.com/lennart-k/caldata-rs"
-version = "0.18.0"
-edition = "2024"
+keywords.workspace = true
+license-file.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme.workspace = true
+repository.workspace = true
+version.workspace = true
+edition.workspace = true
 
 [profile.bench]
 debug = true
@@ -19,12 +30,13 @@ debug = true
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin_include)'] }
 
 [dependencies]
+caldata_derive = { path = "./derive" }
 thiserror = "2.0"
 chrono-tz = { version = "0.10" }
 chrono = { version = "0.4" }
 regex = { version = "1.13" }
 lazy_static = { version = "1.5" }
-itertools = "0.15"
+itertools.workspace = true
 rkyv = { version = "0.8", optional = true }
 derive_more = { version = "2.1", features = [
   "display",
@@ -35,6 +47,15 @@ derive_more = { version = "2.1", features = [
 phf = { version = "0.14", features = ["macros"] }
 vtimezones-rs = { version = "0.3" }
 log = "0.4"
+strum = { version = "0.28", features = ["derive"] }
+paste = "1.0"
+
+[workspace.dependencies]
+syn = "3.0"
+quote = "1.0"
+proc-macro2 = "1.0"
+darling = "0.24"
+itertools = "0.15"
 
 [dev-dependencies]
 insta = { version = "1.48", features = ["filters"] }

@@ -56,26 +56,6 @@ impl CalendarInnerData {
         }
     }
 
-    pub fn mutable(self) -> CalendarInnerDataBuilder {
-        match self {
-            Self::Event(main, overrides) => CalendarInnerDataBuilder::Event(
-                std::iter::once(main.mutable())
-                    .chain(overrides.into_iter().map(Component::mutable))
-                    .collect(),
-            ),
-            Self::Todo(main, overrides) => CalendarInnerDataBuilder::Todo(
-                std::iter::once(main.mutable())
-                    .chain(overrides.into_iter().map(Component::mutable))
-                    .collect(),
-            ),
-            Self::Journal(main, overrides) => CalendarInnerDataBuilder::Journal(
-                std::iter::once(main.mutable())
-                    .chain(overrides.into_iter().map(Component::mutable))
-                    .collect(),
-            ),
-        }
-    }
-
     pub fn get_tzids(&self) -> HashSet<&str> {
         match self {
             Self::Event(main, overrides) => main
@@ -345,38 +325,19 @@ impl IcalCalendarObjectBuilder {
 impl Component for IcalCalendarObject {
     const NAMES: &[&str] = &["VCALENDAR"];
     type Builder = IcalCalendarObjectBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        IcalCalendarObjectBuilder {
-            properties: self.properties,
-            vtimezones: self.vtimezones,
-            inner: Some(self.inner.mutable()),
-        }
-    }
 }
 
 impl Component for IcalCalendarObjectBuilder {
     const NAMES: &[&str] = &["VCALENDAR"];
     type Builder = Self;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        self
-    }
 }
 
 impl ComponentMut for IcalCalendarObjectBuilder {
     type Verified = IcalCalendarObject;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
         self.properties.push(content_line);
+        Ok(())
     }
 
     fn remove_property(&mut self, name: &str) {

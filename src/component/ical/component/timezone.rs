@@ -2,7 +2,7 @@ use crate::{
     ContentLineParser,
     component::{Component, ComponentMut},
     parser::{ContentLine, ICalProperty, ParserError, ParserOptions},
-    property::{GetProperty, IcalDTSTARTProperty, IcalRRULEProperty, IcalTZRDATEProperty},
+    property::{IcalDTSTARTProperty, IcalRRULEProperty, IcalTZRDATEProperty},
     types::Tz,
 };
 use chrono::{DateTime, Utc};
@@ -22,16 +22,12 @@ pub struct IcalTimeZone<const VERIFIED: bool = true> {
 
 impl IcalTimeZone {
     pub fn get_tzid(&self) -> &str {
-        &self
-            .get_property("TZID")
-            .expect("we already verified this exists")
-            .value
+        todo!()
     }
 
     /// This is a common property containing a timezone identifier from the IANA TZDB
     pub fn get_lic_location(&self) -> Option<&str> {
-        self.get_property("X-LIC-LOCATION")
-            .map(|prop| prop.value.as_str())
+        todo!()
     }
 
     pub fn from_tzid(tzid: &str) -> Option<&Self> {
@@ -94,24 +90,14 @@ impl From<&IcalTimeZone> for Option<chrono_tz::Tz> {
 impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
     const NAMES: &[&str] = &["VTIMEZONE"];
     type Builder = IcalTimeZone<false>;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        IcalTimeZone::<false> {
-            properties: self.properties,
-            transitions: self.transitions,
-        }
-    }
 }
 
 impl ComponentMut for IcalTimeZone<false> {
     type Verified = IcalTimeZone;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
         self.properties.push(content_line);
+        Ok(())
     }
 
     fn remove_property(&mut self, name: &str) {
@@ -149,9 +135,10 @@ impl ComponentMut for IcalTimeZone<false> {
         _options: &ParserOptions,
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalTimeZone, ParserError> {
-        if self.get_property("TZID").is_none() {
-            return Err(ParserError::MissingProperty("TZID"));
-        }
+        todo!();
+        // if self.get_property("TZID").is_none() {
+        //     return Err(ParserError::MissingProperty("TZID"));
+        // }
 
         let verified = IcalTimeZone {
             properties: self.properties,
@@ -212,17 +199,6 @@ impl Component for IcalTimeZoneTransition {
             IcalTimeZoneTransitionType::DAYLIGHT => "DAYLIGHT",
         }
     }
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        IcalTimeZoneTransitionBuilder {
-            transition: self.transition,
-            properties: self.properties,
-        }
-    }
 }
 
 impl Component for IcalTimeZoneTransitionBuilder {
@@ -235,21 +211,14 @@ impl Component for IcalTimeZoneTransitionBuilder {
             IcalTimeZoneTransitionType::DAYLIGHT => "DAYLIGHT",
         }
     }
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        self
-    }
 }
 
 impl ComponentMut for IcalTimeZoneTransitionBuilder {
     type Verified = IcalTimeZoneTransition;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
         self.properties.push(content_line);
+        Ok(())
     }
 
     fn remove_property(&mut self, name: &str) {
