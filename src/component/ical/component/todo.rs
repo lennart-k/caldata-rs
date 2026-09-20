@@ -80,10 +80,6 @@ impl Component for IcalTodo {
     const NAMES: &[&str] = &["VTODO"];
     type Builder = IcalTodoBuilder;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
     fn mutable(self) -> Self::Builder {
         IcalTodoBuilder {
             properties: self.properties,
@@ -100,10 +96,6 @@ impl Component for IcalTodoBuilder {
     const NAMES: &[&str] = &["VTODO"];
     type Builder = IcalTodoBuilder;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
     fn mutable(self) -> Self::Builder {
         self
     }
@@ -112,8 +104,9 @@ impl Component for IcalTodoBuilder {
 impl ComponentMut for IcalTodoBuilder {
     type Verified = IcalTodo;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
         self.properties.push(content_line);
+        Ok(())
     }
 
     fn remove_property(&mut self, name: &str) {

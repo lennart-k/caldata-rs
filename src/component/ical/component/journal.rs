@@ -61,10 +61,6 @@ impl Component for IcalJournalBuilder {
     const NAMES: &[&str] = &["VJOURNAL"];
     type Builder = IcalJournalBuilder;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
     fn mutable(self) -> Self::Builder {
         self
     }
@@ -73,10 +69,6 @@ impl Component for IcalJournalBuilder {
 impl Component for IcalJournal {
     const NAMES: &[&str] = &["VJOURNAL"];
     type Builder = IcalJournalBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
 
     fn mutable(self) -> Self::Builder {
         IcalJournalBuilder {
@@ -88,8 +80,9 @@ impl Component for IcalJournal {
 impl ComponentMut for IcalJournalBuilder {
     type Verified = IcalJournal;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
         self.properties.push(content_line);
+        Ok(())
     }
 
     fn remove_property(&mut self, name: &str) {

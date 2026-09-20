@@ -28,10 +28,6 @@ impl Component for IcalAlarmBuilder {
     const NAMES: &[&str] = &["VALARM"];
     type Builder = IcalAlarmBuilder;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
     fn mutable(self) -> Self::Builder {
         self
     }
@@ -40,10 +36,6 @@ impl Component for IcalAlarmBuilder {
 impl Component for IcalAlarm {
     const NAMES: &[&str] = &["VALARM"];
     type Builder = IcalAlarmBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
 
     fn mutable(self) -> Self::Builder {
         IcalAlarmBuilder {
@@ -55,8 +47,9 @@ impl Component for IcalAlarm {
 impl ComponentMut for IcalAlarmBuilder {
     type Verified = IcalAlarm;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
         self.properties.push(content_line);
+        Ok(())
     }
 
     fn remove_property(&mut self, name: &str) {

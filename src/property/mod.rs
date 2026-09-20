@@ -31,25 +31,27 @@ pub trait GetProperty: Component {
         &self,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Vec<T>, ParserError> {
-        self.get_named_properties(T::NAME)
-            .map(|prop| ICalProperty::parse_prop(prop, timezones))
-            .collect::<Result<Vec<_>, _>>()
+        todo!();
+        // self.get_named_properties(T::NAME)
+        //     .map(|prop| ICalProperty::parse_prop(prop, timezones))
+        //     .collect::<Result<Vec<_>, _>>()
     }
 
     fn safe_get_optional<T: ICalProperty>(
         &self,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Option<T>, ParserError> {
-        let mut props = self.get_named_properties(T::NAME);
-        let Some(prop) = props.next() else {
-            return Ok(None);
-        };
-        if props.next().is_some() {
-            return Err(ParserError::PropertyConflict(
-                "Multiple instances of property",
-            ));
-        }
-        ICalProperty::parse_prop(prop, timezones).map(Some)
+        todo!();
+        // let mut props = self.get_named_properties(T::NAME);
+        // let Some(prop) = props.next() else {
+        //     return Ok(None);
+        // };
+        // if props.next().is_some() {
+        //     return Err(ParserError::PropertyConflict(
+        //         "Multiple instances of property",
+        //     ));
+        // }
+        // ICalProperty::parse_prop(prop, timezones).map(Some)
     }
 
     fn safe_get_required<T: ICalProperty>(
@@ -58,10 +60,6 @@ pub trait GetProperty: Component {
     ) -> Result<T, ParserError> {
         self.safe_get_optional(timezones)?
             .ok_or(ParserError::MissingProperty(T::NAME))
-    }
-
-    fn has_prop<T: ICalProperty>(&self) -> bool {
-        self.get_property(T::NAME).is_some()
     }
 }
 

@@ -66,10 +66,6 @@ impl Component for IcalEventBuilder {
     const NAMES: &[&str] = &["VEVENT"];
     type Builder = Self;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
     fn mutable(self) -> Self::Builder {
         self
     }
@@ -78,8 +74,9 @@ impl Component for IcalEventBuilder {
 impl ComponentMut for IcalEventBuilder {
     type Verified = IcalEvent;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
         self.properties.push(content_line);
+        Ok(())
     }
 
     fn remove_property(&mut self, name: &str) {
@@ -130,11 +127,12 @@ impl ComponentMut for IcalEventBuilder {
         }
 
         // OPTIONAL, but MUTUALLY EXCLUSIVE
-        if self.has_prop::<IcalDTENDProperty>() && self.has_prop::<IcalDURATIONProperty>() {
-            return Err(ParserError::PropertyConflict(
-                "both DTEND and DURATION are defined",
-            ));
-        }
+        todo!();
+        // if self.has_prop::<IcalDTENDProperty>() && self.has_prop::<IcalDURATIONProperty>() {
+        //     return Err(ParserError::PropertyConflict(
+        //         "both DTEND and DURATION are defined",
+        //     ));
+        // }
         let dtend = self.safe_get_optional::<IcalDTENDProperty>(timezones)?;
         let duration = self.safe_get_optional::<IcalDURATIONProperty>(timezones)?;
 

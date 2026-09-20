@@ -48,10 +48,6 @@ impl Component for IcalCalendar {
     const NAMES: &[&str] = &["VCALENDAR"];
     type Builder = IcalCalendarBuilder;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
     fn mutable(self) -> Self::Builder {
         IcalCalendarBuilder {
             properties: self.properties,
@@ -74,10 +70,6 @@ impl Component for IcalCalendarBuilder {
     const NAMES: &[&str] = &["VCALENDAR"];
     type Builder = IcalCalendarBuilder;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
     fn mutable(self) -> Self::Builder {
         self
     }
@@ -86,8 +78,9 @@ impl Component for IcalCalendarBuilder {
 impl ComponentMut for IcalCalendarBuilder {
     type Verified = IcalCalendar;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
         self.properties.push(content_line);
+        Ok(())
     }
 
     fn remove_property(&mut self, name: &str) {

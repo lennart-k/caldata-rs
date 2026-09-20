@@ -46,10 +46,6 @@ impl Component for IcalEvent {
     const NAMES: &[&str] = &["VEVENT"];
     type Builder = IcalEventBuilder;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
     fn mutable(self) -> Self::Builder {
         IcalEventBuilder {
             properties: self.properties,

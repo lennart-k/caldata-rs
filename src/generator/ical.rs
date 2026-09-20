@@ -25,7 +25,7 @@ macro_rules! generate_emitter {
             fn generate(&self) -> String {
                 let compname = &crate::component::Component::get_comp_name(self);
                 let mut text = format!("BEGIN:{compname}\r\n");
-                text += &crate::component::Component::get_properties(self).generate();
+                // text += &crate::component::Component::get_properties(self).generate();
                 $(text += &self.$child.generate();)*
                 text + "END:" + compname + "\r\n"
             }
