@@ -49,12 +49,12 @@ mod tests {
     use rstest::rstest;
 
     macro_rules! set_snapshot_suffix {
-    ($($expr:expr),*) => {
-        let mut settings = insta::Settings::clone_current();
-        settings.set_snapshot_suffix(format!($($expr,)*));
-        let _guard = settings.bind_to_scope();
+        ($($expr:expr),*) => {
+            let mut settings = insta::Settings::clone_current();
+            settings.set_snapshot_suffix(format!($($expr,)*));
+            let _guard = settings.bind_to_scope();
+        }
     }
-}
 
     #[test]
     fn test_sort_output_lines() {
