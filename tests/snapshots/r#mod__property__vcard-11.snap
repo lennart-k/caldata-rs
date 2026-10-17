@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: FN
-params: ContentLineParams([])
-value: "J. Doe"

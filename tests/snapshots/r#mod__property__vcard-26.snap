@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: REV
-params: ContentLineParams([])
-value: "19951031T222710Z"

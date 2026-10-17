@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: CALURI
-params: ContentLineParams([("MEDIATYPE", ["text/calendar"])])
-value: "ftp://ftp.example.com/calA.ics"

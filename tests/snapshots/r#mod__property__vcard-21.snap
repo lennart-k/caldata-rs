@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: NICKNAME
-params: ContentLineParams([("TYPE", ["work"])])
-value: "Boss"

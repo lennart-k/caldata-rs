@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: ADR
-params: ContentLineParams([("TYPE", ["work"])])
-value: "pobox;apt;street;city;state;zipcode;country"

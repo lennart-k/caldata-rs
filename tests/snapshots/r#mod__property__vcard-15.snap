@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: KEY
-params: ContentLineParams([])
-value: "http://www.example.com/keys/jdoe.cer"

@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: ROLE
-params: ContentLineParams([])
-value: "Project Leader"

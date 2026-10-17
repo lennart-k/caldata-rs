@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: END
-params: ContentLineParams([])
-value: "VCARD"

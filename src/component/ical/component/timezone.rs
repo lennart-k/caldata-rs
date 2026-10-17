@@ -69,7 +69,6 @@ impl IcalTimeZone {
     }
 }
 
-#[cfg(feature = "chrono-tz")]
 impl From<&IcalTimeZone> for Option<chrono_tz::Tz> {
     fn from(value: &IcalTimeZone) -> Self {
         use crate::types::get_proprietary_tzid;

@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: IMPP
-params: ContentLineParams([("PREF", ["1"])])
-value: "xmpp:alice@example.com"

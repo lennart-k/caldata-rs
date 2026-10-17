@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: FBURL
-params: ContentLineParams([("MEDIATYPE", ["text/calendar"])])
-value: "ftp://example.com/busy/project-a.ifb"

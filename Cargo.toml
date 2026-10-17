@@ -20,7 +20,7 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin_include)'] }
 
 [dependencies]
 thiserror = "2.0"
-chrono-tz = { version = "0.10", optional = true }
+chrono-tz = { version = "0.10" }
 chrono = { version = "0.4" }
 regex = { version = "1.13" }
 lazy_static = { version = "1.5" }
@@ -47,8 +47,7 @@ name = "parse_benchmark"
 harness = false
 
 [features]
-default = ["chrono-tz"]
-chrono-tz = ["dep:chrono-tz"]
+default = []
 test = []
 rkyv = ["dep:rkyv"]
 bench = []

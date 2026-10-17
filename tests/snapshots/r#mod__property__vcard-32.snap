@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: TZ
-params: ContentLineParams([("VALUE", ["utc-offset"])])
-value: "-0500"

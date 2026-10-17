@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: BEGIN
-params: ContentLineParams([])
-value: "VALARM"

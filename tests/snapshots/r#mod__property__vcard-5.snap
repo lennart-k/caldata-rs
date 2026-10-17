@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: BDAY
-params: ContentLineParams([])
-value: "--0203"

@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: CALADRURI
-params: ContentLineParams([])
-value: "http://example.com/calendar/jdoe"

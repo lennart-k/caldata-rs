@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: ORG
-params: ContentLineParams([])
-value: "ABC\\, Inc.;North American Division;Marketing"

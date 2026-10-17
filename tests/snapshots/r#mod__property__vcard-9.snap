@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: EMAIL
-params: ContentLineParams([("TYPE", ["work"])])
-value: "jqpublic@xyz.example.com"

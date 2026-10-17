@@ -7,6 +7,8 @@ use crate::{PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_
 mod generator;
 mod params;
 pub use params::*;
+#[cfg(test)]
+mod tests;
 
 /// Error arising when trying to parse a content line
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]

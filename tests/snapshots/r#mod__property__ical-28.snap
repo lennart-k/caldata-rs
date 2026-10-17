@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: X-BAZ
-params: ContentLineParams([("PARAM1", ["VAL1:FOO"]), ("PARAM2", ["VAL2"])])
-value: "BAZ;BAR"

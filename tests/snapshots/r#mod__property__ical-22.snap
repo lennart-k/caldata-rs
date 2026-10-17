@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: ATTENDEE
-params: ContentLineParams([("DELEGATED-TO", ["mailto:foo7@bar"]), ("CN", ["Foo, Bar"])])
-value: "mailto:foo5@bar"

@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: SUMMARY
-params: ContentLineParams([])
-value: "escaped\\, comma and\\; semicolon\\nnewline"

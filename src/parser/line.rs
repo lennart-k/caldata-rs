@@ -208,4 +208,23 @@ mod tests {
             .unwrap();
         assert_eq!(parsed_lines, lines);
     }
+
+    #[test]
+    fn multioctet_line_wrapping() {
+        let input = b"\xc3\r\n \xbc";
+        let line = LineReader::from_slice(input.as_slice())
+            .next()
+            .unwrap()
+            .unwrap();
+        assert_eq!(line.as_str(), "ü");
+    }
+
+    #[rstest]
+    #[case(b"\xc3\r\n \x00")]
+    #[case(b"\xc3\r\n ")]
+    #[case(b"\xc3 \r\n \xbc")]
+    #[case(b"\xc3 \r\n \n\xbc")]
+    fn invalid_lines(#[case] input: &[u8]) {
+        assert!(LineReader::from_slice(input).next().unwrap().is_err());
+    }
 }

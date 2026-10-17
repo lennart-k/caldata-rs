@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: CALSCALE
-params: ContentLineParams([])
-value: "GREGORIAN"

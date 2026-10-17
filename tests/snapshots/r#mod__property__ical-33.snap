@@ -1,7 +1,0 @@
----
-source: tests/mod.rs
-expression: prop
----
-name: PRODID
-params: ContentLineParams([])
-value: "-//Example Inc.//Example Calendar//EN"
