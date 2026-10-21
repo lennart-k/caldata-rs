@@ -5,12 +5,13 @@ use crate::{
 use chrono::{Datelike, NaiveDate};
 use std::{collections::HashMap, sync::OnceLock};
 
-static RE_DATE: OnceLock<[regex::Regex; 4]> = OnceLock::new();
+static RE_DATE: OnceLock<Vec<regex::Regex>> = OnceLock::new();
 
 #[inline]
 fn re_date() -> &'static [regex::Regex] {
     RE_DATE.get_or_init(|| {
-        [
+        #[allow(unused_mut)]
+        let mut patterns = vec![
             // Reduced precision basic notation
             regex::Regex::new(r"^(?<year>\d{4})(((?<month>\d{2})(?<day>\d{2}))?)?$").unwrap(),
             // Reduced precision notation notation
@@ -21,7 +22,18 @@ fn re_date() -> &'static [regex::Regex] {
                 .unwrap(),
             // Truncated extended notation
             regex::Regex::new(r"^(?:(?<year>\d{4})|-)-(?<month>\d{2})-(?<day>\d{2})$").unwrap(),
-        ]
+        ];
+        // Tried only after every strict pattern has failed, so enabling the feature cannot change
+        // how an already-valid value parses. Extended notation only: in basic notation the width IS
+        // the delimiter, so `199564` is genuinely ambiguous and stays rejected.
+        #[cfg(feature = "lenient-dates")]
+        patterns.extend([
+            // Unpadded month/day, reduced precision: `1995-6-4`, `1995-6`
+            regex::Regex::new(r"^(?<year>\d{4})-(?<month>\d{1,2})(?:-(?<day>\d{1,2}))?$").unwrap(),
+            // Unpadded month/day, truncated: `--6-4`
+            regex::Regex::new(r"^--(?<month>\d{1,2})-(?<day>\d{1,2})$").unwrap(),
+        ]);
+        patterns
     })
 }
 
@@ -162,7 +174,51 @@ mod tests {
     #[case("19850432")]
     #[case("19851422")]
     #[case("198514222")]
+    // Unpadded components stay invalid unless `lenient-dates` is enabled.
+    #[cfg_attr(not(feature = "lenient-dates"), case("1985-4-12"))]
+    #[cfg_attr(not(feature = "lenient-dates"), case("1985-04-2"))]
+    #[cfg_attr(not(feature = "lenient-dates"), case("--4-12"))]
     fn test_parse_date_invalid(#[case] input: &str) {
+        assert!(PartialDate::parse(input).is_err());
+    }
+
+    /// Some address books write an unpadded month or day in extended notation - `1995-6-4` instead
+    /// of `1995-06-04`. It is invalid per ISO 8601, and rejecting it is correct, but a CardDAV
+    /// server that does so cannot store the contact at all.
+    ///
+    /// The parsed value is a normal `PartialDate`, so `Value::value()` renders it zero-padded.
+    /// Note that this does not rewrite the card: `Vcard::generate()` re-emits the original content
+    /// line, so the deviation is preserved in the source. The feature is about being able to READ
+    /// such a card, not about correcting it.
+    #[cfg(feature = "lenient-dates")]
+    #[rstest]
+    #[case("1985-4-12", PartialDate{year: Some(1985), month: Some(4), day: Some(12)}, "1985-04-12")]
+    #[case("1985-04-2", PartialDate{year: Some(1985), month: Some(4), day: Some(2)}, "1985-04-02")]
+    #[case("1985-4-2",  PartialDate{year: Some(1985), month: Some(4), day: Some(2)}, "1985-04-02")]
+    #[case("1985-4",    PartialDate{year: Some(1985), month: Some(4), ..Default::default()}, "1985-04")]
+    #[case("--4-12",    PartialDate{month: Some(4), day: Some(12), ..Default::default()}, "--0412")]
+    fn test_parse_date_lenient(
+        #[case] input: &str,
+        #[case] value: PartialDate,
+        #[case] normalised: &str,
+    ) {
+        let parsed = PartialDate::parse(input).unwrap();
+        assert_eq!(parsed, value);
+        // Round-trips to the strict form, so a lenient parse never propagates the deviation.
+        assert_eq!(parsed.value(), normalised);
+        assert_eq!(PartialDate::parse(&parsed.value()).unwrap(), value);
+    }
+
+    /// Enabling the feature must not change how a strictly-valid value parses, and must not make
+    /// genuinely ambiguous input parse: in basic notation the width IS the delimiter.
+    #[cfg(feature = "lenient-dates")]
+    #[rstest]
+    #[case("199564")]
+    #[case("19850432")]
+    #[case("19851422")]
+    #[case("1985-13-01")]
+    #[case("1985-1-32")]
+    fn test_parse_date_lenient_still_invalid(#[case] input: &str) {
         assert!(PartialDate::parse(input).is_err());
     }
 }
