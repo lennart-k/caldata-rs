@@ -32,4 +32,7 @@ pub mod component;
 use crate::parser::ComponentParser;
 use component::VcardContact;
 
+#[cfg(test)]
+mod tests;
+
 pub type VcardParser<'a, I> = ComponentParser<'a, VcardContact, I>;

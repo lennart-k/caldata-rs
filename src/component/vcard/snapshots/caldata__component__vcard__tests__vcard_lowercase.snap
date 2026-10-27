@@ -1,5 +1,5 @@
 ---
-source: tests/mod.rs
+source: src/component/vcard/tests.rs
 expression: card
 ---
 VcardContact {

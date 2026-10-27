@@ -137,9 +137,7 @@ pub mod rfc7809 {
 }
 
 pub mod parser {
-    use caldata::{
-        IcalObjectParser, IcalParser, VcardParser, component::IcalCalendar, generator::Emitter,
-    };
+    use caldata::{IcalObjectParser, IcalParser, component::IcalCalendar, generator::Emitter};
     use itertools::Itertools;
     use rstest::rstest;
 
@@ -212,34 +210,6 @@ pub mod parser {
                 str_normalise_prop_order(&reference.generate()),
                 str_normalise_prop_order(&reimported.generate())
             );
-        }
-    }
-
-    #[test]
-    fn vcard() {
-        let input = include_str!("./resources/vcard_input.vcf");
-        let reader = VcardParser::from_slice(input.as_bytes());
-        let card = reader.expect_one().unwrap();
-        assert_eq!(card.get_uid(), Some("jdoelaskdjlaksjd"))
-    }
-
-    #[test]
-    fn vcard_lowercase() {
-        let input = include_str!("./resources/vcard_lowercase.vcf");
-        let reader = VcardParser::from_slice(input.as_bytes());
-        for res in reader {
-            let card = res.unwrap();
-            insta::assert_debug_snapshot!(card);
-            similar_asserts::assert_eq!(card.generate().to_lowercase(), input.to_lowercase());
-        }
-    }
-
-    #[test]
-    fn vcard_invalid() {
-        let input = include_str!("./resources/vcard_invalid.vcf");
-        let reader = VcardParser::from_slice(input.as_bytes());
-        for res in reader {
-            assert!(res.is_err());
         }
     }
 }
