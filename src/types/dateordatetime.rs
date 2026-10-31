@@ -45,7 +45,9 @@ impl CalDateOrDateTime {
         Ok(match prop.params.get_value_type().unwrap_or(default_type) {
             "DATE" => Self::Date(CalDate::parse_prop(prop, timezones)?),
             "DATE-TIME" => Self::DateTime(CalDateTime::parse_prop(prop, timezones)?),
-            _ => return Err(ParserError::InvalidPropertyType(prop.generate())),
+            _ => {
+                return Err(ParserError::InvalidPropertyType(prop.generate_string()));
+            }
         })
     }
 

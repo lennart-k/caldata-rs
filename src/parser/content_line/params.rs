@@ -1,3 +1,5 @@
+use std::fmt::Write;
+
 use derive_more::From;
 use itertools::Itertools;
 
@@ -45,21 +47,20 @@ impl ContentLineParams {
 }
 
 impl Emitter for ContentLineParams {
-    fn generate(&self) -> String {
-        if self.is_empty() {
-            return "".to_owned();
+    fn generate<W: Write>(&self, w: &mut W) -> Result<(), std::fmt::Error> {
+        for (i, (name, values)) in self.0.iter().enumerate() {
+            if i > 0 {
+                w.write_char(PARAM_DELIMITER)?;
+            }
+            w.write_str(name)?;
+            w.write_char('=')?;
+            let value: String = values
+                .iter()
+                .map(|value| protect_param(value, false))
+                .join(&PARAM_VALUE_DELIMITER.to_string());
+            w.write_str(&value)?;
         }
-
-        self.0
-            .iter()
-            .map(|(name, values)| {
-                let value: String = values
-                    .iter()
-                    .map(|value| protect_param(value, false))
-                    .join(&PARAM_VALUE_DELIMITER.to_string());
-                format!("{name}={value}")
-            })
-            .join(&PARAM_DELIMITER.to_string())
+        Ok(())
     }
 }
 
@@ -147,7 +148,7 @@ mod tests {
     #[case("a\n:n", "\"a^n:n\"")]
     fn test_generate_params_unquoted(#[case] value: &str, #[case] escaped: &str) {
         assert_eq!(
-            ContentLineParams(vec![("HALLO".to_owned(), vec![value.to_owned()])]).generate(),
+            ContentLineParams(vec![("HALLO".to_owned(), vec![value.to_owned()])]).generate_string(),
             format!("HALLO={escaped}")
         );
     }
@@ -161,7 +162,7 @@ mod tests {
                 number: 1,
             })
             .unwrap()
-            .generate(),
+            .generate_string(),
             format!("{content_line}\r\n")
         )
     }

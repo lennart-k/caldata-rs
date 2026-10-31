@@ -28,6 +28,6 @@ mod tests {
         timezones.insert("W. Europe Standard Time".to_owned(), None);
         let prop = IcalDTSTARTProperty::parse_prop(&content_line, Some(&timezones)).unwrap();
         let roundtrip: ContentLine = prop.into();
-        similar_asserts::assert_eq!(roundtrip.generate(), input);
+        similar_asserts::assert_eq!(roundtrip.generate_string(), input);
     }
 }

@@ -349,7 +349,7 @@ mod tests {
             .unwrap()
             .clone()
             .truncate(Utc.with_ymd_and_hms(1970, 1, 1, 0, 0, 0).unwrap());
-        assert_snapshot!(format!("{case}_trunc"), tz.generate());
+        assert_snapshot!(format!("{case}_trunc"), tz.generate_string());
     }
 
     #[rstest]
@@ -358,7 +358,7 @@ mod tests {
     fn test_timezone(#[case] tzid: &str) {
         let tz = IcalTimeZone::from_tzid(tzid).unwrap();
         assert_eq!(tz.get_tzid(), tzid);
-        assert!(tz.generate().contains(tzid));
+        assert!(tz.generate_string().contains(tzid));
     }
 
     #[test]
@@ -366,7 +366,7 @@ mod tests {
         for tzid in vtimezones_rs::VTIMEZONES.keys() {
             let tz = IcalTimeZone::from_tzid(tzid).unwrap();
             assert_eq!(&tz.get_tzid(), tzid);
-            assert!(tz.generate().contains(tzid));
+            assert!(tz.generate_string().contains(tzid));
         }
     }
 }

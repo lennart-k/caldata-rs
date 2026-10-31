@@ -63,7 +63,7 @@ fn benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("comps_serialise");
     let cal = parse_ical();
     group.bench_function("ics serialise ical_everything.ics", |b| {
-        b.iter(|| cal.generate())
+        b.iter(|| cal.generate_string())
     });
     // #[cfg(feature = "rkyv")]
     // c.bench_function("rkyv serialise ical_everything.ics", |b| {

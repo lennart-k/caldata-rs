@@ -117,7 +117,7 @@ impl DateOrDateTimeOrPeriod {
                 prop, timezones, value_type,
             )?)),
             "PERIOD" => Ok(Self::Period(Period::parse_prop(prop, timezones)?)),
-            _ => Err(ParserError::InvalidPropertyType(prop.generate())),
+            _ => Err(ParserError::InvalidPropertyType(prop.generate_string())),
         }
     }
 

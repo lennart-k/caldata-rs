@@ -194,7 +194,7 @@ mod tests {
             .with_summary("Hello World!".to_string())
             .build(&ParserOptions { rfc7809: false }, None)
             .unwrap();
-        insta::assert_snapshot!(ical_event.generate(), @r"
+        insta::assert_snapshot!(ical_event.generate_string(), @r"
         BEGIN:VEVENT
         DTSTAMP:20260628T100312Z
         DTSTART:20260628T100312Z
