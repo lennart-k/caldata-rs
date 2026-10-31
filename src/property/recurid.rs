@@ -30,7 +30,7 @@ impl ICalProperty for IcalRECURIDProperty {
         let range = match prop.params.get_param("RANGE") {
             Some("THISANDFUTURE") => RecurIdRange::ThisAndFuture,
             None => RecurIdRange::This,
-            _ => return Err(ParserError::InvalidPropertyType(prop.generate())),
+            _ => return Err(ParserError::InvalidPropertyType(prop.generate_string())),
         };
         Ok(Self(dt, prop.params.clone(), range))
     }
@@ -86,6 +86,6 @@ mod tests {
             .unwrap();
         let prop = IcalRECURIDProperty::parse_prop(&content_line, None).unwrap();
         let roundtrip: ContentLine = prop.into();
-        similar_asserts::assert_eq!(roundtrip.generate(), input);
+        similar_asserts::assert_eq!(roundtrip.generate_string(), input);
     }
 }

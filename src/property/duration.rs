@@ -19,6 +19,6 @@ mod tests {
             .unwrap();
         let prop = IcalDURATIONProperty::parse_prop(&content_line, None).unwrap();
         let roundtrip: ContentLine = prop.into();
-        similar_asserts::assert_eq!(roundtrip.generate(), input);
+        similar_asserts::assert_eq!(roundtrip.generate_string(), input);
     }
 }

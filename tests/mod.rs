@@ -36,7 +36,7 @@ pub mod calendar_object {
         for (g_res, res) in generic_reader.zip(reader) {
             let g_cal = g_res.unwrap();
             let cal = res.unwrap();
-            similar_asserts::assert_eq!(g_cal.generate(), cal.generate());
+            similar_asserts::assert_eq!(g_cal.generate_string(), cal.generate_string());
             similar_asserts::assert_eq!(cal.get_tzids().iter().sorted().join(","), tzids);
         }
     }
@@ -84,7 +84,7 @@ pub mod calendar_object {
             let cal = res.unwrap();
             let recurrence = cal.expand_recurrence(None, None).unwrap();
             assert!(recurrence.get_tzids().is_empty());
-            insta::assert_snapshot!(format!("{i}_ics"), recurrence.generate());
+            insta::assert_snapshot!(format!("{i}_ics"), recurrence.generate_string());
             insta::assert_debug_snapshot!(format!("{i}_data"), recurrence.get_inner());
         }
     }
@@ -116,7 +116,7 @@ pub mod rfc7809 {
             .with_options(ParserOptions { rfc7809: true });
 
         let cal = reader.expect_one().unwrap();
-        insta::assert_snapshot!(cal.generate());
+        insta::assert_snapshot!(cal.generate_string());
 
         let reader = IcalParser::from_slice(input.as_bytes());
         assert!(reader.expect_one().is_err());
@@ -124,7 +124,7 @@ pub mod rfc7809 {
             IcalParser::from_slice(input.as_bytes()).with_options(ParserOptions { rfc7809: true });
 
         let cal2 = reader.expect_one().unwrap();
-        insta::assert_snapshot!("fullcal", cal2.generate());
+        insta::assert_snapshot!("fullcal", cal2.generate_string());
     }
 
     #[test]
@@ -168,7 +168,7 @@ pub mod parser {
     fn ical_roundtrip(#[case] ical: &str) {
         let reader = IcalParser::from_slice(ical.as_bytes());
         let cals: Vec<IcalCalendar> = reader.map(Result::unwrap).collect();
-        similar_asserts::assert_eq!(cals.iter().map(Emitter::generate).join(""), ical);
+        similar_asserts::assert_eq!(cals.iter().map(Emitter::generate_string).join(""), ical);
     }
 
     #[test]
@@ -190,7 +190,7 @@ pub mod parser {
             vec![cal1.to_owned(), cal2.to_owned(), cal3.to_owned()],
             vec![],
         )
-        .generate();
+        .generate_string();
         insta::assert_snapshot!(export);
         // Ensure that exported calendar is valid
         let roundtrip_cal = IcalParser::from_slice(export.as_bytes())
@@ -207,8 +207,8 @@ pub mod parser {
             reference.properties = vec![];
             reimported.properties = vec![];
             similar_asserts::assert_eq!(
-                str_normalise_prop_order(&reference.generate()),
-                str_normalise_prop_order(&reimported.generate())
+                str_normalise_prop_order(&reference.generate_string()),
+                str_normalise_prop_order(&reimported.generate_string())
             );
         }
     }

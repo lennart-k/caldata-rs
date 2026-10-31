@@ -34,7 +34,7 @@ mod tests {
         timezones.insert("America/New_York".to_owned(), None);
         let prop = IcalRDATEProperty::parse_prop(&content_line, Some(&timezones)).unwrap();
         let roundtrip: ContentLine = prop.into();
-        let roundtrip = roundtrip.generate();
+        let roundtrip = roundtrip.generate_string();
         similar_asserts::assert_eq!(
             roundtrip.trim().trim_end_matches(','),
             input.trim().trim_end_matches(',')

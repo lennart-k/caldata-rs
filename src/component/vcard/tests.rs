@@ -15,7 +15,7 @@ fn vcard_lowercase() {
     for res in reader {
         let card = res.unwrap();
         insta::assert_debug_snapshot!(card);
-        similar_asserts::assert_eq!(card.generate().to_lowercase(), input.to_lowercase());
+        similar_asserts::assert_eq!(card.generate_string().to_lowercase(), input.to_lowercase());
     }
 }
 

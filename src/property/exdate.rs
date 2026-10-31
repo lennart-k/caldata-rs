@@ -29,6 +29,6 @@ mod tests {
         timezones.insert("America/New_York".to_owned(), None);
         let prop = IcalEXDATEProperty::parse_prop(&content_line, Some(&timezones)).unwrap();
         let roundtrip: ContentLine = prop.into();
-        similar_asserts::assert_eq!(roundtrip.generate(), input);
+        similar_asserts::assert_eq!(roundtrip.generate_string(), input);
     }
 }

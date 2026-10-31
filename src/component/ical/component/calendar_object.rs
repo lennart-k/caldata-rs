@@ -13,6 +13,7 @@ use chrono::{DateTime, Utc};
 use std::{
     borrow::Cow,
     collections::{BTreeMap, HashMap, HashSet},
+    fmt::Write,
 };
 
 #[derive(Debug, Clone)]
@@ -492,17 +493,27 @@ impl ComponentMut for IcalCalendarObjectBuilder {
 }
 
 impl Emitter for CalendarInnerData {
-    fn generate(&self) -> String {
+    fn generate<W: Write>(&self, w: &mut W) -> std::fmt::Result {
         match self {
             Self::Event(main, overrides) => {
-                main.generate() + &overrides.iter().map(Emitter::generate).collect::<String>()
+                main.generate(w)?;
+                for over in overrides {
+                    over.generate(w)?;
+                }
             }
             Self::Todo(main, overrides) => {
-                main.generate() + &overrides.iter().map(Emitter::generate).collect::<String>()
+                main.generate(w)?;
+                for over in overrides {
+                    over.generate(w)?;
+                }
             }
             Self::Journal(main, overrides) => {
-                main.generate() + &overrides.iter().map(Emitter::generate).collect::<String>()
+                main.generate(w)?;
+                for over in overrides {
+                    over.generate(w)?;
+                }
             }
         }
+        Ok(())
     }
 }
