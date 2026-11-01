@@ -1,7 +1,6 @@
 use chrono::DateTime;
 
 use crate::{
-    ContentLineParser,
     component::{Component, ComponentMut, IcalAlarmBuilder, IcalEvent},
     parser::{ContentLine, ParserError, ParserOptions},
     property::{
@@ -11,6 +10,7 @@ use crate::{
         IcalUIDProperty,
     },
     types::{CalDateOrDateTime, CalDateTime, Tz},
+    ContentLineParser,
 };
 use std::{
     borrow::Cow,
@@ -65,21 +65,14 @@ impl IcalEventBuilder {
 impl Component for IcalEventBuilder {
     const NAMES: &[&str] = &["VEVENT"];
     type Builder = Self;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        self
-    }
 }
 
 impl ComponentMut for IcalEventBuilder {
     type Verified = IcalEvent;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
         self.properties.push(content_line);
+        Ok(())
     }
 
     fn remove_property(&mut self, name: &str) {
@@ -116,10 +109,9 @@ impl ComponentMut for IcalEventBuilder {
         let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;
         // REQUIRED if METHOD not specified:
         // For now just ensure that no METHOD property exists
-        assert!(
-            self.safe_get_optional::<IcalMETHODProperty>(timezones)?
-                .is_none()
-        );
+        assert!(self
+            .safe_get_optional::<IcalMETHODProperty>(timezones)?
+            .is_none());
         let dtstart: IcalDTSTARTProperty = self.safe_get_required(timezones)?;
 
         // OPTIONAL, but NOT MORE THAN ONCE: class / created / description / geo / last-mod / location / organizer / priority / seq / status / summary / transp / url / recurid / rrule
@@ -130,11 +122,12 @@ impl ComponentMut for IcalEventBuilder {
         }
 
         // OPTIONAL, but MUTUALLY EXCLUSIVE
-        if self.has_prop::<IcalDTENDProperty>() && self.has_prop::<IcalDURATIONProperty>() {
-            return Err(ParserError::PropertyConflict(
-                "both DTEND and DURATION are defined",
-            ));
-        }
+        todo!();
+        // if self.has_prop::<IcalDTENDProperty>() && self.has_prop::<IcalDURATIONProperty>() {
+        //     return Err(ParserError::PropertyConflict(
+        //         "both DTEND and DURATION are defined",
+        //     ));
+        // }
         let dtend = self.safe_get_optional::<IcalDTENDProperty>(timezones)?;
         let duration = self.safe_get_optional::<IcalDURATIONProperty>(timezones)?;
 

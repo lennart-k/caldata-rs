@@ -47,47 +47,19 @@ pub type IcalCalendarBuilder = IcalCalendar<
 impl Component for IcalCalendar {
     const NAMES: &[&str] = &["VCALENDAR"];
     type Builder = IcalCalendarBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        IcalCalendarBuilder {
-            properties: self.properties,
-            events: self.events.into_iter().map(Component::mutable).collect(),
-            alarms: self.alarms.into_iter().map(Component::mutable).collect(),
-            todos: self.todos.into_iter().map(Component::mutable).collect(),
-            journals: self.journals.into_iter().map(Component::mutable).collect(),
-            free_busys: self
-                .free_busys
-                .into_iter()
-                .map(Component::mutable)
-                .collect(),
-            vtimezones: self.vtimezones,
-            timezones: self.timezones,
-        }
-    }
 }
 
 impl Component for IcalCalendarBuilder {
     const NAMES: &[&str] = &["VCALENDAR"];
     type Builder = IcalCalendarBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        self
-    }
 }
 
 impl ComponentMut for IcalCalendarBuilder {
     type Verified = IcalCalendar;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
         self.properties.push(content_line);
+        Ok(())
     }
 
     fn remove_property(&mut self, name: &str) {

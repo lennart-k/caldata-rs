@@ -29,10 +29,10 @@ macro_rules! generate_emitter {
                 w.write_str("BEGIN:")?;
                 w.write_str(compname)?;
                 w.write_str("\r\n")?;
-                for property in &self.properties {
-                    property.generate(w)?;
-                }
-                $(self.$child.generate(w)?;)*
+                // for property in &self.properties {
+                //     property.generate(w)?;
+                // }
+                // $(self.$child.generate(w)?;)*
                 w.write_str("END:")?;
                 w.write_str(compname)?;
                 w.write_str("\r\n")?;
@@ -49,7 +49,6 @@ generate_emitter!(IcalAlarm,);
 generate_emitter!(IcalFreeBusy,);
 generate_emitter!(IcalJournal,);
 generate_emitter!(IcalEvent, alarms);
-generate_emitter!(IcalTodo, alarms);
 generate_emitter!(IcalTimeZone<true>, transitions);
 generate_emitter!(
     IcalCalendar,

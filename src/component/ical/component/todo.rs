@@ -1,77 +1,77 @@
-use chrono::DateTime;
+use chrono::{DateTime, Utc};
 
-use crate::rrule::RRule;
-
-use crate::types::Tz;
+use crate::component::vcard::component;
+use crate::property::{
+    IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDUEProperty, IcalDURATIONProperty,
+};
+use crate::rrule::{self, RRuleSet};
+use crate::types::CalDateTime;
 use crate::{
-    ContentLineParser,
-    component::{Component, ComponentMut, IcalAlarm, IcalAlarmBuilder},
+    component::{Component, ComponentMut, IcalAlarm},
     parser::{ContentLine, ParserError, ParserOptions},
     property::{
-        GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDUEProperty,
-        IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty,
-        IcalRECURIDProperty, IcalRRULEProperty, IcalUIDProperty,
+        IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty,
+        IcalRRULEProperty, IcalUIDProperty,
     },
-    types::CalDateOrDateTime,
 };
-use std::{
-    borrow::Cow,
-    collections::{HashMap, HashSet},
-};
+use std::collections::{HashMap, HashSet};
 
-#[derive(Debug, Clone)]
-pub struct IcalTodo {
-    uid: String,
-    pub dtstart: Option<IcalDTSTARTProperty>,
-    pub due: Option<IcalDUEProperty>,
-    pub duration: Option<IcalDURATIONProperty>,
-    pub dtstamp: IcalDTSTAMPProperty,
-    pub properties: Vec<ContentLine>,
-    pub alarms: Vec<IcalAlarm>,
-    rdates: Vec<IcalRDATEProperty>,
-    rrules: Vec<RRule>,
-    exdates: Vec<IcalEXDATEProperty>,
-    exrules: Vec<RRule>,
-    pub(crate) recurid: Option<IcalRECURIDProperty>,
-}
-
-#[derive(Debug, Clone, Default)]
-pub struct IcalTodoBuilder {
-    pub properties: Vec<ContentLine>,
-    pub alarms: Vec<IcalAlarmBuilder>,
-}
+component::component!(
+    IcalTodo,
+    &["VTODO"],
+    required_once: {
+        uid: IcalUIDProperty,
+        dtstamp: IcalDTSTAMPProperty,
+    },
+    required_many: {
+    },
+    optional_many: {
+        rdate: IcalRDATEProperty,
+        rrule: IcalRRULEProperty,
+        exdate: IcalEXDATEProperty,
+        exrule: IcalEXRULEProperty,
+    },
+    optional_once: {
+        dtstart: IcalDTSTARTProperty,
+        duration: IcalDURATIONProperty,
+        due: IcalDUEProperty,
+        recurid: IcalRECURIDProperty,
+    },
+    components: {
+        alarms: IcalAlarm
+    },
+    extra_fields: {
+        rruleset: Option<crate::rrule::RRuleSet> = |&dtstart, &rrule, &rdate, &exrule, &exdate| {
+            let dtstart: &Option<IcalDTSTARTProperty> = dtstart;
+            let rrule: &Option<IcalRRULEProperty> = rrule;
+            let rdate: &Option<IcalRDATEProperty> = rdate;
+            let exrule: &Option<IcalEXRULEProperty> = exrule;
+            let exdate: &Option<IcalEXDATEProperty> = exdate;
+            let Some(dtstart) = dtstart.as_ref() else {
+                return None;
+            };
+            let rrule_dtstart: DateTime<crate::types::Tz> = dtstart.0.clone().into();
+            let rrules = rrule.iter().map(|rrule| rrule.0.clone().validate(rrule_dtstart))
+                .collect::<Result<Vec<_>, _>>().ok()?;
+            Some(crate::rrule::RRuleSet::new(rrule_dtstart))
+        }
+    },
+);
 
 impl IcalTodo {
     pub fn get_uid(&self) -> &str {
-        &self.uid
+        &self.uid.0
     }
 
     pub fn has_rruleset(&self) -> bool {
-        !self.rrules.is_empty()
-            || !self.rdates.is_empty()
-            || !self.exrules.is_empty()
-            || !self.exdates.is_empty()
+        self.rruleset.is_some()
     }
 
     pub fn get_alarms(&self) -> &[IcalAlarm] {
         &self.alarms
     }
 
-    pub fn get_last_occurence(&self) -> Option<CalDateOrDateTime> {
-        if self.has_rruleset() {
-            // Non-trivial to handle
-            return None;
-        }
-        if let Some(dtend) = &self.due {
-            return Some(dtend.0.clone());
-        }
-
-        if let Some(dtstart) = &self.dtstart
-            && let Some(duration) = &self.duration
-        {
-            return Some((dtstart.0.clone() + duration.0).into());
-        }
-
+    pub fn get_last_occurence(&self) -> Option<CalDateTime> {
         None
     }
 }
@@ -79,151 +79,16 @@ impl IcalTodo {
 impl Component for IcalTodo {
     const NAMES: &[&str] = &["VTODO"];
     type Builder = IcalTodoBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        IcalTodoBuilder {
-            properties: self.properties,
-            alarms: self
-                .alarms
-                .into_iter()
-                .map(|alarm| alarm.mutable())
-                .collect(),
-        }
-    }
-}
-
-impl Component for IcalTodoBuilder {
-    const NAMES: &[&str] = &["VTODO"];
-    type Builder = IcalTodoBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        self
-    }
-}
-
-impl ComponentMut for IcalTodoBuilder {
-    type Verified = IcalTodo;
-
-    fn add_content_line(&mut self, content_line: ContentLine) {
-        self.properties.push(content_line);
-    }
-
-    fn remove_property(&mut self, name: &str) {
-        self.properties
-            .retain(|content_line| content_line.name != name);
-    }
-
-    #[inline]
-    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
-        &mut self,
-        value: &str,
-        line_parser: &mut ContentLineParser<'a, I>,
-        options: &ParserOptions,
-    ) -> Result<(), ParserError> {
-        match value {
-            "VALARM" => {
-                let mut alarm = IcalAlarmBuilder::new();
-                alarm.parse(line_parser, options)?;
-                self.alarms.push(alarm);
-            }
-            _ => return Err(ParserError::InvalidComponent(value.to_owned())),
-        };
-
-        Ok(())
-    }
-
-    fn build(
-        self,
-        options: &ParserOptions,
-        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
-    ) -> Result<IcalTodo, ParserError> {
-        // REQUIRED, but ONLY ONCE
-        let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;
-        let dtstamp = self.safe_get_required(timezones)?;
-
-        // OPTIONAL, but ONLY ONCE: class / completed / created / description / dtstart / geo / last-mod / location / organizer / percent / priority / recurid / seq / status / summary / url / rrule
-        let dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
-        let recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
-        if let Some(IcalDTSTARTProperty(dtstart, _)) = &dtstart
-            && let Some(recurid) = &recurid
-        {
-            recurid.validate_dtstart(dtstart)?;
-        }
-        // OPTIONAL, but MUTUALLY EXCLUSIVE
-        let duration = self.safe_get_optional::<IcalDURATIONProperty>(timezones)?;
-        let due = self.safe_get_optional::<IcalDUEProperty>(timezones)?;
-        if duration.is_some() && due.is_some() {
-            return Err(ParserError::PropertyConflict(
-                "both DUE and DURATION are defined",
-            ));
-        }
-
-        // OPTIONAL, MULTIPLE ALLOWED: attach / attendee / categories / comment / contact / exdate / rstatus / related / resources / rdate / x-prop / iana-prop
-        let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
-        let exdates = self.safe_get_all::<IcalEXDATEProperty>(timezones)?;
-        let (rrules, exrules) = if let Some(dtstart) = dtstart.as_ref() {
-            let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().into();
-            let rrules = self
-                .safe_get_all::<IcalRRULEProperty>(timezones)?
-                .into_iter()
-                .map(|rrule| rrule.0.validate(rrule_dtstart))
-                .collect::<Result<Vec<_>, _>>()?;
-            let exrules = self
-                .safe_get_all::<IcalEXRULEProperty>(timezones)?
-                .into_iter()
-                .map(|rrule| rrule.0.validate(rrule_dtstart))
-                .collect::<Result<Vec<_>, _>>()?;
-            (rrules, exrules)
-        } else {
-            (vec![], vec![])
-        };
-
-        let verified = IcalTodo {
-            uid,
-            dtstamp,
-            dtstart,
-            due,
-            duration,
-            rdates,
-            rrules,
-            exdates,
-            exrules,
-            recurid,
-            properties: self.properties,
-            alarms: self
-                .alarms
-                .into_iter()
-                .map(|alarm| alarm.build(options, timezones))
-                .collect::<Result<Vec<_>, _>>()?,
-        };
-
-        Ok(verified)
-    }
 }
 
 impl IcalTodo {
     pub fn get_tzids(&self) -> HashSet<&str> {
-        self.properties
-            .iter()
-            .filter_map(|prop| prop.params.get_tzid())
-            .chain(self.alarms.iter().flat_map(IcalAlarm::get_tzids))
-            .collect()
+        todo!()
     }
 }
 
 impl IcalTodoBuilder {
     pub fn get_tzids(&self) -> HashSet<&str> {
-        self.properties
-            .iter()
-            .filter_map(|prop| prop.params.get_tzid())
-            .collect()
+        todo!()
     }
 }
