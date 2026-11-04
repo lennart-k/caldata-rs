@@ -1,109 +1,47 @@
 #[cfg(not(tarpaulin_include))]
-use crate::parser::ParserOptions;
 use crate::{
-    component::{Component, ComponentMut},
+    component::component,
     parser::{ContentLine, ParserError},
-    property::{
-        GetProperty, IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalUIDProperty,
-    },
+    property::IcalUIDProperty,
 };
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
-#[derive(Debug, Clone, Default)]
-pub struct IcalFreeBusyBuilder {
-    pub properties: Vec<ContentLine>,
-}
-
-#[derive(Debug, Clone)]
-pub struct IcalFreeBusy {
-    pub uid: String,
-    pub dtstamp: IcalDTSTAMPProperty,
-    pub properties: Vec<ContentLine>,
-}
-
-impl IcalFreeBusyBuilder {
-    pub fn new() -> Self {
-        Self {
-            properties: Vec::new(),
-        }
-    }
-}
-
-impl Component for IcalFreeBusyBuilder {
-    const NAMES: &[&str] = &["VFREEBUSY"];
-    type Builder = IcalFreeBusyBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        self
-    }
-}
-
-impl Component for IcalFreeBusy {
-    const NAMES: &[&str] = &["VFREEBUSY"];
-    type Builder = IcalFreeBusyBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        IcalFreeBusyBuilder {
-            properties: self.properties,
-        }
-    }
-}
-
-impl ComponentMut for IcalFreeBusyBuilder {
-    type Verified = IcalFreeBusy;
-
-    fn add_content_line(&mut self, content_line: ContentLine) {
-        self.properties.push(content_line);
-    }
-
-    fn remove_property(&mut self, name: &str) {
-        self.properties
-            .retain(|content_line| content_line.name != name);
-    }
-
-    fn build(
-        self,
-        _options: &ParserOptions,
-        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
-    ) -> Result<IcalFreeBusy, ParserError> {
-        // REQUIRED, but NOT MORE THAN ONCE
-        let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;
-        let dtstamp = self.safe_get_required(timezones)?;
-        // OPTIONAL, but NOT MORE THAN ONCE: contact / dtstart / dtend / organizer / url /
-        let _dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
-        let _dtend = self.safe_get_optional::<IcalDTENDProperty>(timezones)?;
-        // OPTIONAL, allowed multiple times: attendee / comment / freebusy / rstatus / x-prop / iana-prop
-
-        Ok(IcalFreeBusy {
-            uid,
-            dtstamp,
-            properties: self.properties,
-        })
-    }
-}
+component!(
+    IcalFreeBusy,
+    &["VFREEBUSY"],
+    required_once: {
+        uid: IcalUIDProperty,
+    },
+    required_many: {
+    },
+    optional_many: {
+    },
+    optional_once: {
+    },
+    components: {},
+    extra_fields: {},
+);
 
 impl IcalFreeBusy {
     pub fn get_tzids(&self) -> HashSet<&str> {
-        self.properties
-            .iter()
-            .filter_map(|prop| prop.params.get_tzid())
-            .collect()
+        todo!()
     }
 }
 
 impl IcalFreeBusyBuilder {
     pub fn get_tzids(&self) -> HashSet<&str> {
-        self.properties
-            .iter()
-            .filter_map(|prop| prop.params.get_tzid())
-            .collect()
+        todo!()
+    }
+
+    fn build_from_fields(
+        IcalFreeBusyFields {
+            uid,
+            other_properties,
+        }: IcalFreeBusyFields,
+    ) -> Result<IcalFreeBusy, ParserError> {
+        Ok(IcalFreeBusy {
+            uid,
+            other_properties,
+        })
     }
 }

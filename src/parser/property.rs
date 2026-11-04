@@ -90,7 +90,7 @@ pub trait ICalProperty: Sized + Emitter {
     const DEFAULT_TYPE: &'static str;
 
     fn parse_prop(
-        prop: &ContentLine,
+        prop: ContentLine,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self, ParserError>;
 
@@ -105,12 +105,12 @@ macro_rules! property {
 
             #[inline]
             fn parse_prop(
-                prop: &crate::parser::ContentLine,
+                prop: crate::parser::ContentLine,
                 timezones: Option<&std::collections::HashMap<String, Option<chrono_tz::Tz>>>,
             ) -> Result<Self, crate::parser::ParserError> {
                 Ok(Self(
-                    crate::parser::ParseProp::parse_prop(prop, timezones, $default_type)?,
-                    prop.params.clone(),
+                    crate::parser::ParseProp::parse_prop(&prop, timezones, $default_type)?,
+                    prop.params,
                 ))
             }
 

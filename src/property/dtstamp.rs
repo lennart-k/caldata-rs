@@ -21,7 +21,7 @@ mod tests {
         let mut timezones = HashMap::new();
         timezones.insert("Europe/Berlin".to_owned(), Some(chrono_tz::Europe::Berlin));
         timezones.insert("W. Europe Standard Time".to_owned(), None);
-        let prop = IcalDTSTAMPProperty::parse_prop(&content_line, Some(&timezones)).unwrap();
+        let prop = IcalDTSTAMPProperty::parse_prop(content_line, Some(&timezones)).unwrap();
         similar_asserts::assert_eq!(prop.generate_string(), input);
         let content_line: ContentLine = prop.into();
         similar_asserts::assert_eq!(content_line.generate_string(), input);

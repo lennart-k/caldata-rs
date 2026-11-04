@@ -32,7 +32,7 @@ mod tests {
             .unwrap();
         let mut timezones = HashMap::new();
         timezones.insert("America/New_York".to_owned(), None);
-        let prop = IcalRDATEProperty::parse_prop(&content_line, Some(&timezones)).unwrap();
+        let prop = IcalRDATEProperty::parse_prop(content_line, Some(&timezones)).unwrap();
         similar_asserts::assert_eq!(
             prop.generate_string().trim().trim_end_matches(','),
             input.trim().trim_end_matches(',')
