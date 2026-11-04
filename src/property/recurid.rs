@@ -1,7 +1,8 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::Write};
 
 use crate::{
-    generator::Emitter,
+    PARAM_DELIMITER, VALUE_DELIMITER,
+    generator::{Emitter, LineWriter},
     parser::{ContentLine, ContentLineParams, ICalProperty, ParseProp, ParserError},
     types::{CalDateOrDateTime, Value},
 };
@@ -41,6 +42,22 @@ impl ICalProperty for IcalRECURIDProperty {
         Self(dt.utc_or_local(), params, range)
     }
 }
+
+impl Emitter for IcalRECURIDProperty {
+    fn generate<W: std::fmt::Write>(&self, i: &mut W) -> std::fmt::Result {
+        let mut w = LineWriter::new(i);
+        w.write_str(Self::NAME)?;
+        if !self.1.is_empty() {
+            w.write_char(PARAM_DELIMITER)?;
+            self.1.generate(&mut w)?;
+        }
+        w.write_char(VALUE_DELIMITER)?;
+        w.write_str(&self.0.value())?;
+        w.write_str("\r\n")?;
+        Ok(())
+    }
+}
+
 impl IcalRECURIDProperty {
     pub fn validate_dtstart(&self, dtstart: &CalDateOrDateTime) -> Result<(), ParserError> {
         if (self.0.is_date() != dtstart.is_date())
@@ -73,7 +90,10 @@ impl From<IcalRECURIDProperty> for crate::property::ContentLine {
 #[cfg(test)]
 mod tests {
     use super::IcalRECURIDProperty;
-    use crate::{generator::Emitter, parser::ICalProperty, property::ContentLine};
+    use crate::{
+        generator::Emitter,
+        parser::{ContentLine, ICalProperty},
+    };
     use rstest::rstest;
 
     #[rstest]
@@ -85,7 +105,8 @@ mod tests {
             .unwrap()
             .unwrap();
         let prop = IcalRECURIDProperty::parse_prop(&content_line, None).unwrap();
-        let roundtrip: ContentLine = prop.into();
-        similar_asserts::assert_eq!(roundtrip.generate_string(), input);
+        similar_asserts::assert_eq!(prop.generate_string(), input);
+        let content_line: ContentLine = prop.into();
+        similar_asserts::assert_eq!(content_line.generate_string(), input);
     }
 }

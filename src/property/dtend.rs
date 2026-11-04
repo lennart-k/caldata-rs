@@ -22,7 +22,8 @@ mod tests {
         timezones.insert("Europe/Berlin".to_owned(), Some(chrono_tz::Europe::Berlin));
         timezones.insert("W. Europe Standard Time".to_owned(), None);
         let prop = IcalDTENDProperty::parse_prop(&content_line, Some(&timezones)).unwrap();
-        let roundtrip: ContentLine = prop.into();
-        similar_asserts::assert_eq!(roundtrip.generate_string(), input);
+        similar_asserts::assert_eq!(prop.generate_string(), input);
+        let content_line: ContentLine = prop.into();
+        similar_asserts::assert_eq!(content_line.generate_string(), input);
     }
 }
