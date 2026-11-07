@@ -50,6 +50,15 @@ property!("PRODID", "TEXT", IcalPRODIDProperty, String);
 
 property!("METHOD", "TEXT", IcalMETHODProperty, String);
 
+property!(
+    "TZOFFSETFROM",
+    "UTC-OFFSET",
+    IcalTZOFFSETFROMProperty,
+    String
+);
+property!("TZOFFSETTO", "UTC-OFFSET", IcalTZOFFSETTOProperty, String);
+
+property!("UID", "TEXT", VcardUIDProperty, String);
 property!("FN", "TEXT", VcardFNProperty, String);
 property!("N", "TEXT", VcardNProperty, String);
 property!("NICKNAME", "TEXT", VcardNICKNAMEProperty, String);

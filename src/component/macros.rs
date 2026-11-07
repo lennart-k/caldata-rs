@@ -71,7 +71,7 @@ macro_rules! component {
                     match name {
                         $(
                             _ if $comp_type::NAMES.contains(&name) => {
-                                let mut comp = $comp_type::Builder::new();
+                                let mut comp = <$comp_type as Component>::Builder::new();
                                 comp.parse(line_parser, options)?;
                                 self.$comp_field.push(comp);
                                 Ok(())

@@ -1,9 +1,8 @@
 use crate::{
     ContentLineParser,
-    component::{Component, ComponentMut},
+    component::{Component, ComponentMut, IcalTimeZoneTransition, IcalTimeZoneTransitionBuilder},
+    generator::Emitter,
     parser::{ContentLine, ICalProperty, ParserError, ParserOptions},
-    property::{IcalDTSTARTProperty, IcalRRULEProperty, IcalTZRDATEProperty},
-    types::Tz,
 };
 use chrono::{DateTime, Utc};
 #[cfg(not(tarpaulin_include))]
@@ -16,7 +15,7 @@ static TIMEZONES_CACHE: OnceLock<HashMap<String, OnceLock<IcalTimeZone>>> = Once
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalTimeZone<const VERIFIED: bool = true> {
-    pub properties: Vec<ContentLine>,
+    pub other_properties: Vec<ContentLine>,
     pub transitions: Vec<IcalTimeZoneTransition>,
 }
 
@@ -55,7 +54,7 @@ impl IcalTimeZone {
 
     pub fn truncate(self, start: DateTime<Utc>) -> Self {
         Self {
-            properties: self.properties,
+            other_properties: self.other_properties,
             transitions: self
                 .transitions
                 .into_iter()
@@ -96,7 +95,7 @@ impl ComponentMut for IcalTimeZone<false> {
     type Verified = IcalTimeZone;
 
     fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
-        self.properties.push(content_line);
+        self.other_properties.push(content_line);
         Ok(())
     }
 
@@ -136,7 +135,7 @@ impl ComponentMut for IcalTimeZone<false> {
         // }
 
         let verified = IcalTimeZone {
-            properties: self.properties,
+            other_properties: self.other_properties,
             transitions: self.transitions,
         };
 
@@ -162,133 +161,9 @@ pub enum IcalTimeZoneTransitionType {
     DAYLIGHT,
 }
 
-#[derive(Debug, Clone)]
-pub struct IcalTimeZoneTransition {
-    pub transition: IcalTimeZoneTransitionType,
-    pub properties: Vec<ContentLine>,
-    pub dtstart: IcalDTSTARTProperty,
-}
-
-#[derive(Debug, Clone, Default)]
-pub struct IcalTimeZoneTransitionBuilder {
-    pub transition: IcalTimeZoneTransitionType,
-    pub properties: Vec<ContentLine>,
-}
-
-impl IcalTimeZoneTransitionBuilder {
-    pub fn new(transition: IcalTimeZoneTransitionType) -> Self {
-        Self {
-            transition,
-            properties: Vec::new(),
-        }
-    }
-}
-
-impl Component for IcalTimeZoneTransition {
-    const NAMES: &[&str] = &["STANDARD", "DAYLIGHT"];
-    type Builder = IcalTimeZoneTransitionBuilder;
-
-    fn get_comp_name(&self) -> &'static str {
-        match self.transition {
-            IcalTimeZoneTransitionType::STANDARD => "STANDARD",
-            IcalTimeZoneTransitionType::DAYLIGHT => "DAYLIGHT",
-        }
-    }
-}
-
-impl Component for IcalTimeZoneTransitionBuilder {
-    const NAMES: &[&str] = &["STANDARD", "DAYLIGHT"];
-    type Builder = IcalTimeZoneTransitionBuilder;
-
-    fn get_comp_name(&self) -> &'static str {
-        match self.transition {
-            IcalTimeZoneTransitionType::STANDARD => "STANDARD",
-            IcalTimeZoneTransitionType::DAYLIGHT => "DAYLIGHT",
-        }
-    }
-}
-
-impl ComponentMut for IcalTimeZoneTransitionBuilder {
-    type Verified = IcalTimeZoneTransition;
-
-    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
-        self.properties.push(content_line);
+impl Emitter for IcalTimeZone {
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
         Ok(())
-    }
-
-    fn build(
-        self,
-        _options: &ParserOptions,
-        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
-    ) -> Result<IcalTimeZoneTransition, ParserError> {
-        // Make sure that they are valid
-        self.safe_get_all::<IcalRRULEProperty>(None)?;
-        self.safe_get_all::<IcalTZRDATEProperty>(None)?;
-        Ok(IcalTimeZoneTransition {
-            dtstart: self.safe_get_required(None)?,
-            transition: self.transition,
-            properties: self.properties,
-        })
-    }
-}
-
-impl IcalTimeZoneTransition {
-    pub fn truncate(self, start: DateTime<Utc>) -> Option<Self> {
-        let dtstart = self.dtstart.0.utc().with_timezone(&Tz::UTC);
-        let mut rrules = vec![];
-        let mut rdates = vec![];
-        let mut other_properties = vec![];
-        let mut dtstart_prop = &ContentLine::default();
-        for property in &self.properties {
-            match property.name.as_str() {
-                "RRULE" => {
-                    let rrule = IcalRRULEProperty::parse_prop(property, None)
-                        .expect("validated in build")
-                        .0;
-                    // In case an error occurs we simply don't try to remove the RRULE.
-                    // One example of an error is VTIMEZONEs used by Thunderbird which don't output
-                    // UNTIL in UTC.
-                    if let Ok(rrule) = rrule.validate_inside_vtimezone(dtstart)
-                        && let Some(until) = rrule.get_until()
-                        && until < &start
-                    {
-                        continue;
-                    }
-                    rrules.push(property)
-                }
-                "RDATE" => {
-                    let prop = IcalTZRDATEProperty::parse_prop(property, None)
-                        .expect("validated in build");
-                    if prop.0.is_empty() {
-                        continue;
-                    }
-                    let Some(min_rdate) = prop.0.iter().min().cloned() else {
-                        continue;
-                    };
-                    rdates.push((property, min_rdate));
-                }
-                "DTSTART" => {
-                    dtstart_prop = property;
-                }
-                _ => other_properties.push(property),
-            }
-        }
-
-        rdates.retain(|(_content_line, min_rdate)| min_rdate.utc() >= start);
-
-        if rrules.is_empty() && rdates.is_empty() && dtstart < start {
-            return None;
-        }
-
-        Some(Self {
-            properties: std::iter::once(dtstart_prop.clone())
-                .chain(rdates.into_iter().map(|(line, _)| line.clone()))
-                .chain(rrules.into_iter().cloned())
-                .chain(other_properties.into_iter().cloned())
-                .collect(),
-            transition: self.transition,
-            ..self
-        })
     }
 }
 
