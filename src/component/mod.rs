@@ -14,16 +14,7 @@ use std::collections::HashMap;
 /// An immutable interface for an Ical/Vcard component.
 /// This is also implemented by verified components
 pub trait Component: Clone {
-    const NAMES: &[&str];
-
-    fn get_comp_name(&self) -> &'static str {
-        assert_eq!(
-            Self::NAMES.len(),
-            1,
-            "Default implementation only applicable for fixed component name"
-        );
-        Self::NAMES[0]
-    }
+    const NAME: &str;
 
     type Builder: ComponentMut;
 

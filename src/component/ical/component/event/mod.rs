@@ -1,7 +1,7 @@
 use crate::{
     ParserError,
     component::{Component, IcalAlarm, component},
-    parser::ContentLine,
+    parser::{ContentLine, ParserOptions},
     property::{
         IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDURATIONProperty,
         IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty,
@@ -12,7 +12,7 @@ use std::collections::HashSet;
 
 component!(
     IcalEvent,
-    &["VEVENT"],
+    "VEVENT",
     required_once: {
         uid: IcalUIDProperty,
         dtstamp: IcalDTSTAMPProperty,
@@ -63,6 +63,7 @@ impl IcalEventBuilder {
             other_properties,
             alarms,
         }: IcalEventFields,
+        _: &ParserOptions,
     ) -> Result<IcalEvent, ParserError> {
         Ok(IcalEvent {
             uid,

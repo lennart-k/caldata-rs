@@ -1,12 +1,12 @@
 use crate::component::component;
-use crate::parser::{ContentLine, ParserError};
+use crate::parser::{ContentLine, ParserError, ParserOptions};
 use crate::property::{
     VcardANNIVERSARYProperty, VcardBDAYProperty, VcardFNProperty, VcardNProperty, VcardUIDProperty,
 };
 
 component!(
     VcardContact,
-    &["VCARD"],
+    "VCARD",
     required_once: {
     },
     required_many: {
@@ -35,6 +35,7 @@ impl VcardContactBuilder {
             anniversary,
             other_properties,
         }: VcardContactFields,
+        _: &ParserOptions,
     ) -> Result<VcardContact, ParserError> {
         Ok(VcardContact {
             full_name,
@@ -52,5 +53,3 @@ impl VcardContact {
         self.uid.as_ref().map(|uid| uid.0.as_str())
     }
 }
-
-impl VcardContactBuilder {}

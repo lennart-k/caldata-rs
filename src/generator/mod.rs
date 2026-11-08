@@ -30,6 +30,15 @@ impl<K, T: Emitter> Emitter for BTreeMap<K, T> {
     }
 }
 
+impl<T: Emitter> Emitter for Option<T> {
+    fn generate<W: Write>(&self, w: &mut W) -> std::fmt::Result {
+        if let Some(val) = self {
+            val.generate(w)?;
+        }
+        Ok(())
+    }
+}
+
 impl<T: Emitter> Emitter for Vec<T> {
     fn generate<W: Write>(&self, w: &mut W) -> std::fmt::Result {
         for component in self {

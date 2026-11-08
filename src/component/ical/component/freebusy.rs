@@ -1,3 +1,4 @@
+use crate::parser::ParserOptions;
 #[cfg(not(tarpaulin_include))]
 use crate::{
     component::component,
@@ -8,7 +9,7 @@ use std::collections::HashSet;
 
 component!(
     IcalFreeBusy,
-    &["VFREEBUSY"],
+    "VFREEBUSY",
     required_once: {
         uid: IcalUIDProperty,
     },
@@ -38,6 +39,7 @@ impl IcalFreeBusyBuilder {
             uid,
             other_properties,
         }: IcalFreeBusyFields,
+        _: &ParserOptions,
     ) -> Result<IcalFreeBusy, ParserError> {
         Ok(IcalFreeBusy {
             uid,

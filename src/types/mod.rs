@@ -14,6 +14,8 @@ pub use dateordatetime::*;
 pub use period::*;
 mod guess_timezone;
 pub use guess_timezone::*;
+mod utc_offset;
+pub use utc_offset::*;
 
 mod vcard;
 pub use vcard::*;

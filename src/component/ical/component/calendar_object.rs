@@ -6,7 +6,7 @@ use crate::{
     },
     generator::Emitter,
     parser::{ContentLine, ICalProperty, ParserError, ParserOptions},
-    property::{IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
+    property::{IcalPRODIDProperty, IcalVERSIONProperty},
     types::CalDateTime,
 };
 use chrono::{DateTime, Utc};
@@ -196,25 +196,6 @@ impl IcalCalendarObject {
     pub fn get_tzids(&self) -> HashSet<&str> {
         self.inner.get_tzids()
     }
-
-    pub fn add_to_calendar(self, cal: &mut IcalCalendar) {
-        match self.inner {
-            CalendarInnerData::Event(main, overrides) => {
-                cal.events.push(main);
-                cal.events.extend_from_slice(&overrides);
-            }
-            CalendarInnerData::Journal(main, overrides) => {
-                cal.journals.push(main);
-                cal.journals.extend_from_slice(&overrides);
-            }
-            CalendarInnerData::Todo(main, overrides) => {
-                cal.todos.push(main);
-                cal.todos.extend_from_slice(&overrides);
-            }
-        }
-        cal.vtimezones.extend(self.vtimezones);
-        cal.timezones.extend(self.timezones);
-    }
 }
 
 #[derive(Debug, Clone, Default)]
@@ -236,12 +217,12 @@ impl IcalCalendarObjectBuilder {
 }
 
 impl Component for IcalCalendarObject {
-    const NAMES: &[&str] = &["VCALENDAR"];
+    const NAME: &str = "VCALENDAR";
     type Builder = IcalCalendarObjectBuilder;
 }
 
 impl Component for IcalCalendarObjectBuilder {
-    const NAMES: &[&str] = &["VCALENDAR"];
+    const NAME: &str = "VCALENDAR";
     type Builder = Self;
 }
 

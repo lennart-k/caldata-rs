@@ -1,6 +1,7 @@
 use crate::{
     parser::{ContentLine, property},
     types::PartialDateAndOrTime,
+    types::UtcOffset,
 };
 
 mod duration;
@@ -50,13 +51,22 @@ property!("PRODID", "TEXT", IcalPRODIDProperty, String);
 
 property!("METHOD", "TEXT", IcalMETHODProperty, String);
 
+property!("TZID", "TEXT", IcalTZIDProperty, String);
+property!("X-LIC-LOCATION", "TEXT", IcalXLICLOCATIONProperty, String);
+property!("TZNAME", "TEXT", IcalTZNAMEProperty, String);
+
 property!(
     "TZOFFSETFROM",
     "UTC-OFFSET",
     IcalTZOFFSETFROMProperty,
-    String
+    UtcOffset
 );
-property!("TZOFFSETTO", "UTC-OFFSET", IcalTZOFFSETTOProperty, String);
+property!(
+    "TZOFFSETTO",
+    "UTC-OFFSET",
+    IcalTZOFFSETTOProperty,
+    UtcOffset
+);
 
 property!("UID", "TEXT", VcardUIDProperty, String);
 property!("FN", "TEXT", VcardFNProperty, String);

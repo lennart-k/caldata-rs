@@ -1,7 +1,7 @@
 macro_rules! component {
     (
         $name:ident,
-        $comp_names:expr,
+        $comp_name:literal,
         required_once: { $($req_once_field:ident: $req_once_type:ty),* $(,)? },
         required_many: { $($req_many_field:ident: $req_many_type:ty),* $(,)? },
         optional_many: { $($opt_many_field:ident: $opt_many_type:ty),* $(,)? },
@@ -42,12 +42,12 @@ macro_rules! component {
             }
 
             impl $crate::component::Component for [< $name Builder >] {
-                const NAMES: &[&str] = $comp_names;
+                const NAME: &str = $comp_name;
                 type Builder = Self;
             }
 
             impl $crate::component::Component for $name {
-                const NAMES: &[&str] = $comp_names;
+                const NAME: &str = $comp_name;
                 type Builder = [< $name Builder >];
             }
 
@@ -70,8 +70,8 @@ macro_rules! component {
                 ) -> Result<(), $crate::ParserError> {
                     match name {
                         $(
-                            _ if $comp_type::NAMES.contains(&name) => {
-                                let mut comp = <$comp_type as Component>::Builder::new();
+                            $comp_type::NAME => {
+                                let mut comp = <$comp_type as Component>::Builder::default();
                                 comp.parse(line_parser, options)?;
                                 self.$comp_field.push(comp);
                                 Ok(())
@@ -135,25 +135,25 @@ macro_rules! component {
                         )*
                     };
 
-                    Self::build_from_fields(fields)
+                    Self::build_from_fields(fields, options)
                 }
             }
 
             impl $crate::generator::Emitter for $name {
                 fn generate<W: ::std::fmt::Write>(&self, w: &mut W) -> ::std::fmt::Result {
-                    let compname = $crate::component::Component::get_comp_name(self);
                     w.write_str("BEGIN:")?;
-                    w.write_str(compname)?;
+                    w.write_str(<Self as $crate::component::Component>::NAME)?;
                     w.write_str("\r\n")?;
-                    // $($crate::parser::ContentLine::from(self.$req_once_field).generate(w)?;)*
-                    // $($crate::parser::ContentLine::from(self.$req_many_field).generate(w)?;)*
-                    // $($crate::parser::ContentLine::from(self.$opt_once_field).generate(w)?;)*
-                    // $($crate::parser::ContentLine::from(self.$req_once_field).generate(w)?;)*
-                    // for property in self.other_properties {
-                    //     property.generate(w)?;
-                    // }
+                    $(self.$req_once_field.generate(w)?;)*
+                    $(self.$opt_once_field.generate(w)?;)*
+                    $(self.$req_many_field.generate(w)?;)*
+                    $(self.$opt_many_field.generate(w)?;)*
+                    for property in &self.other_properties {
+                        property.generate(w)?;
+                    }
+                    $(self.$comp_field.generate(w)?;)*
                     w.write_str("END:")?;
-                    w.write_str(compname)?;
+                    w.write_str(<Self as $crate::component::Component>::NAME)?;
                     w.write_str("\r\n")?;
                     Ok(())
                 }

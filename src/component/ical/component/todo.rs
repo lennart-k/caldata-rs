@@ -1,13 +1,14 @@
 use chrono::DateTime;
 
 use crate::component;
+use crate::parser::ParserOptions;
 use crate::property::{
     IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDUEProperty, IcalDURATIONProperty,
 };
 use crate::rrule::RRuleSet;
 use crate::types::Tz;
 use crate::{
-    component::{Component, ComponentMut, IcalAlarm},
+    component::{Component, IcalAlarm},
     parser::{ContentLine, ParserError},
     property::{
         IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty,
@@ -18,7 +19,7 @@ use std::collections::HashSet;
 
 component::component!(
     IcalTodo,
-    &["VTODO"],
+    "VTODO",
     required_once: {
         uid: IcalUIDProperty,
         dtstamp: IcalDTSTAMPProperty,
@@ -61,6 +62,7 @@ impl IcalTodoBuilder {
             other_properties,
             alarms,
         }: IcalTodoFields,
+        _: &ParserOptions,
     ) -> Result<IcalTodo, ParserError> {
         let rruleset = if let Some(dtstart) = dtstart.as_ref()
             && (!rrule.is_empty() || !rdate.is_empty())

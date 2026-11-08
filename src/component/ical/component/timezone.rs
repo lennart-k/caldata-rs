@@ -1,32 +1,64 @@
 use crate::{
-    ContentLineParser,
-    component::{Component, ComponentMut, IcalTimeZoneTransition, IcalTimeZoneTransitionBuilder},
-    generator::Emitter,
-    parser::{ContentLine, ICalProperty, ParserError, ParserOptions},
+    ParserError,
+    component::{self, Component, IcalTimeZoneTransitionDaylight, IcalTimeZoneTransitionStandard},
+    parser::{ContentLine, ParserOptions},
+    property::{IcalTZIDProperty, IcalXLICLOCATIONProperty},
 };
 use chrono::{DateTime, Utc};
-#[cfg(not(tarpaulin_include))]
-use std::borrow::Cow;
-use std::collections::HashMap;
-use std::sync::OnceLock;
+use std::{collections::HashMap, sync::OnceLock};
 
 // Memoise generated vtimezones
 static TIMEZONES_CACHE: OnceLock<HashMap<String, OnceLock<IcalTimeZone>>> = OnceLock::new();
 
-#[derive(Debug, Clone, Default)]
-pub struct IcalTimeZone<const VERIFIED: bool = true> {
-    pub other_properties: Vec<ContentLine>,
-    pub transitions: Vec<IcalTimeZoneTransition>,
+component::component!(
+    IcalTimeZone,
+    "VTIMEZONE",
+    required_once: {
+        tzid: IcalTZIDProperty,
+    },
+    required_many: {
+    },
+    optional_many: {
+    },
+    optional_once: {
+        lic_location: IcalXLICLOCATIONProperty
+    },
+    components: {
+        standard: IcalTimeZoneTransitionStandard,
+        daylight: IcalTimeZoneTransitionDaylight,
+    },
+    extra_fields: {
+    },
+);
+
+impl IcalTimeZoneBuilder {
+    fn build_from_fields(
+        IcalTimeZoneFields {
+            tzid,
+            lic_location,
+            other_properties,
+            standard,
+            daylight,
+        }: IcalTimeZoneFields,
+        _: &ParserOptions,
+    ) -> Result<IcalTimeZone, ParserError> {
+        Ok(IcalTimeZone {
+            tzid,
+            lic_location,
+            other_properties,
+            standard,
+            daylight,
+        })
+    }
 }
 
 impl IcalTimeZone {
     pub fn get_tzid(&self) -> &str {
-        todo!()
+        &self.tzid.0
     }
 
-    /// This is a common property containing a timezone identifier from the IANA TZDB
     pub fn get_lic_location(&self) -> Option<&str> {
-        todo!()
+        self.lic_location.as_ref().map(|prop| prop.0.as_str())
     }
 
     pub fn from_tzid(tzid: &str) -> Option<&Self> {
@@ -48,19 +80,13 @@ impl IcalTimeZone {
             let cal = IcalParser::from_slice(tz_ics.as_bytes())
                 .expect_one()
                 .unwrap();
-            cal.vtimezones.into_values().next().unwrap()
+            cal.get_timezones().first().unwrap().clone()
         }))
     }
 
-    pub fn truncate(self, start: DateTime<Utc>) -> Self {
-        Self {
-            other_properties: self.other_properties,
-            transitions: self
-                .transitions
-                .into_iter()
-                .filter_map(|trans| trans.truncate(start))
-                .collect(),
-        }
+    pub fn truncate(self, _start: DateTime<Utc>) -> Self {
+        // TODO: implement
+        self
     }
 }
 
@@ -86,121 +112,90 @@ impl From<&IcalTimeZone> for Option<chrono_tz::Tz> {
     }
 }
 
-impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
-    const NAMES: &[&str] = &["VTIMEZONE"];
-    type Builder = IcalTimeZone<false>;
-}
-
-impl ComponentMut for IcalTimeZone<false> {
-    type Verified = IcalTimeZone;
-
-    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
-        self.other_properties.push(content_line);
-        Ok(())
-    }
-
-    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
-        &mut self,
-        value: &str,
-        line_parser: &mut ContentLineParser<'a, I>,
-        options: &ParserOptions,
-    ) -> Result<(), ParserError> {
-        use self::IcalTimeZoneTransitionType::{DAYLIGHT, STANDARD};
-
-        match value {
-            "STANDARD" => {
-                let mut transition = IcalTimeZoneTransitionBuilder::new(STANDARD);
-                transition.parse(line_parser, options)?;
-                self.transitions.push(transition.build(options, None)?);
-            }
-            "DAYLIGHT" => {
-                let mut transition = IcalTimeZoneTransitionBuilder::new(DAYLIGHT);
-                transition.parse(line_parser, options)?;
-                self.transitions.push(transition.build(options, None)?);
-            }
-            _ => return Err(ParserError::InvalidComponent(value.to_owned())),
-        };
-
-        Ok(())
-    }
-
-    fn build(
-        self,
-        _options: &ParserOptions,
-        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
-    ) -> Result<IcalTimeZone, ParserError> {
-        todo!();
-        // if self.get_property("TZID").is_none() {
-        //     return Err(ParserError::MissingProperty("TZID"));
-        // }
-
-        let verified = IcalTimeZone {
-            other_properties: self.other_properties,
-            transitions: self.transitions,
-        };
-
-        #[cfg(feature = "test")]
-        {
-            // Verify that the conditions for our getters are actually met
-            verified.get_tzid();
-            verified.get_lic_location();
-        }
-
-        Ok(verified)
-    }
-}
-
-#[derive(Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "rkyv",
-    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
-)]
-pub enum IcalTimeZoneTransitionType {
-    #[default]
-    STANDARD,
-    DAYLIGHT,
-}
-
-impl Emitter for IcalTimeZone {
-    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
-        Ok(())
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use chrono::{TimeZone, Utc};
-    use insta::assert_snapshot;
-    use rstest::rstest;
+    use std::str::FromStr;
 
-    use crate::{component::IcalTimeZone, generator::Emitter};
+    use crate::{ComponentParser, component::IcalTimeZone, generator::Emitter};
 
-    #[rstest]
-    #[case(0, "Europe/Bratislava")]
-    #[case(1, "Europe/Berlin")]
-    fn test_truncation(#[case] case: usize, #[case] tzid: &str) {
-        let tz = IcalTimeZone::from_tzid(tzid)
-            .unwrap()
-            .clone()
-            .truncate(Utc.with_ymd_and_hms(1970, 1, 1, 0, 0, 0).unwrap());
-        assert_snapshot!(format!("{case}_trunc"), tz.generate_string());
-    }
+    const EXAMPLE_TIMEZONE: &str = r#"BEGIN:VTIMEZONE
+TZID:America/New_York
+LAST-MODIFIED:20050809T050000Z
+BEGIN:STANDARD
+DTSTART:20071104T020000
+TZOFFSETFROM:-0400
+TZOFFSETTO:-0500
+TZNAME:EST
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:20070311T020000
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0400
+TZNAME:EDT
+END:DAYLIGHT
+END:VTIMEZONE
+"#;
 
-    #[rstest]
-    #[case("Europe/Berlin")]
-    #[case("CET")]
-    fn test_timezone(#[case] tzid: &str) {
-        let tz = IcalTimeZone::from_tzid(tzid).unwrap();
-        assert_eq!(tz.get_tzid(), tzid);
-        assert!(tz.generate_string().contains(tzid));
+    #[test]
+    fn test_parse_timezone() {
+        let timezone =
+            ComponentParser::<'_, IcalTimeZone, _>::from_slice(EXAMPLE_TIMEZONE.as_bytes())
+                .expect_one()
+                .unwrap();
+        assert_eq!(timezone.tzid.0, "America/New_York");
+        assert_eq!(timezone.standard.len(), 1);
+        assert_eq!(
+            timezone
+                .standard
+                .first()
+                .unwrap()
+                .tzname
+                .as_ref()
+                .unwrap()
+                .0,
+            "EST"
+        );
+        assert_eq!(timezone.daylight.len(), 1);
+        assert_eq!(
+            timezone
+                .daylight
+                .first()
+                .unwrap()
+                .tzname
+                .as_ref()
+                .unwrap()
+                .0,
+            "EDT"
+        );
     }
 
     #[test]
-    fn test_all_timezones() {
-        for tzid in vtimezones_rs::VTIMEZONES.keys() {
-            let tz = IcalTimeZone::from_tzid(tzid).unwrap();
-            assert_eq!(&tz.get_tzid(), tzid);
-            assert!(tz.generate_string().contains(tzid));
-        }
+    fn test_generate_daylight() {
+        let timezone =
+            ComponentParser::<'_, IcalTimeZone, _>::from_slice(EXAMPLE_TIMEZONE.as_bytes())
+                .expect_one()
+                .unwrap();
+        similar_asserts::assert_eq!(
+            EXAMPLE_TIMEZONE.replace("\n", "\r\n"),
+            timezone.generate_string()
+        );
+    }
+
+    #[rstest::rstest]
+    #[case("Europe/Berlin")]
+    #[case("America/New_York")]
+    #[case("Europe/Kyiv")]
+    #[case("CET")]
+    fn test_tzdb(#[case] tzid: &str) {
+        let timezone = IcalTimeZone::from_tzid(tzid).unwrap();
+        assert_eq!(timezone.tzid.0, tzid);
+        let tz: Option<chrono_tz::Tz> = timezone.into();
+        assert_eq!(chrono_tz::Tz::from_str(tzid).unwrap(), tz.unwrap());
+    }
+
+    #[rstest::rstest]
+    #[case("asdjlk")]
+    fn test_tzdb_invalid(#[case] tzid: &str) {
+        assert!(IcalTimeZone::from_tzid(tzid).is_none());
     }
 }

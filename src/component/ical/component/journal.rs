@@ -1,4 +1,5 @@
 use crate::component::component;
+use crate::parser::ParserOptions;
 use crate::{
     parser::{ContentLine, ParserError},
     property::{
@@ -10,7 +11,7 @@ use std::collections::HashSet;
 
 component!(
     IcalJournal,
-    &["VJOURNAL"],
+    "VJOURNAL",
     required_once: {
         uid: IcalUIDProperty,
         dtstamp: IcalDTSTAMPProperty
@@ -46,6 +47,7 @@ impl IcalJournalBuilder {
             recurid,
             other_properties,
         }: IcalJournalFields,
+        _: &ParserOptions,
     ) -> Result<IcalJournal, ParserError> {
         Ok(IcalJournal {
             uid,
