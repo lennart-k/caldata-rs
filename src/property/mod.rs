@@ -68,6 +68,7 @@ property!(
     UtcOffset
 );
 
+property!("VERSION", "TEXT", VcardVERSIONProperty, String);
 property!("UID", "TEXT", VcardUIDProperty, String);
 property!("FN", "TEXT", VcardFNProperty, String);
 property!("N", "TEXT", VcardNProperty, String);

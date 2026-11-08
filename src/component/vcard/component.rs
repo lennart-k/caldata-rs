@@ -1,13 +1,15 @@
 use crate::component::component;
 use crate::parser::{ContentLine, ParserError, ParserOptions};
 use crate::property::{
-    VcardANNIVERSARYProperty, VcardBDAYProperty, VcardFNProperty, VcardNProperty, VcardUIDProperty,
+    IcalVERSIONProperty, VcardANNIVERSARYProperty, VcardBDAYProperty, VcardFNProperty,
+    VcardNProperty, VcardUIDProperty, VcardVERSIONProperty,
 };
 
 component!(
     VcardContact,
     "VCARD",
     required_once: {
+        version: VcardVERSIONProperty
     },
     required_many: {
         full_name: VcardFNProperty,
@@ -28,6 +30,7 @@ component!(
 impl VcardContactBuilder {
     fn build_from_fields(
         VcardContactFields {
+            version,
             full_name,
             uid,
             n,
@@ -38,6 +41,7 @@ impl VcardContactBuilder {
         _: &ParserOptions,
     ) -> Result<VcardContact, ParserError> {
         Ok(VcardContact {
+            version,
             full_name,
             uid,
             n,

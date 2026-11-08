@@ -3,6 +3,12 @@ source: src/component/vcard/tests.rs
 expression: card
 ---
 VcardContact {
+    version: VcardVERSIONProperty(
+        "4.0",
+        ContentLineParams(
+            [],
+        ),
+    ),
     full_name: [
         VcardFNProperty(
             "Alice Foobar",
@@ -23,13 +29,6 @@ VcardContact {
     bday: None,
     anniversary: None,
     other_properties: [
-        ContentLine {
-            name: "VERSION",
-            params: ContentLineParams(
-                [],
-            ),
-            value: "4.0",
-        },
         ContentLine {
             name: "EMAIL",
             params: ContentLineParams(
