@@ -84,9 +84,20 @@ impl IcalTimeZone {
         }))
     }
 
-    pub fn truncate(self, _start: DateTime<Utc>) -> Self {
-        // TODO: implement
-        self
+    pub fn truncate(self, start: DateTime<Utc>) -> Self {
+        Self {
+            standard: self
+                .standard
+                .into_iter()
+                .flat_map(|transition| transition.truncate(start))
+                .collect(),
+            daylight: self
+                .daylight
+                .into_iter()
+                .flat_map(|transition| transition.truncate(start))
+                .collect(),
+            ..self
+        }
     }
 }
 

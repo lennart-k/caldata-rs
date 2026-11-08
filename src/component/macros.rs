@@ -35,6 +35,17 @@ macro_rules! component {
                 $(pub $comp_field: Vec<$comp_type>,)*
             }
 
+            impl [< $name Fields >] {
+                pub fn get_tzids(&self) -> impl Iterator<Item = &str> {
+                    ::std::iter::empty()
+                        $(.chain($crate::parser::GetTzid::get_tzid(&self.$req_once_field)))*
+                        $(.chain(self.$req_many_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
+                        $(.chain(self.$opt_once_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
+                        $(.chain(self.$opt_many_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
+                        $(.chain(self.$comp_field.iter().flat_map($crate::component::Component::get_tzids)))*
+                }
+            }
+
             #[derive(Debug, Clone, Default)]
             pub struct [< $name Builder >] {
                 content_lines: Vec<ContentLine>,
@@ -44,11 +55,25 @@ macro_rules! component {
             impl $crate::component::Component for [< $name Builder >] {
                 const NAME: &str = $comp_name;
                 type Builder = Self;
+
+                fn get_tzids(&self) -> impl Iterator<Item = &str> {
+                    self.content_lines.iter().flat_map($crate::parser::GetTzid::get_tzid)
+                        $(.chain(self.$comp_field.iter().flat_map($crate::component::Component::get_tzids)))*
+                }
             }
 
             impl $crate::component::Component for $name {
                 const NAME: &str = $comp_name;
                 type Builder = [< $name Builder >];
+
+                fn get_tzids(&self) -> impl Iterator<Item = &str> {
+                    ::std::iter::empty()
+                        $(.chain($crate::parser::GetTzid::get_tzid(&self.$req_once_field)))*
+                        $(.chain(self.$req_many_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
+                        $(.chain(self.$opt_once_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
+                        $(.chain(self.$opt_many_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
+                        $(.chain(self.$comp_field.iter().flat_map($crate::component::Component::get_tzids)))*
+                }
             }
 
             impl $crate::component::ComponentMut for [< $name Builder >] {
@@ -97,18 +122,18 @@ macro_rules! component {
                         let property_name = content_line.name.as_str();
                         match property_name {
                             $(
-                                <$req_once_type as crate::parser::ICalProperty>::NAME
+                                <$req_once_type as $crate::parser::ICalProperty>::NAME
                                     => [< req_once_ $req_once_field >] = Some($crate::parser::ICalProperty::parse_prop(content_line, timezones)?),
                             )*
                             $(
-                                <$req_many_type as crate::parser::ICalProperty>::NAME
+                                <$req_many_type as $crate::parser::ICalProperty>::NAME
                                     => [< req_many_ $req_many_field >].push($crate::parser::ICalProperty::parse_prop(content_line, timezones)?),
                             )*
                             $(
-                                <$opt_once_type as crate::parser::ICalProperty>::NAME
+                                <$opt_once_type as $crate::parser::ICalProperty>::NAME
                                     => [< opt_once_ $opt_once_field >] = Some($crate::parser::ICalProperty::parse_prop(content_line, timezones)?),)*
                             $(
-                                <$opt_many_type as crate::parser::ICalProperty>::NAME
+                                <$opt_many_type as $crate::parser::ICalProperty>::NAME
                                     => [< opt_many_ $opt_many_field >].push($crate::parser::ICalProperty::parse_prop(content_line, timezones)?),
                             )*
                             _ => other_properties.push(content_line)

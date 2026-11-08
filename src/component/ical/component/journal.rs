@@ -7,7 +7,6 @@ use crate::{
         IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty, IcalUIDProperty,
     },
 };
-use std::collections::HashSet;
 
 component!(
     IcalJournal,
@@ -64,20 +63,12 @@ impl IcalJournalBuilder {
     }
 }
 
-impl IcalJournalBuilder {
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        todo!()
-    }
-}
-
 impl IcalJournal {
     pub fn get_uid(&self) -> &str {
         &self.uid.0
     }
-}
 
-impl IcalJournal {
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        todo!()
+    pub fn get_recurid(&self) -> Option<&IcalRECURIDProperty> {
+        self.recurid.as_ref()
     }
 }

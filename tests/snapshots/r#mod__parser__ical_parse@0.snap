@@ -4,32 +4,35 @@ expression: cals
 ---
 [
     IcalCalendar {
-        properties: [
-            ContentLine {
-                name: "CALSCALE",
-                params: ContentLineParams(
+        version: IcalVERSIONProperty(
+            Version2_0,
+            ContentLineParams(
+                [],
+            ),
+        ),
+        prodid: IcalPRODIDProperty(
+            "-//Ximian//NONSGML Evolution Calendar//EN",
+            ContentLineParams(
+                [],
+            ),
+        ),
+        calscale: Some(
+            IcalCALSCALEProperty(
+                "GREGORIAN",
+                ContentLineParams(
                     [],
                 ),
-                value: "GREGORIAN",
-            },
-            ContentLine {
-                name: "PRODID",
-                params: ContentLineParams(
-                    [],
-                ),
-                value: "-//Ximian//NONSGML Evolution Calendar//EN",
-            },
-            ContentLine {
-                name: "VERSION",
-                params: ContentLineParams(
-                    [],
-                ),
-                value: "2.0",
-            },
-        ],
-        events: [
+            ),
+        ),
+        other_properties: [],
+        event: [
             IcalEvent {
-                uid: "fa915b604e6e3f36772501ff869439e6a3c5cf67",
+                uid: IcalUIDProperty(
+                    "fa915b604e6e3f36772501ff869439e6a3c5cf67",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
                 dtstamp: IcalDTSTAMPProperty(
                     CalDateTime(
                         2025-07-26T11:26:17Olson(
@@ -58,6 +61,11 @@ expression: cals
                         ],
                     ),
                 ),
+                rdate: [],
+                rrule: [],
+                exdate: [],
+                exrule: [],
+                duration: None,
                 dtend: Some(
                     IcalDTENDProperty(
                         Date(
@@ -78,11 +86,6 @@ expression: cals
                         ),
                     ),
                 ),
-                duration: None,
-                rdates: [],
-                rrules: [],
-                exdates: [],
-                exrules: [],
                 recurid: None,
                 summary: Some(
                     IcalSUMMARYProperty(
@@ -92,62 +95,13 @@ expression: cals
                         ),
                     ),
                 ),
-                properties: [
-                    ContentLine {
-                        name: "UID",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "fa915b604e6e3f36772501ff869439e6a3c5cf67",
-                    },
-                    ContentLine {
-                        name: "DTSTAMP",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "20250726T112617Z",
-                    },
-                    ContentLine {
-                        name: "DTSTART",
-                        params: ContentLineParams(
-                            [
-                                (
-                                    "VALUE",
-                                    [
-                                        "DATE",
-                                    ],
-                                ),
-                            ],
-                        ),
-                        value: "20250806",
-                    },
-                    ContentLine {
-                        name: "DTEND",
-                        params: ContentLineParams(
-                            [
-                                (
-                                    "VALUE",
-                                    [
-                                        "DATE",
-                                    ],
-                                ),
-                            ],
-                        ),
-                        value: "20250807",
-                    },
+                other_properties: [
                     ContentLine {
                         name: "SEQUENCE",
                         params: ContentLineParams(
                             [],
                         ),
                         value: "2",
-                    },
-                    ContentLine {
-                        name: "SUMMARY",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "all day event",
                     },
                     ContentLine {
                         name: "TRANSP",
@@ -179,13 +133,14 @@ expression: cals
                     },
                 ],
                 alarms: [],
+                rruleset: None,
             },
         ],
-        alarms: [],
-        todos: [],
-        journals: [],
-        free_busys: [],
-        vtimezones: {},
-        timezones: {},
+        alarm: [],
+        todo: [],
+        journal: [],
+        free_busy: [],
+        timezone: [],
+        chrono_timezones: {},
     },
 ]

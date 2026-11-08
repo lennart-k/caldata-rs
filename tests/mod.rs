@@ -10,7 +10,10 @@ macro_rules! set_snapshot_suffix {
 
 pub mod calendar_object {
     use caldata::{
-        IcalObjectParser, IcalParser, component::CalendarInnerData, generator::Emitter, types::Tz,
+        IcalObjectParser, IcalParser,
+        component::{CalendarInnerData, Component},
+        generator::Emitter,
+        types::Tz,
     };
     use chrono::{DateTime, Timelike, Utc};
     use itertools::Itertools;
@@ -37,7 +40,7 @@ pub mod calendar_object {
             let g_cal = g_res.unwrap();
             let cal = res.unwrap();
             similar_asserts::assert_eq!(g_cal.generate_string(), cal.generate_string());
-            similar_asserts::assert_eq!(cal.get_tzids().iter().sorted().join(","), tzids);
+            similar_asserts::assert_eq!(cal.get_tzids().sorted().join(","), tzids);
         }
     }
 
@@ -83,7 +86,7 @@ pub mod calendar_object {
         for (i, res) in reader.enumerate() {
             let cal = res.unwrap();
             let recurrence = cal.expand_recurrence(None, None).unwrap();
-            assert!(recurrence.get_tzids().is_empty());
+            assert!(recurrence.get_tzids().collect_vec().is_empty());
             insta::assert_snapshot!(format!("{i}_ics"), recurrence.generate_string());
             insta::assert_debug_snapshot!(format!("{i}_data"), recurrence.get_inner());
         }
@@ -168,7 +171,7 @@ pub mod parser {
     fn ical_roundtrip(#[case] ical: &str) {
         let reader = IcalParser::from_slice(ical.as_bytes());
         let cals: Vec<IcalCalendar> = reader.map(Result::unwrap).collect();
-        similar_asserts::assert_eq!(cals.iter().map(Emitter::generate_string).join(""), ical);
+        similar_asserts::assert_eq!(ical, cals.iter().map(Emitter::generate_string).join(""));
     }
 
     // #[test]

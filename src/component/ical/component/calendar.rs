@@ -1,25 +1,18 @@
 use crate::{
-    ContentLineParser,
     component::{
-        self, Component, ComponentMut, IcalAlarm, IcalAlarmBuilder, IcalCalendarObject, IcalEvent,
-        IcalEventBuilder, IcalFreeBusy, IcalFreeBusyBuilder, IcalJournal, IcalJournalBuilder,
-        IcalTimeZone, IcalTimeZoneBuilder, IcalTodo, IcalTodoBuilder, ParserError,
+        self, Component, IcalAlarm, IcalEvent, IcalFreeBusy, IcalJournal, IcalTimeZone, IcalTodo,
+        ParserError,
     },
-    generator::Emitter,
     parser::{ContentLine, ParserOptions},
-    property::{
-        Calscale, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty, IcalVersion,
-    },
+    property::{IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
 };
-use std::{
-    borrow::Cow,
-    collections::{BTreeMap, HashMap, HashSet},
-};
+use std::collections::{HashMap, HashSet};
 
 component::component!(
     IcalCalendar,
     "VCALENDAR",
     required_once: {
+        version: IcalVERSIONProperty,
         prodid: IcalPRODIDProperty,
     },
     required_many: {
@@ -27,6 +20,7 @@ component::component!(
     optional_many: {
     },
     optional_once: {
+        calscale: IcalCALSCALEProperty,
     },
     components: {
         event: IcalEvent,
@@ -43,7 +37,14 @@ component::component!(
 
 impl IcalCalendarBuilder {
     fn build_from_fields(
-        IcalCalendarFields {
+        fields: IcalCalendarFields,
+        _options: &ParserOptions,
+    ) -> Result<IcalCalendar, ParserError> {
+        let _tzids: HashSet<&str> = fields.get_tzids().collect();
+
+        let IcalCalendarFields {
+            version,
+            calscale,
             prodid,
             other_properties,
             event,
@@ -52,9 +53,8 @@ impl IcalCalendarBuilder {
             journal,
             free_busy,
             timezone,
-        }: IcalCalendarFields,
-        _options: &ParserOptions,
-    ) -> Result<IcalCalendar, ParserError> {
+        } = fields;
+
         let chrono_timezones = HashMap::from_iter(
             timezone
                 .iter()
@@ -62,6 +62,8 @@ impl IcalCalendarBuilder {
         );
 
         Ok(IcalCalendar {
+            version,
+            calscale,
             prodid,
             other_properties,
             event,

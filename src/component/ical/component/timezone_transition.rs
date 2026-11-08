@@ -1,3 +1,5 @@
+use chrono::{DateTime, Utc};
+
 use crate::{
     ParserError,
     component::{Component, ComponentMut},
@@ -7,6 +9,7 @@ use crate::{
         IcalDTSTARTProperty, IcalRDATEProperty, IcalRRULEProperty, IcalTZNAMEProperty,
         IcalTZOFFSETFROMProperty, IcalTZOFFSETTOProperty,
     },
+    types::Tz,
 };
 use std::collections::HashMap;
 
@@ -27,6 +30,59 @@ pub type IcalTimeZoneTransitionDaylight = IcalTimeZoneTransition<true>;
 impl<const DAYLIGHT: bool> Component for IcalTimeZoneTransition<DAYLIGHT> {
     const NAME: &str = if DAYLIGHT { "DAYLIGHT" } else { "STANDARD" };
     type Builder = IcalTimeZoneTransitionBuilder<DAYLIGHT>;
+
+    fn get_tzids(&self) -> impl Iterator<Item = &str> {
+        // A time zone transition cannot refer to TZIDs
+        std::iter::empty()
+    }
+}
+
+impl<const DAYLIGHT: bool> IcalTimeZoneTransition<DAYLIGHT> {
+    pub fn truncate(self, start: DateTime<Utc>) -> Option<Self> {
+        let dtstart = self.dtstart.0.utc().with_timezone(&Tz::UTC);
+        let rrule: Vec<IcalRRULEProperty> = self
+            .rrule
+            .into_iter()
+            .filter(|prop| {
+                if let Ok(rrule) = prop.0.clone().validate_inside_vtimezone(dtstart) {
+                    if let Some(until) = rrule.get_until()
+                        && until < &start
+                    {
+                        // transition has ended before our object starts
+                        false
+                    } else {
+                        true
+                    }
+                } else {
+                    // seems invalid so keep it to be safe
+                    true
+                }
+            })
+            .collect();
+
+        let rdate: Vec<IcalRDATEProperty> = self
+            .rdate
+            .into_iter()
+            .filter(|prop| {
+                for rdate in &prop.0 {
+                    // Transition might happen after the start of our calendar object, keep it
+                    if start <= rdate.start().utc() {
+                        return true;
+                    }
+                }
+                false
+            })
+            .collect();
+
+        if rrule.is_empty() && rdate.is_empty() && dtstart < start {
+            return None;
+        }
+        Some(Self {
+            rrule,
+            rdate,
+            ..self
+        })
+    }
 }
 
 #[derive(Debug, Clone, Default)]
@@ -40,6 +96,11 @@ pub type IcalTimeZoneTransitionDaylightBuilder = IcalTimeZoneTransitionBuilder<t
 impl<const DAYLIGHT: bool> Component for IcalTimeZoneTransitionBuilder<DAYLIGHT> {
     const NAME: &str = if DAYLIGHT { "DAYLIGHT" } else { "STANDARD" };
     type Builder = IcalTimeZoneTransitionBuilder<DAYLIGHT>;
+
+    fn get_tzids(&self) -> impl Iterator<Item = &str> {
+        // A time zone transition cannot refer to TZIDs
+        std::iter::empty()
+    }
 }
 
 impl<const DAYLIGHT: bool> ComponentMut for IcalTimeZoneTransitionBuilder<DAYLIGHT> {

@@ -54,6 +54,7 @@ property!("METHOD", "TEXT", IcalMETHODProperty, String);
 property!("TZID", "TEXT", IcalTZIDProperty, String);
 property!("X-LIC-LOCATION", "TEXT", IcalXLICLOCATIONProperty, String);
 property!("TZNAME", "TEXT", IcalTZNAMEProperty, String);
+property!("CALSCALE", "TEXT", IcalCALSCALEProperty, String);
 
 property!(
     "TZOFFSETFROM",

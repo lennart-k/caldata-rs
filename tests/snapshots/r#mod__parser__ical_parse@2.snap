@@ -4,32 +4,35 @@ expression: cals
 ---
 [
     IcalCalendar {
-        properties: [
-            ContentLine {
-                name: "CALSCALE",
-                params: ContentLineParams(
+        version: IcalVERSIONProperty(
+            Version2_0,
+            ContentLineParams(
+                [],
+            ),
+        ),
+        prodid: IcalPRODIDProperty(
+            "-//Example Inc.//Example Calendar//EN",
+            ContentLineParams(
+                [],
+            ),
+        ),
+        calscale: Some(
+            IcalCALSCALEProperty(
+                "GREGORIAN",
+                ContentLineParams(
                     [],
                 ),
-                value: "GREGORIAN",
-            },
-            ContentLine {
-                name: "PRODID",
-                params: ContentLineParams(
-                    [],
-                ),
-                value: "-//Example Inc.//Example Calendar//EN",
-            },
-            ContentLine {
-                name: "VERSION",
-                params: ContentLineParams(
-                    [],
-                ),
-                value: "2.0",
-            },
-        ],
-        events: [
+            ),
+        ),
+        other_properties: [],
+        event: [
             IcalEvent {
-                uid: "4088E990AD89CB3DBB484909",
+                uid: IcalUIDProperty(
+                    "4088E990AD89CB3DBB484909",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
                 dtstamp: IcalDTSTAMPProperty(
                     CalDateTime(
                         2008-02-05T19:12:24Olson(
@@ -58,12 +61,12 @@ expression: cals
                         ],
                     ),
                 ),
-                dtend: None,
+                rdate: [],
+                rrule: [],
+                exdate: [],
+                exrule: [],
                 duration: None,
-                rdates: [],
-                rrules: [],
-                exdates: [],
-                exrules: [],
+                dtend: None,
                 recurid: None,
                 summary: Some(
                     IcalSUMMARYProperty(
@@ -73,46 +76,10 @@ expression: cals
                         ),
                     ),
                 ),
-                properties: [
-                    ContentLine {
-                        name: "DTSTAMP",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "20080205T191224Z",
-                    },
-                    ContentLine {
-                        name: "DTSTART",
-                        params: ContentLineParams(
-                            [
-                                (
-                                    "VALUE",
-                                    [
-                                        "DATE",
-                                    ],
-                                ),
-                            ],
-                        ),
-                        value: "20081006",
-                    },
-                    ContentLine {
-                        name: "SUMMARY",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "Planning meeting",
-                    },
-                    ContentLine {
-                        name: "UID",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "4088E990AD89CB3DBB484909",
-                    },
-                ],
+                other_properties: [],
                 alarms: [
                     IcalAlarm {
-                        properties: [
+                        other_properties: [
                             ContentLine {
                                 name: "SUMMARY",
                                 params: ContentLineParams(
@@ -123,31 +90,31 @@ expression: cals
                         ],
                     },
                 ],
+                rruleset: None,
             },
         ],
-        alarms: [],
-        todos: [],
-        journals: [],
-        free_busys: [],
-        vtimezones: {},
-        timezones: {},
+        alarm: [],
+        todo: [],
+        journal: [],
+        free_busy: [],
+        timezone: [],
+        chrono_timezones: {},
     },
     IcalCalendar {
-        properties: [
-            ContentLine {
-                name: "PRODID",
-                params: ContentLineParams(
-                    [],
-                ),
-                value: "-//Example Inc.//Example Calendar//EN",
-            },
-            ContentLine {
-                name: "VERSION",
-                params: ContentLineParams(
-                    [],
-                ),
-                value: "2.0",
-            },
+        version: IcalVERSIONProperty(
+            Version2_0,
+            ContentLineParams(
+                [],
+            ),
+        ),
+        prodid: IcalPRODIDProperty(
+            "-//Example Inc.//Example Calendar//EN",
+            ContentLineParams(
+                [],
+            ),
+        ),
+        calscale: None,
+        other_properties: [
             ContentLine {
                 name: "ATTENDEE",
                 params: ContentLineParams(
@@ -379,41 +346,44 @@ expression: cals
                 value: "BAZ;BAR",
             },
         ],
-        events: [],
-        alarms: [],
-        todos: [],
-        journals: [],
-        free_busys: [],
-        vtimezones: {},
-        timezones: {},
+        event: [],
+        alarm: [],
+        todo: [],
+        journal: [],
+        free_busy: [],
+        timezone: [],
+        chrono_timezones: {},
     },
     IcalCalendar {
-        properties: [
-            ContentLine {
-                name: "CALSCALE",
-                params: ContentLineParams(
+        version: IcalVERSIONProperty(
+            Version2_0,
+            ContentLineParams(
+                [],
+            ),
+        ),
+        prodid: IcalPRODIDProperty(
+            "-//Example Inc.//Example Calendar//EN",
+            ContentLineParams(
+                [],
+            ),
+        ),
+        calscale: Some(
+            IcalCALSCALEProperty(
+                "GREGORIAN",
+                ContentLineParams(
                     [],
                 ),
-                value: "GREGORIAN",
-            },
-            ContentLine {
-                name: "PRODID",
-                params: ContentLineParams(
-                    [],
-                ),
-                value: "-//Example Inc.//Example Calendar//EN",
-            },
-            ContentLine {
-                name: "VERSION",
-                params: ContentLineParams(
-                    [],
-                ),
-                value: "2.0",
-            },
-        ],
-        events: [
+            ),
+        ),
+        other_properties: [],
+        event: [
             IcalEvent {
-                uid: "4088E990AD89CB3DBB484909",
+                uid: IcalUIDProperty(
+                    "4088E990AD89CB3DBB484909",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
                 dtstamp: IcalDTSTAMPProperty(
                     CalDateTime(
                         2008-02-05T19:12:24Olson(
@@ -442,12 +412,12 @@ expression: cals
                         ],
                     ),
                 ),
-                dtend: None,
+                rdate: [],
+                rrule: [],
+                exdate: [],
+                exrule: [],
                 duration: None,
-                rdates: [],
-                rrules: [],
-                exdates: [],
-                exrules: [],
+                dtend: None,
                 recurid: None,
                 summary: Some(
                     IcalSUMMARYProperty(
@@ -457,35 +427,7 @@ expression: cals
                         ),
                     ),
                 ),
-                properties: [
-                    ContentLine {
-                        name: "DTSTAMP",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "20080205T191224Z",
-                    },
-                    ContentLine {
-                        name: "DTSTART",
-                        params: ContentLineParams(
-                            [
-                                (
-                                    "VALUE",
-                                    [
-                                        "DATE",
-                                    ],
-                                ),
-                            ],
-                        ),
-                        value: "20081006",
-                    },
-                    ContentLine {
-                        name: "SUMMARY",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "Missing description value, but includes header",
-                    },
+                other_properties: [
                     ContentLine {
                         name: "DESCRIPTION",
                         params: ContentLineParams(
@@ -493,22 +435,16 @@ expression: cals
                         ),
                         value: "",
                     },
-                    ContentLine {
-                        name: "UID",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "4088E990AD89CB3DBB484909",
-                    },
                 ],
                 alarms: [],
+                rruleset: None,
             },
         ],
-        alarms: [],
-        todos: [],
-        journals: [],
-        free_busys: [],
-        vtimezones: {},
-        timezones: {},
+        alarm: [],
+        todo: [],
+        journal: [],
+        free_busy: [],
+        timezone: [],
+        chrono_timezones: {},
     },
 ]

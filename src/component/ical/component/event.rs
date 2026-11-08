@@ -8,7 +8,6 @@ use crate::{
         IcalRRULEProperty, IcalSUMMARYProperty, IcalUIDProperty,
     },
 };
-use std::collections::HashSet;
 
 component!(
     IcalEvent,
@@ -41,8 +40,12 @@ component!(
 );
 
 impl IcalEvent {
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        todo!()
+    pub fn get_uid(&self) -> &str {
+        &self.uid.0
+    }
+
+    pub fn get_recurid(&self) -> Option<&IcalRECURIDProperty> {
+        self.recurid.as_ref()
     }
 }
 

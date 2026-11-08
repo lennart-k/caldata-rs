@@ -4,32 +4,35 @@ expression: cals
 ---
 [
     IcalCalendar {
-        properties: [
-            ContentLine {
-                name: "CALSCALE",
-                params: ContentLineParams(
+        version: IcalVERSIONProperty(
+            Version2_0,
+            ContentLineParams(
+                [],
+            ),
+        ),
+        prodid: IcalPRODIDProperty(
+            "-//Ximian//NONSGML Evolution Calendar//EN",
+            ContentLineParams(
+                [],
+            ),
+        ),
+        calscale: Some(
+            IcalCALSCALEProperty(
+                "GREGORIAN",
+                ContentLineParams(
                     [],
                 ),
-                value: "GREGORIAN",
-            },
-            ContentLine {
-                name: "PRODID",
-                params: ContentLineParams(
-                    [],
-                ),
-                value: "-//Ximian//NONSGML Evolution Calendar//EN",
-            },
-            ContentLine {
-                name: "VERSION",
-                params: ContentLineParams(
-                    [],
-                ),
-                value: "2.0",
-            },
-        ],
-        events: [
+            ),
+        ),
+        other_properties: [],
+        event: [
             IcalEvent {
-                uid: "fa915b604e6e3f36772501ff869439e6a3c5cf67",
+                uid: IcalUIDProperty(
+                    "fa915b604e6e3f36772501ff869439e6a3c5cf67",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
                 dtstamp: IcalDTSTAMPProperty(
                     CalDateTime(
                         2025-07-26T11:26:17Olson(
@@ -58,6 +61,11 @@ expression: cals
                         ],
                     ),
                 ),
+                rdate: [],
+                rrule: [],
+                exdate: [],
+                exrule: [],
+                duration: None,
                 dtend: Some(
                     IcalDTENDProperty(
                         Date(
@@ -78,11 +86,6 @@ expression: cals
                         ),
                     ),
                 ),
-                duration: None,
-                rdates: [],
-                rrules: [],
-                exdates: [],
-                exrules: [],
                 recurid: None,
                 summary: Some(
                     IcalSUMMARYProperty(
@@ -92,62 +95,13 @@ expression: cals
                         ),
                     ),
                 ),
-                properties: [
-                    ContentLine {
-                        name: "UID",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "fa915b604e6e3f36772501ff869439e6a3c5cf67",
-                    },
-                    ContentLine {
-                        name: "DTSTAMP",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "20250726T112617Z",
-                    },
-                    ContentLine {
-                        name: "DTSTART",
-                        params: ContentLineParams(
-                            [
-                                (
-                                    "VALUE",
-                                    [
-                                        "DATE",
-                                    ],
-                                ),
-                            ],
-                        ),
-                        value: "20250806",
-                    },
-                    ContentLine {
-                        name: "DTEND",
-                        params: ContentLineParams(
-                            [
-                                (
-                                    "VALUE",
-                                    [
-                                        "DATE",
-                                    ],
-                                ),
-                            ],
-                        ),
-                        value: "20250807",
-                    },
+                other_properties: [
                     ContentLine {
                         name: "SEQUENCE",
                         params: ContentLineParams(
                             [],
                         ),
                         value: "2",
-                    },
-                    ContentLine {
-                        name: "SUMMARY",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "all day event",
                     },
                     ContentLine {
                         name: "TRANSP",
@@ -180,7 +134,7 @@ expression: cals
                 ],
                 alarms: [
                     IcalAlarm {
-                        properties: [
+                        other_properties: [
                             ContentLine {
                                 name: "TRIGGER",
                                 params: ContentLineParams(
@@ -226,11 +180,12 @@ expression: cals
                         ],
                     },
                 ],
+                rruleset: None,
             },
         ],
-        alarms: [
+        alarm: [
             IcalAlarm {
-                properties: [
+                other_properties: [
                     ContentLine {
                         name: "TRIGGER",
                         params: ContentLineParams(
@@ -276,9 +231,28 @@ expression: cals
                 ],
             },
         ],
-        todos: [
+        todo: [
             IcalTodo {
-                uid: "89b13d12c2142cc66192932e1e560ed344dfb174",
+                uid: IcalUIDProperty(
+                    "89b13d12c2142cc66192932e1e560ed344dfb174",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+                dtstamp: IcalDTSTAMPProperty(
+                    CalDateTime(
+                        2025-07-26T11:26:18Olson(
+                            UTC,
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+                rdate: [],
+                rrule: [],
+                exdate: [],
+                exrule: [],
                 dtstart: Some(
                     IcalDTSTARTProperty(
                         Date(
@@ -299,6 +273,7 @@ expression: cals
                         ),
                     ),
                 ),
+                duration: None,
                 due: Some(
                     IcalDUEProperty(
                         Date(
@@ -319,66 +294,14 @@ expression: cals
                         ),
                     ),
                 ),
-                duration: None,
-                dtstamp: IcalDTSTAMPProperty(
-                    CalDateTime(
-                        2025-07-26T11:26:18Olson(
-                            UTC,
-                        ),
-                    ),
-                    ContentLineParams(
-                        [],
-                    ),
-                ),
-                properties: [
-                    ContentLine {
-                        name: "UID",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "89b13d12c2142cc66192932e1e560ed344dfb174",
-                    },
-                    ContentLine {
-                        name: "DTSTAMP",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "20250726T112618Z",
-                    },
+                recurid: None,
+                other_properties: [
                     ContentLine {
                         name: "SUMMARY",
                         params: ContentLineParams(
                             [],
                         ),
                         value: "amazing task",
-                    },
-                    ContentLine {
-                        name: "DTSTART",
-                        params: ContentLineParams(
-                            [
-                                (
-                                    "VALUE",
-                                    [
-                                        "DATE",
-                                    ],
-                                ),
-                            ],
-                        ),
-                        value: "20250804",
-                    },
-                    ContentLine {
-                        name: "DUE",
-                        params: ContentLineParams(
-                            [
-                                (
-                                    "VALUE",
-                                    [
-                                        "DATE",
-                                    ],
-                                ),
-                            ],
-                        ),
-                        value: "20250819",
                     },
                     ContentLine {
                         name: "PERCENT-COMPLETE",
@@ -431,16 +354,17 @@ expression: cals
                     },
                 ],
                 alarms: [],
-                rdates: [],
-                rrules: [],
-                exdates: [],
-                exrules: [],
-                recurid: None,
+                rruleset: None,
             },
         ],
-        journals: [
+        journal: [
             IcalJournal {
-                uid: "84f728973b37b1cb9abf7556adde789b780779f7",
+                uid: IcalUIDProperty(
+                    "84f728973b37b1cb9abf7556adde789b780779f7",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
                 dtstamp: IcalDTSTAMPProperty(
                     CalDateTime(
                         2025-07-26T13:06:53Olson(
@@ -451,6 +375,10 @@ expression: cals
                         [],
                     ),
                 ),
+                rdate: [],
+                rrule: [],
+                exdate: [],
+                exrule: [],
                 dtstart: Some(
                     IcalDTSTARTProperty(
                         Date(
@@ -471,41 +399,14 @@ expression: cals
                         ),
                     ),
                 ),
-                properties: [
-                    ContentLine {
-                        name: "UID",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "84f728973b37b1cb9abf7556adde789b780779f7",
-                    },
-                    ContentLine {
-                        name: "DTSTAMP",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "20250726T130653Z",
-                    },
+                recurid: None,
+                other_properties: [
                     ContentLine {
                         name: "SUMMARY",
                         params: ContentLineParams(
                             [],
                         ),
                         value: "journal entry!",
-                    },
-                    ContentLine {
-                        name: "DTSTART",
-                        params: ContentLineParams(
-                            [
-                                (
-                                    "VALUE",
-                                    [
-                                        "DATE",
-                                    ],
-                                ),
-                            ],
-                        ),
-                        value: "20250705",
                     },
                     ContentLine {
                         name: "CLASS",
@@ -550,122 +451,29 @@ expression: cals
                         value: "0af7d703351f3eed3c08491bdcb10a4c138181cc6be73d5b58aa13ccab898b55",
                     },
                 ],
-                rdates: [],
-                rrules: [],
-                exdates: [],
-                exrules: [],
-                recurid: None,
+                rruleset: None,
             },
         ],
-        free_busys: [],
-        vtimezones: {
-            "Europe/Berlin": IcalTimeZone {
-                properties: [
-                    ContentLine {
-                        name: "TZID",
-                        params: ContentLineParams(
+        free_busy: [],
+        timezone: [
+            IcalTimeZone {
+                tzid: IcalTZIDProperty(
+                    "Europe/Berlin",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+                lic_location: Some(
+                    IcalXLICLOCATIONProperty(
+                        "Europe/Berlin",
+                        ContentLineParams(
                             [],
                         ),
-                        value: "Europe/Berlin",
-                    },
-                    ContentLine {
-                        name: "X-LIC-LOCATION",
-                        params: ContentLineParams(
-                            [],
-                        ),
-                        value: "Europe/Berlin",
-                    },
-                ],
-                transitions: [
+                    ),
+                ),
+                other_properties: [],
+                standard: [
                     IcalTimeZoneTransition {
-                        transition: DAYLIGHT,
-                        properties: [
-                            ContentLine {
-                                name: "TZNAME",
-                                params: ContentLineParams(
-                                    [],
-                                ),
-                                value: "CEST",
-                            },
-                            ContentLine {
-                                name: "TZOFFSETFROM",
-                                params: ContentLineParams(
-                                    [],
-                                ),
-                                value: "+0100",
-                            },
-                            ContentLine {
-                                name: "TZOFFSETTO",
-                                params: ContentLineParams(
-                                    [],
-                                ),
-                                value: "+0200",
-                            },
-                            ContentLine {
-                                name: "DTSTART",
-                                params: ContentLineParams(
-                                    [],
-                                ),
-                                value: "19810329T020000",
-                            },
-                            ContentLine {
-                                name: "RRULE",
-                                params: ContentLineParams(
-                                    [],
-                                ),
-                                value: "FREQ=YEARLY;UNTIL=20370329T010000Z;BYDAY=-1SU;BYMONTH=3",
-                            },
-                        ],
-                        dtstart: IcalDTSTARTProperty(
-                            DateTime(
-                                CalDateTime(
-                                    1981-03-29T02:00:00Local,
-                                ),
-                            ),
-                            ContentLineParams(
-                                [],
-                            ),
-                        ),
-                    },
-                    IcalTimeZoneTransition {
-                        transition: STANDARD,
-                        properties: [
-                            ContentLine {
-                                name: "TZNAME",
-                                params: ContentLineParams(
-                                    [],
-                                ),
-                                value: "CET",
-                            },
-                            ContentLine {
-                                name: "TZOFFSETFROM",
-                                params: ContentLineParams(
-                                    [],
-                                ),
-                                value: "+0200",
-                            },
-                            ContentLine {
-                                name: "TZOFFSETTO",
-                                params: ContentLineParams(
-                                    [],
-                                ),
-                                value: "+0100",
-                            },
-                            ContentLine {
-                                name: "DTSTART",
-                                params: ContentLineParams(
-                                    [],
-                                ),
-                                value: "19961027T030000",
-                            },
-                            ContentLine {
-                                name: "RRULE",
-                                params: ContentLineParams(
-                                    [],
-                                ),
-                                value: "FREQ=YEARLY;UNTIL=20361026T010000Z;BYDAY=-1SU;BYMONTH=10",
-                            },
-                        ],
                         dtstart: IcalDTSTARTProperty(
                             DateTime(
                                 CalDateTime(
@@ -676,11 +484,163 @@ expression: cals
                                 [],
                             ),
                         ),
+                        tzoffsetfrom: IcalTZOFFSETFROMProperty(
+                            UtcOffset(
+                                TimeDelta {
+                                    secs: 7200,
+                                    nanos: 0,
+                                },
+                            ),
+                            ContentLineParams(
+                                [],
+                            ),
+                        ),
+                        tzoffsetto: IcalTZOFFSETTOProperty(
+                            UtcOffset(
+                                TimeDelta {
+                                    secs: 3600,
+                                    nanos: 0,
+                                },
+                            ),
+                            ContentLineParams(
+                                [],
+                            ),
+                        ),
+                        rrule: [
+                            IcalRRULEProperty(
+                                RRule {
+                                    freq: Yearly,
+                                    interval: 1,
+                                    count: None,
+                                    until: Some(
+                                        2036-10-26T01:00:00Olson(
+                                            UTC,
+                                        ),
+                                    ),
+                                    week_start: Mon,
+                                    by_set_pos: [],
+                                    by_month: [
+                                        10,
+                                    ],
+                                    by_month_day: [],
+                                    by_n_month_day: [],
+                                    by_year_day: [],
+                                    by_week_no: [],
+                                    by_weekday: [
+                                        Nth(
+                                            -1,
+                                            Sun,
+                                        ),
+                                    ],
+                                    by_hour: [],
+                                    by_minute: [],
+                                    by_second: [],
+                                    by_easter: None,
+                                    stage: PhantomData<caldata::rrule::core::Unvalidated>,
+                                },
+                                ContentLineParams(
+                                    [],
+                                ),
+                            ),
+                        ],
+                        rdate: [],
+                        tzname: Some(
+                            IcalTZNAMEProperty(
+                                "CET",
+                                ContentLineParams(
+                                    [],
+                                ),
+                            ),
+                        ),
+                        other_properties: [],
+                    },
+                ],
+                daylight: [
+                    IcalTimeZoneTransition {
+                        dtstart: IcalDTSTARTProperty(
+                            DateTime(
+                                CalDateTime(
+                                    1981-03-29T02:00:00Local,
+                                ),
+                            ),
+                            ContentLineParams(
+                                [],
+                            ),
+                        ),
+                        tzoffsetfrom: IcalTZOFFSETFROMProperty(
+                            UtcOffset(
+                                TimeDelta {
+                                    secs: 3600,
+                                    nanos: 0,
+                                },
+                            ),
+                            ContentLineParams(
+                                [],
+                            ),
+                        ),
+                        tzoffsetto: IcalTZOFFSETTOProperty(
+                            UtcOffset(
+                                TimeDelta {
+                                    secs: 7200,
+                                    nanos: 0,
+                                },
+                            ),
+                            ContentLineParams(
+                                [],
+                            ),
+                        ),
+                        rrule: [
+                            IcalRRULEProperty(
+                                RRule {
+                                    freq: Yearly,
+                                    interval: 1,
+                                    count: None,
+                                    until: Some(
+                                        2037-03-29T01:00:00Olson(
+                                            UTC,
+                                        ),
+                                    ),
+                                    week_start: Mon,
+                                    by_set_pos: [],
+                                    by_month: [
+                                        3,
+                                    ],
+                                    by_month_day: [],
+                                    by_n_month_day: [],
+                                    by_year_day: [],
+                                    by_week_no: [],
+                                    by_weekday: [
+                                        Nth(
+                                            -1,
+                                            Sun,
+                                        ),
+                                    ],
+                                    by_hour: [],
+                                    by_minute: [],
+                                    by_second: [],
+                                    by_easter: None,
+                                    stage: PhantomData<caldata::rrule::core::Unvalidated>,
+                                },
+                                ContentLineParams(
+                                    [],
+                                ),
+                            ),
+                        ],
+                        rdate: [],
+                        tzname: Some(
+                            IcalTZNAMEProperty(
+                                "CEST",
+                                ContentLineParams(
+                                    [],
+                                ),
+                            ),
+                        ),
+                        other_properties: [],
                     },
                 ],
             },
-        },
-        timezones: {
+        ],
+        chrono_timezones: {
             "Europe/Berlin": Some(
                 Europe/Berlin,
             ),

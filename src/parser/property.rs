@@ -85,7 +85,7 @@ impl<T: ParseProp> ParseProp for Vec<T> {
     }
 }
 
-pub trait ICalProperty: Sized + Emitter {
+pub trait ICalProperty: Sized + Emitter + GetTzid {
     const NAME: &'static str;
     const DEFAULT_TYPE: &'static str;
 
@@ -95,6 +95,16 @@ pub trait ICalProperty: Sized + Emitter {
     ) -> Result<Self, ParserError>;
 
     fn utc_or_local(self) -> Self;
+}
+
+pub trait GetTzid {
+    fn get_tzid(&self) -> Option<&str>;
+}
+
+impl GetTzid for ContentLine {
+    fn get_tzid(&self) -> Option<&str> {
+        self.params.get_tzid()
+    }
 }
 
 macro_rules! property {
@@ -119,6 +129,13 @@ macro_rules! property {
                 let Self(dt, mut params) = self;
                 params.remove("TZID");
                 Self(crate::types::Value::utc_or_local(dt), params)
+            }
+        }
+
+        impl $crate::parser::GetTzid for $prop {
+            #[inline]
+            fn get_tzid(&self) -> Option<&str> {
+                self.1.get_tzid()
             }
         }
 

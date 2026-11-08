@@ -5,7 +5,6 @@ use crate::{
     parser::{ContentLine, ParserError},
     property::IcalUIDProperty,
 };
-use std::collections::HashSet;
 
 component!(
     IcalFreeBusy,
@@ -23,17 +22,7 @@ component!(
     extra_fields: {},
 );
 
-impl IcalFreeBusy {
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        todo!()
-    }
-}
-
 impl IcalFreeBusyBuilder {
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        todo!()
-    }
-
     fn build_from_fields(
         IcalFreeBusyFields {
             uid,

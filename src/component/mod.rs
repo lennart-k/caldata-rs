@@ -21,6 +21,8 @@ pub trait Component: Clone {
     fn builder() -> Self::Builder {
         Default::default()
     }
+
+    fn get_tzids(&self) -> impl Iterator<Item = &str>;
 }
 
 /// A mutable interface for an Ical/Vcard component.

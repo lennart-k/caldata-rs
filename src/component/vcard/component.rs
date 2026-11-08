@@ -1,7 +1,7 @@
 use crate::component::component;
 use crate::parser::{ContentLine, ParserError, ParserOptions};
 use crate::property::{
-    IcalVERSIONProperty, VcardANNIVERSARYProperty, VcardBDAYProperty, VcardFNProperty,
+    VcardANNIVERSARYProperty, VcardBDAYProperty, VcardFNProperty,
     VcardNProperty, VcardUIDProperty, VcardVERSIONProperty,
 };
 

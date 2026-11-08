@@ -15,7 +15,6 @@ use crate::{
         IcalRRULEProperty, IcalUIDProperty,
     },
 };
-use std::collections::HashSet;
 
 component::component!(
     IcalTodo,
@@ -127,19 +126,7 @@ impl IcalTodo {
         &self.uid.0
     }
 
-    pub fn get_alarms(&self) -> &[IcalAlarm] {
-        &self.alarms
-    }
-}
-
-impl IcalTodo {
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        todo!()
-    }
-}
-
-impl IcalTodoBuilder {
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        todo!()
+    pub fn get_recurid(&self) -> Option<&IcalRECURIDProperty> {
+        self.recurid.as_ref()
     }
 }

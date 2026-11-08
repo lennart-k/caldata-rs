@@ -3,7 +3,7 @@ use std::{collections::HashMap, fmt::Write};
 use crate::{
     PARAM_DELIMITER, VALUE_DELIMITER,
     generator::{Emitter, LineWriter},
-    parser::{ContentLine, ContentLineParams, ICalProperty, ParseProp, ParserError},
+    parser::{ContentLine, ContentLineParams, GetTzid, ICalProperty, ParseProp, ParserError},
     types::{CalDateOrDateTime, Value},
 };
 
@@ -40,6 +40,12 @@ impl ICalProperty for IcalRECURIDProperty {
         let Self(dt, mut params, range) = self;
         params.remove("TZID");
         Self(dt.utc_or_local(), params, range)
+    }
+}
+
+impl GetTzid for IcalRECURIDProperty {
+    fn get_tzid(&self) -> Option<&str> {
+        self.1.get_tzid()
     }
 }
 
