@@ -64,7 +64,7 @@ impl IcalTodoBuilder {
         _: &ParserOptions,
     ) -> Result<IcalTodo, ParserError> {
         let rruleset = if let Some(dtstart) = dtstart.as_ref()
-            && (!rrule.is_empty() || !rdate.is_empty())
+            && !(rrule.is_empty() && rdate.is_empty())
         {
             let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().into();
             Some(

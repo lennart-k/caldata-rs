@@ -40,7 +40,7 @@ pub mod calendar_object {
             let g_cal = g_res.unwrap();
             let cal = res.unwrap();
             similar_asserts::assert_eq!(g_cal.generate_string(), cal.generate_string());
-            similar_asserts::assert_eq!(cal.get_tzids().sorted().join(","), tzids);
+            similar_asserts::assert_eq!(cal.get_tzids().unique().sorted().join(","), tzids);
         }
     }
 

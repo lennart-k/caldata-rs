@@ -1,3 +1,5 @@
+use chrono::{DateTime, Utc};
+
 use crate::{
     ParserError,
     component::{Component, IcalAlarm, component},
@@ -7,6 +9,8 @@ use crate::{
         IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty,
         IcalRRULEProperty, IcalSUMMARYProperty, IcalUIDProperty,
     },
+    rrule::RRuleSet,
+    types::Tz,
 };
 
 component!(
@@ -47,6 +51,23 @@ impl IcalEvent {
     pub fn get_recurid(&self) -> Option<&IcalRECURIDProperty> {
         self.recurid.as_ref()
     }
+
+    pub fn expand_recurrence(
+        mut self,
+        start: Option<DateTime<Utc>>,
+        end: Option<DateTime<Utc>>,
+        overrides: &[Self],
+    ) -> Vec<Self> {
+        let mut overrides = overrides.to_vec();
+
+        vec![Self {
+            rdate: vec![],
+            rrule: vec![],
+            exdate: vec![],
+            exrule: vec![],
+            ..self
+        }]
+    }
 }
 
 impl IcalEventBuilder {
@@ -68,6 +89,44 @@ impl IcalEventBuilder {
         }: IcalEventFields,
         _: &ParserOptions,
     ) -> Result<IcalEvent, ParserError> {
+        let rruleset = if !(rrule.is_empty() && rdate.is_empty()) {
+            let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().into();
+            Some(
+                RRuleSet::new(rrule_dtstart)
+                    .set_rrules(
+                        rrule
+                            .iter()
+                            .map(|rrule| rrule.0.clone().validate(rrule_dtstart))
+                            .collect::<Result<_, _>>()?,
+                    )
+                    .set_exrules(
+                        exrule
+                            .iter()
+                            .map(|exrule| exrule.0.clone().validate(rrule_dtstart))
+                            .collect::<Result<_, _>>()?,
+                    )
+                    .set_rdates(
+                        rdate
+                            .iter()
+                            .flat_map(|IcalRDATEProperty(dates, _)| {
+                                // TODO: Support periods
+                                dates.iter().map(|date| date.clone().start().into())
+                            })
+                            .collect(),
+                    )
+                    .set_exdates(
+                        exdate
+                            .iter()
+                            .flat_map(|IcalEXDATEProperty(dates, _)| {
+                                dates.iter().map(|date| date.clone().into())
+                            })
+                            .collect(),
+                    ),
+            )
+        } else {
+            None
+        };
+
         Ok(IcalEvent {
             uid,
             dtstamp,
@@ -82,7 +141,7 @@ impl IcalEventBuilder {
             summary,
             other_properties,
             alarms,
-            rruleset: None,
+            rruleset,
         })
     }
 }
