@@ -109,6 +109,7 @@ pub mod rfc7809 {
 
     #[rstest::rstest]
     #[case(0, include_str!("./resources/ical_rfc7809.ics"))]
+    // TZIDs from custom properties are also added
     #[case(1, include_str!("./resources/ical_rfc7809_journal.ics"))]
     #[case(2, include_str!("./resources/ical_rfc7809_todo.ics"))]
     fn rfc7809(#[case] case: usize, #[case] input: &str) {

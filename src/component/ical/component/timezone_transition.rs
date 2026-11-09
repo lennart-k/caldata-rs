@@ -66,7 +66,7 @@ impl<const DAYLIGHT: bool> IcalTimeZoneTransition<DAYLIGHT> {
             .filter(|prop| {
                 for rdate in &prop.0 {
                     // Transition might happen after the start of our calendar object, keep it
-                    if start <= rdate.start().utc() {
+                    if start <= rdate.clone().start().utc() {
                         return true;
                     }
                 }

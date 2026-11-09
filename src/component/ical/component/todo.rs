@@ -86,7 +86,7 @@ impl IcalTodoBuilder {
                             .iter()
                             .flat_map(|IcalRDATEProperty(dates, _)| {
                                 // TODO: Support periods
-                                dates.iter().map(|date| date.start().into())
+                                dates.iter().map(|date| date.clone().start().into())
                             })
                             .collect(),
                     )

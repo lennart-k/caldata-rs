@@ -121,10 +121,10 @@ impl DateOrDateTimeOrPeriod {
         }
     }
 
-    pub fn start(&self) -> CalDateOrDateTime {
+    pub fn start(self) -> CalDateOrDateTime {
         match self {
-            Self::DateOrDateTime(dodt) => dodt.clone(),
-            Self::Period(Period(start, _)) => start.clone().into(),
+            Self::DateOrDateTime(dodt) => dodt,
+            Self::Period(Period(start, _)) => start.into(),
         }
     }
 
