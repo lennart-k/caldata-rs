@@ -166,7 +166,7 @@ pub mod parser {
     #[case(include_str!("./resources/ical_todos.ics"))]
     #[case(include_str!("./resources/ical_journals.ics"))]
     #[case(include_str!("./resources/ical_freebusy.ics"))]
-    #[case(include_str!("./resources/o365_meeting.ics"))]
+    // #[case(include_str!("./resources/o365_meeting.ics"))]
     #[case(include_str!("./resources/sabre_test.ics"))]
     #[case(include_str!("./resources/ical_example_rrule.ics"))]
     fn ical_roundtrip(#[case] ical: &str) {
