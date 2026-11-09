@@ -80,7 +80,7 @@ impl IcalTimeZone {
             let cal = IcalParser::from_slice(tz_ics.as_bytes())
                 .expect_one()
                 .unwrap();
-            cal.get_timezones().first().unwrap().clone()
+            cal.get_timezones().values().next().unwrap().clone()
         }))
     }
 

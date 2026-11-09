@@ -140,7 +140,7 @@ expression: cals
         todo: [],
         journal: [],
         free_busy: [],
-        timezone: [],
+        timezone: {},
         chrono_timezones: {},
     },
 ]

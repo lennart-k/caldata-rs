@@ -455,8 +455,8 @@ expression: cals
             },
         ],
         free_busy: [],
-        timezone: [
-            IcalTimeZone {
+        timezone: {
+            "Europe/Berlin": IcalTimeZone {
                 tzid: IcalTZIDProperty(
                     "Europe/Berlin",
                     ContentLineParams(
@@ -639,7 +639,7 @@ expression: cals
                     },
                 ],
             },
-        ],
+        },
         chrono_timezones: {
             "Europe/Berlin": Some(
                 Europe/Berlin,
