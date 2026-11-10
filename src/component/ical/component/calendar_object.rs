@@ -454,3 +454,75 @@ impl Emitter for IcalCalendarObject {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use chrono::{DateTime, Timelike, Utc};
+    use itertools::Itertools;
+
+    use crate::{
+        IcalObjectParser,
+        component::{CalendarInnerData, Component},
+        generator::Emitter,
+        types::Tz,
+    };
+
+    macro_rules! set_snapshot_suffix {
+        ($($expr:expr),*) => {
+            let mut settings = insta::Settings::clone_current();
+            settings.set_snapshot_suffix(format!($($expr,)*));
+            let _guard = settings.bind_to_scope();
+        }
+    }
+
+    #[rstest::rstest]
+    #[case(0, include_str!("../../../../tests/resources/Recurring at 9am, third at 10am.ics"))]
+    #[case(1, include_str!("../../../../tests/resources/recurring_wholeday.ics"))]
+    #[case(2, include_str!("../../../../tests/resources/ical_recurrence_date.ics"))]
+    #[case(3, include_str!("../../../../tests/resources/ical_recurrence_date_2.ics"))]
+    // Has no RRULE
+    #[case(4, include_str!("../../../../tests/resources/ical_example_1.ics"))]
+    fn rrule_expansion(#[case] case: usize, #[case] input: &str) {
+        set_snapshot_suffix!("{case}");
+        let reader = IcalObjectParser::from_slice(input.as_bytes());
+        for (i, res) in reader.enumerate() {
+            let cal = res.unwrap();
+            let recurrence = cal.expand_recurrence(None, None).unwrap();
+            assert!(recurrence.get_tzids().collect_vec().is_empty());
+            insta::assert_snapshot!(format!("{i}_ics"), &recurrence.generate_string());
+            insta::assert_debug_snapshot!(format!("{i}_data"), recurrence.get_inner());
+        }
+    }
+
+    #[rstest::rstest]
+    #[case(include_str!("../../../../tests/resources/ical_recurrence_date_2.ics"))]
+    fn rrule_expansion_empty(#[case] input: &str) {
+        let reader = IcalObjectParser::from_slice(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            let recurrence = cal.expand_recurrence(Some(DateTime::<Utc>::MAX_UTC), None);
+            assert!(recurrence.is_none());
+        }
+    }
+
+    /*
+    /// Expand a reccurent event across winter and summer time
+    /// This will fail if we wrongly expand in UTC
+    #[rstest::rstest]
+    fn rrule_expansion_timezones() {
+        let input = include_str!("../../../../tests/resources/ical_recurrence_winter_summer.ics");
+        let obj = IcalObjectParser::from_slice(input.as_bytes())
+            .expect_one()
+            .unwrap();
+        let CalendarInnerData::Event(event, _) = obj.get_inner() else {
+            panic!()
+        };
+        let expanded = event.expand_recurrence(None, None, &[]);
+        for recurrence in expanded {
+            let datetime: DateTime<Tz> = recurrence.dtstart.0.clone().into();
+            let datetime_local = datetime.with_timezone(&Tz::Olson(chrono_tz::Tz::Europe__Berlin));
+            assert_eq!(datetime_local.hour(), 9);
+        }
+    }
+    */
+}

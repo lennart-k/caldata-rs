@@ -35,17 +35,6 @@ macro_rules! component {
                 $(pub $comp_field: Vec<$comp_type>,)*
             }
 
-            impl [< $name Fields >] {
-                pub fn get_tzids(&self) -> impl Iterator<Item = &str> {
-                    self.other_properties.iter().flat_map($crate::parser::GetTzid::get_tzid)
-                        $(.chain($crate::parser::GetTzid::get_tzid(&self.$req_once_field)))*
-                        $(.chain(self.$req_many_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
-                        $(.chain(self.$opt_once_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
-                        $(.chain(self.$opt_many_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
-                        $(.chain(self.$comp_field.iter().flat_map($crate::component::Component::get_tzids)))*
-                }
-            }
-
             #[derive(Debug, Clone, Default)]
             pub struct [< $name Builder >] {
                 content_lines: Vec<ContentLine>,

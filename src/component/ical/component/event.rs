@@ -3,7 +3,7 @@ use chrono::{DateTime, Utc};
 use crate::{
     ParserError,
     component::{Component, IcalAlarm, component},
-    parser::{ContentLine, ParserOptions},
+    parser::{ContentLine, ICalProperty, ParserOptions},
     property::{
         IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDURATIONProperty,
         IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty,
@@ -144,4 +144,23 @@ impl IcalEventBuilder {
             rruleset,
         })
     }
+}
+
+#[cfg(test)]
+mod tests {
+    const EXAMPLE_EVENT: &str = r#"BEGIN:VCALENDAR
+VERSION:2.0
+CALSCALE:GREGORIAN
+PRODID:-//SabreDAV//SabreDAV//EN
+BEGIN:VEVENT
+DTSTAMP:20201204T082107Z
+UID:6bec1263-c5f4-4446-8a0c-10d960a6e06e
+DTSTART;TZID=CET:20201225T150000
+DTEND;TZID=Europe/Berlin:20201225T223000
+SUMMARY:Omit VTIMEZONE
+END:VEVENT
+END:VCALENDAR
+"#;
+    #[test]
+    fn test_recurrence_expansion() {}
 }
