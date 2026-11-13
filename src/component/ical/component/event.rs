@@ -10,7 +10,7 @@ use crate::{
         IcalRRULEProperty, IcalSUMMARYProperty, IcalUIDProperty,
     },
     rrule::RRuleSet,
-    types::Tz,
+    types::{CalDateOrDateTime, Tz},
 };
 
 component!(
@@ -52,21 +52,29 @@ impl IcalEvent {
         self.recurid.as_ref()
     }
 
-    pub fn expand_recurrence(
-        mut self,
+    pub fn get_recurrence_set(
+        &self,
         start: Option<DateTime<Utc>>,
         end: Option<DateTime<Utc>>,
-        overrides: &[Self],
-    ) -> Vec<Self> {
-        let mut overrides = overrides.to_vec();
-
-        vec![Self {
-            rdate: vec![],
-            rrule: vec![],
-            exdate: vec![],
-            exrule: vec![],
-            ..self
-        }]
+        limit: u16,
+    ) -> Vec<CalDateOrDateTime> {
+        // Procedure:
+        // - build RRuleSet (checks that UNTIL matches DTSTART)
+        let Some(mut rruleset) = self.rruleset.clone() else {
+            return vec![self.dtstart.0.clone()];
+        };
+        if let Some(start) = start {
+            rruleset = rruleset.after(start.with_timezone(&Tz::UTC));
+        }
+        if let Some(end) = end {
+            rruleset = rruleset.before(end.with_timezone(&Tz::UTC));
+        }
+        let is_date = self.dtstart.0.is_date();
+        rruleset.all(limit).dates.into_iter().map(|datetime| {
+            if is_date {
+                datetime.date_naive()
+            }
+        })
     }
 }
 
