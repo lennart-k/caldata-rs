@@ -1,18 +1,18 @@
 use crate::{
     ContentLineParser,
     component::{
-        Component, ComponentMut, IcalCalendar, IcalEvent, IcalEventBuilder, IcalJournal,
-        IcalJournalBuilder, IcalTimeZone, IcalTodo, IcalTodoBuilder,
+        Component, ComponentMut, IcalEvent, IcalEventBuilder, IcalJournal, IcalJournalBuilder,
+        IcalTimeZone, IcalTimeZoneBuilder, IcalTodo, IcalTodoBuilder,
     },
     generator::Emitter,
-    parser::{ContentLine, ParserError, ParserOptions},
-    property::{GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
+    parser::{ContentLine, GetTzid, ICalProperty, ParserError, ParserOptions},
+    property::{IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
     types::CalDateTime,
 };
 use chrono::{DateTime, Utc};
 use std::{
     borrow::Cow,
-    collections::{BTreeMap, HashMap, HashSet},
+    collections::{BTreeMap, HashMap},
     fmt::Write,
 };
 
@@ -31,19 +31,13 @@ pub enum CalendarInnerDataBuilder {
 }
 
 impl CalendarInnerDataBuilder {
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        match self {
-            Self::Event(events) => events
-                .iter()
-                .flat_map(IcalEventBuilder::get_tzids)
-                .collect(),
-            Self::Todo(todos) => todos.iter().flat_map(IcalTodoBuilder::get_tzids).collect(),
-
-            Self::Journal(journals) => journals
-                .iter()
-                .flat_map(IcalJournalBuilder::get_tzids)
-                .collect(),
-        }
+    pub fn get_tzids(&self) -> impl Iterator<Item = &str> {
+        let iterator: Box<dyn Iterator<Item = &str>> = match self {
+            Self::Event(events) => Box::new(events.iter().flat_map(Component::get_tzids)),
+            Self::Todo(todos) => Box::new(todos.iter().flat_map(Component::get_tzids)),
+            Self::Journal(journals) => Box::new(journals.iter().flat_map(Component::get_tzids)),
+        };
+        iterator
     }
 }
 
@@ -56,44 +50,22 @@ impl CalendarInnerData {
         }
     }
 
-    pub fn mutable(self) -> CalendarInnerDataBuilder {
-        match self {
-            Self::Event(main, overrides) => CalendarInnerDataBuilder::Event(
-                std::iter::once(main.mutable())
-                    .chain(overrides.into_iter().map(Component::mutable))
-                    .collect(),
+    pub fn get_tzids(&self) -> impl Iterator<Item = &str> {
+        let iterator: Box<dyn Iterator<Item = &str>> = match self {
+            Self::Event(main, overrides) => Box::new(
+                main.get_tzids()
+                    .chain(overrides.iter().flat_map(Component::get_tzids)),
             ),
-            Self::Todo(main, overrides) => CalendarInnerDataBuilder::Todo(
-                std::iter::once(main.mutable())
-                    .chain(overrides.into_iter().map(Component::mutable))
-                    .collect(),
+            Self::Todo(main, overrides) => Box::new(
+                main.get_tzids()
+                    .chain(overrides.iter().flat_map(Component::get_tzids)),
             ),
-            Self::Journal(main, overrides) => CalendarInnerDataBuilder::Journal(
-                std::iter::once(main.mutable())
-                    .chain(overrides.into_iter().map(Component::mutable))
-                    .collect(),
+            Self::Journal(main, overrides) => Box::new(
+                main.get_tzids()
+                    .chain(overrides.iter().flat_map(Component::get_tzids)),
             ),
-        }
-    }
-
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        match self {
-            Self::Event(main, overrides) => main
-                .get_tzids()
-                .into_iter()
-                .chain(overrides.iter().flat_map(|e| e.get_tzids()))
-                .collect(),
-            Self::Todo(main, overrides) => main
-                .get_tzids()
-                .into_iter()
-                .chain(overrides.iter().flat_map(|e| e.get_tzids()))
-                .collect(),
-            Self::Journal(main, overrides) => main
-                .get_tzids()
-                .into_iter()
-                .chain(overrides.iter().flat_map(|e| e.get_tzids()))
-                .collect(),
-        }
+        };
+        iterator
     }
 
     pub fn get_first_occurence(&self) -> Option<CalDateTime> {
@@ -127,42 +99,17 @@ impl CalendarInnerData {
     }
 
     pub fn get_last_occurence(&self) -> Option<CalDateTime> {
-        match self {
-            Self::Event(main, overrides) => {
-                if main.has_rruleset() {
-                    return None;
-                }
-                std::iter::once(main)
-                    .chain(overrides.iter())
-                    .flat_map(IcalEvent::get_last_occurence)
-                    .max()
-                    .map(Into::into)
-            }
-            Self::Todo(main, overrides) => {
-                if main.has_rruleset() {
-                    return None;
-                }
-                std::iter::once(main)
-                    .chain(overrides.iter())
-                    .flat_map(IcalTodo::get_last_occurence)
-                    .max()
-                    .map(Into::into)
-            }
-            Self::Journal(_main, _overrides) => None,
-        }
+        todo!()
     }
 
     pub fn from_events(mut events: Vec<IcalEvent>) -> Result<Self, ParserError> {
         let main_idx = events
             .iter()
-            .position(IcalEvent::has_rruleset)
+            .position(|obj| obj.get_recurid().is_none())
             .unwrap_or_default();
         let main = events.remove(main_idx);
         if events.iter().any(|o| o.get_uid() != main.get_uid()) {
             return Err(ParserError::DifferingUIDs);
-        }
-        if events.iter().any(IcalEvent::has_rruleset) {
-            return Err(ParserError::MultipleMainObjects);
         }
         let overrides = events;
         if overrides.iter().any(|e| e.recurid.is_none()) {
@@ -177,17 +124,14 @@ impl CalendarInnerData {
     pub fn from_todos(mut todos: Vec<IcalTodo>) -> Result<Self, ParserError> {
         let main_idx = todos
             .iter()
-            .position(IcalTodo::has_rruleset)
+            .position(|obj| obj.get_recurid().is_none())
             .unwrap_or_default();
         let main = todos.remove(main_idx);
         if todos.iter().any(|o| o.get_uid() != main.get_uid()) {
             return Err(ParserError::DifferingUIDs);
         }
-        if todos.iter().any(IcalTodo::has_rruleset) {
-            return Err(ParserError::MultipleMainObjects);
-        }
         let overrides = todos;
-        if overrides.iter().any(|t| t.recurid.is_none()) {
+        if overrides.iter().any(|e| e.recurid.is_none()) {
             return Err(ParserError::MissingRecurId);
         }
         if overrides.iter().any(|e| e.get_uid() != main.get_uid()) {
@@ -199,17 +143,14 @@ impl CalendarInnerData {
     pub fn from_journals(mut journals: Vec<IcalJournal>) -> Result<Self, ParserError> {
         let main_idx = journals
             .iter()
-            .position(IcalJournal::has_rruleset)
+            .position(|obj| obj.get_recurid().is_none())
             .unwrap_or_default();
         let main = journals.remove(main_idx);
         if journals.iter().any(|o| o.get_uid() != main.get_uid()) {
             return Err(ParserError::DifferingUIDs);
         }
-        if journals.iter().any(IcalJournal::has_rruleset) {
-            return Err(ParserError::MultipleMainObjects);
-        }
         let overrides = journals;
-        if overrides.iter().any(|j| j.recurid.is_none()) {
+        if overrides.iter().any(|e| e.recurid.is_none()) {
             return Err(ParserError::MissingRecurId);
         }
         if overrides.iter().any(|e| e.get_uid() != main.get_uid()) {
@@ -254,10 +195,13 @@ impl CalendarInnerDataBuilder {
 #[derive(Debug, Clone)]
 /// An ICAL calendar object.
 pub struct IcalCalendarObject {
-    pub properties: Vec<ContentLine>,
     pub(crate) inner: CalendarInnerData,
     pub(crate) vtimezones: BTreeMap<String, IcalTimeZone>,
     pub(crate) timezones: HashMap<String, Option<chrono_tz::Tz>>,
+    version: IcalVERSIONProperty,
+    prodid: IcalPRODIDProperty,
+    calscale: Option<IcalCALSCALEProperty>,
+    pub other_properties: Vec<ContentLine>,
 }
 
 impl IcalCalendarObject {
@@ -279,63 +223,25 @@ impl IcalCalendarObject {
 
     pub fn expand_recurrence(
         &self,
-        start: Option<DateTime<Utc>>,
-        end: Option<DateTime<Utc>>,
+        _start: Option<DateTime<Utc>>,
+        _end: Option<DateTime<Utc>>,
     ) -> Option<Cow<'_, Self>> {
-        match &self.inner {
-            CalendarInnerData::Event(main, overrides) => {
-                let mut events = main.expand_recurrence(start, end, overrides);
-                if events.is_empty() {
-                    return None;
-                }
-                let first = events.remove(0);
-                Some(Cow::Owned(Self {
-                    properties: self.properties.clone(),
-                    inner: CalendarInnerData::Event(first, events),
-                    timezones: HashMap::new(),
-                    vtimezones: BTreeMap::new(),
-                }))
-            }
-            _ => Some(Cow::Borrowed(self)),
-        }
-    }
-
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        self.inner.get_tzids()
-    }
-
-    pub fn add_to_calendar(self, cal: &mut IcalCalendar) {
-        match self.inner {
-            CalendarInnerData::Event(main, overrides) => {
-                cal.events.push(main);
-                cal.events.extend_from_slice(&overrides);
-            }
-            CalendarInnerData::Journal(main, overrides) => {
-                cal.journals.push(main);
-                cal.journals.extend_from_slice(&overrides);
-            }
-            CalendarInnerData::Todo(main, overrides) => {
-                cal.todos.push(main);
-                cal.todos.extend_from_slice(&overrides);
-            }
-        }
-        cal.vtimezones.extend(self.vtimezones);
-        cal.timezones.extend(self.timezones);
+        None
     }
 }
 
 #[derive(Debug, Clone, Default)]
 /// An ICAL calendar object.
 pub struct IcalCalendarObjectBuilder {
-    pub properties: Vec<ContentLine>,
     pub inner: Option<CalendarInnerDataBuilder>,
     pub vtimezones: BTreeMap<String, IcalTimeZone>,
+    pub content_lines: Vec<ContentLine>,
 }
 
 impl IcalCalendarObjectBuilder {
     pub fn new() -> Self {
         Self {
-            properties: Vec::new(),
+            content_lines: Vec::new(),
             vtimezones: BTreeMap::new(),
             inner: None,
         }
@@ -343,45 +249,36 @@ impl IcalCalendarObjectBuilder {
 }
 
 impl Component for IcalCalendarObject {
-    const NAMES: &[&str] = &["VCALENDAR"];
+    const NAME: &str = "VCALENDAR";
     type Builder = IcalCalendarObjectBuilder;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        IcalCalendarObjectBuilder {
-            properties: self.properties,
-            vtimezones: self.vtimezones,
-            inner: Some(self.inner.mutable()),
-        }
+    fn get_tzids(&self) -> impl Iterator<Item = &str> {
+        self.other_properties
+            .iter()
+            .flat_map(GetTzid::get_tzid)
+            .chain(self.inner.get_tzids())
     }
 }
 
 impl Component for IcalCalendarObjectBuilder {
-    const NAMES: &[&str] = &["VCALENDAR"];
+    const NAME: &str = "VCALENDAR";
     type Builder = Self;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        self
+    fn get_tzids(&self) -> impl Iterator<Item = &str> {
+        std::iter::empty().chain(
+            self.inner
+                .iter()
+                .flat_map(CalendarInnerDataBuilder::get_tzids),
+        )
     }
 }
 
 impl ComponentMut for IcalCalendarObjectBuilder {
     type Verified = IcalCalendarObject;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
-        self.properties.push(content_line);
-    }
-
-    fn remove_property(&mut self, name: &str) {
-        self.properties
-            .retain(|content_line| content_line.name != name);
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
+        self.content_lines.push(content_line);
+        Ok(())
     }
 
     fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
@@ -391,7 +288,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
         options: &ParserOptions,
     ) -> Result<(), ParserError> {
         match value {
-            "VEVENT" => {
+            IcalEvent::NAME => {
                 let event = IcalEventBuilder::from_parser(line_parser, options)?;
                 match &mut self.inner {
                     Some(CalendarInnerDataBuilder::Event(events)) => {
@@ -403,7 +300,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
                     _ => return Err(ParserError::InvalidComponent(value.to_owned())),
                 };
             }
-            "VTODO" => {
+            IcalTodo::NAME => {
                 let todo = IcalTodoBuilder::from_parser(line_parser, options)?;
                 match &mut self.inner {
                     Some(CalendarInnerDataBuilder::Todo(todos)) => {
@@ -415,7 +312,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
                     _ => return Err(ParserError::InvalidComponent(value.to_owned())),
                 };
             }
-            "VJOURNAL" => {
+            IcalJournal::NAME => {
                 let journal = IcalJournalBuilder::from_parser(line_parser, options)?;
                 match &mut self.inner {
                     Some(CalendarInnerDataBuilder::Journal(journals)) => {
@@ -427,9 +324,9 @@ impl ComponentMut for IcalCalendarObjectBuilder {
                     _ => return Err(ParserError::InvalidComponent(value.to_owned())),
                 };
             }
-            "VTIMEZONE" => {
+            IcalTimeZone::NAME => {
                 let timezone =
-                    IcalTimeZone::from_parser(line_parser, options)?.build(options, None)?;
+                    IcalTimeZoneBuilder::from_parser(line_parser, options)?.build(options, None)?;
                 self.vtimezones
                     .insert(timezone.get_tzid().to_owned(), timezone);
             }
@@ -442,17 +339,11 @@ impl ComponentMut for IcalCalendarObjectBuilder {
     fn build(
         self,
         options: &ParserOptions,
-        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
+        _: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self::Verified, ParserError> {
-        let _version: IcalVERSIONProperty = self.safe_get_required(None)?;
-        let _prodid: IcalPRODIDProperty = self.safe_get_required(None)?;
-        let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(None)?;
-
-        #[allow(unused_mut)]
         let mut vtimezones: BTreeMap<String, IcalTimeZone> = self.vtimezones;
         let inner = self.inner.ok_or(ParserError::NotComplete)?;
 
-        #[allow(unused_mut)]
         let mut timezones = HashMap::from_iter(
             vtimezones
                 .iter()
@@ -483,8 +374,32 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             }
         }
 
+        let mut version: Option<IcalVERSIONProperty> = None;
+        let mut calscale: Option<IcalCALSCALEProperty> = None;
+        let mut prodid: Option<IcalPRODIDProperty> = None;
+        let mut other_properties = Vec::new();
+
+        for content_line in self.content_lines {
+            let property_name = content_line.name.as_str();
+            match property_name {
+                IcalPRODIDProperty::NAME => {
+                    prodid = Some(ICalProperty::parse_prop(content_line, None)?);
+                }
+                IcalCALSCALEProperty::NAME => {
+                    calscale = Some(ICalProperty::parse_prop(content_line, None)?);
+                }
+                IcalVERSIONProperty::NAME => {
+                    version = Some(ICalProperty::parse_prop(content_line, None)?);
+                }
+                _ => other_properties.push(content_line),
+            }
+        }
+
         Ok(IcalCalendarObject {
-            properties: self.properties,
+            prodid: prodid.ok_or(ParserError::MissingProperty(IcalPRODIDProperty::NAME))?,
+            calscale,
+            version: version.ok_or(ParserError::MissingProperty(IcalVERSIONProperty::NAME))?,
+            other_properties,
             vtimezones,
             inner,
             timezones,
@@ -516,4 +431,98 @@ impl Emitter for CalendarInnerData {
         }
         Ok(())
     }
+}
+
+impl Emitter for IcalCalendarObject {
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
+        w.write_str("BEGIN:")?;
+        w.write_str(Self::NAME)?;
+        w.write_str("\r\n")?;
+        self.version.generate(w)?;
+        self.prodid.generate(w)?;
+        self.calscale.generate(w)?;
+        for property in &self.other_properties {
+            property.generate(w)?;
+        }
+        for vtimezone in self.vtimezones.values() {
+            vtimezone.generate(w)?;
+        }
+        self.inner.generate(w)?;
+        w.write_str("END:")?;
+        w.write_str(Self::NAME)?;
+        w.write_str("\r\n")?;
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::{DateTime, Timelike, Utc};
+    use itertools::Itertools;
+
+    use crate::{
+        IcalObjectParser,
+        component::{CalendarInnerData, Component},
+        generator::Emitter,
+        types::Tz,
+    };
+
+    macro_rules! set_snapshot_suffix {
+        ($($expr:expr),*) => {
+            let mut settings = insta::Settings::clone_current();
+            settings.set_snapshot_suffix(format!($($expr,)*));
+            let _guard = settings.bind_to_scope();
+        }
+    }
+
+    #[rstest::rstest]
+    #[case(0, include_str!("../../../../tests/resources/Recurring at 9am, third at 10am.ics"))]
+    #[case(1, include_str!("../../../../tests/resources/recurring_wholeday.ics"))]
+    #[case(2, include_str!("../../../../tests/resources/ical_recurrence_date.ics"))]
+    #[case(3, include_str!("../../../../tests/resources/ical_recurrence_date_2.ics"))]
+    // Has no RRULE
+    #[case(4, include_str!("../../../../tests/resources/ical_example_1.ics"))]
+    fn rrule_expansion(#[case] case: usize, #[case] input: &str) {
+        set_snapshot_suffix!("{case}");
+        let reader = IcalObjectParser::from_slice(input.as_bytes());
+        for (i, res) in reader.enumerate() {
+            let cal = res.unwrap();
+            let recurrence = cal.expand_recurrence(None, None).unwrap();
+            assert!(recurrence.get_tzids().collect_vec().is_empty());
+            insta::assert_snapshot!(format!("{i}_ics"), &recurrence.generate_string());
+            insta::assert_debug_snapshot!(format!("{i}_data"), recurrence.get_inner());
+        }
+    }
+
+    #[rstest::rstest]
+    #[case(include_str!("../../../../tests/resources/ical_recurrence_date_2.ics"))]
+    fn rrule_expansion_empty(#[case] input: &str) {
+        let reader = IcalObjectParser::from_slice(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            let recurrence = cal.expand_recurrence(Some(DateTime::<Utc>::MAX_UTC), None);
+            assert!(recurrence.is_none());
+        }
+    }
+
+    /*
+    /// Expand a reccurent event across winter and summer time
+    /// This will fail if we wrongly expand in UTC
+    #[rstest::rstest]
+    fn rrule_expansion_timezones() {
+        let input = include_str!("../../../../tests/resources/ical_recurrence_winter_summer.ics");
+        let obj = IcalObjectParser::from_slice(input.as_bytes())
+            .expect_one()
+            .unwrap();
+        let CalendarInnerData::Event(event, _) = obj.get_inner() else {
+            panic!()
+        };
+        let expanded = event.expand_recurrence(None, None, &[]);
+        for recurrence in expanded {
+            let datetime: DateTime<Tz> = recurrence.dtstart.0.clone().into();
+            let datetime_local = datetime.with_timezone(&Tz::Olson(chrono_tz::Tz::Europe__Berlin));
+            assert_eq!(datetime_local.hour(), 9);
+        }
+    }
+    */
 }

@@ -3,7 +3,7 @@ use std::{collections::HashMap, fmt::Write};
 use crate::{
     PARAM_DELIMITER, VALUE_DELIMITER,
     generator::{Emitter, LineWriter},
-    parser::{ContentLine, ContentLineParams, ICalProperty, ParseProp, ParserError},
+    parser::{ContentLine, ContentLineParams, GetTzid, ICalProperty, ParseProp, ParserError},
     types::{CalDateOrDateTime, Value},
 };
 
@@ -24,10 +24,10 @@ impl ICalProperty for IcalRECURIDProperty {
     const DEFAULT_TYPE: &'static str = "DATE-TIME";
 
     fn parse_prop(
-        prop: &ContentLine,
+        prop: ContentLine,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self, ParserError> {
-        let dt = ParseProp::parse_prop(prop, timezones, Self::DEFAULT_TYPE)?;
+        let dt = ParseProp::parse_prop(&prop, timezones, Self::DEFAULT_TYPE)?;
         let range = match prop.params.get_param("RANGE") {
             Some("THISANDFUTURE") => RecurIdRange::ThisAndFuture,
             None => RecurIdRange::This,
@@ -40,6 +40,12 @@ impl ICalProperty for IcalRECURIDProperty {
         let Self(dt, mut params, range) = self;
         params.remove("TZID");
         Self(dt.utc_or_local(), params, range)
+    }
+}
+
+impl GetTzid for IcalRECURIDProperty {
+    fn get_tzid(&self) -> Option<&str> {
+        self.1.get_tzid()
     }
 }
 
@@ -104,7 +110,7 @@ mod tests {
             .next()
             .unwrap()
             .unwrap();
-        let prop = IcalRECURIDProperty::parse_prop(&content_line, None).unwrap();
+        let prop = IcalRECURIDProperty::parse_prop(content_line, None).unwrap();
         similar_asserts::assert_eq!(prop.generate_string(), input);
         let content_line: ContentLine = prop.into();
         similar_asserts::assert_eq!(content_line.generate_string(), input);

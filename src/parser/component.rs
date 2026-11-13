@@ -41,7 +41,7 @@ impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> ComponentParser<'a, C,
         };
 
         if line.name != "BEGIN"
-            || !C::NAMES.contains(&line.value.to_uppercase().as_str())
+            || !C::NAME.eq_ignore_ascii_case(&line.value)
             || !line.params.is_empty()
         {
             return Err(ParserError::MissingHeader);
@@ -73,15 +73,6 @@ impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> Iterator for Component
             Ok(_) => comp.build(&self.options, None),
             Err(err) => Err(err),
         };
-
-        #[cfg(all(feature = "test", not(feature = "bench")))]
-        {
-            // Run this for more test coverage
-            if let Ok(comp) = result.as_ref() {
-                let mutable = comp.clone().mutable();
-                mutable.get_properties();
-            }
-        }
 
         Some(result)
     }

@@ -1,7 +1,10 @@
 pub mod ical;
 pub use ical::{IcalObjectParser, IcalParser, component::*};
 pub mod vcard;
-pub use vcard::component::*;
+pub use vcard::VcardParser;
+
+mod macros;
+pub(crate) use macros::component;
 
 use crate::ParserError;
 use crate::parser::{ContentLine, ContentLineParser, ParserOptions};
@@ -11,33 +14,15 @@ use std::collections::HashMap;
 /// An immutable interface for an Ical/Vcard component.
 /// This is also implemented by verified components
 pub trait Component: Clone {
-    const NAMES: &[&str];
-
-    fn get_comp_name(&self) -> &'static str {
-        assert_eq!(
-            Self::NAMES.len(),
-            1,
-            "Default implementation only applicable for fixed component name"
-        );
-        Self::NAMES[0]
-    }
+    const NAME: &str;
 
     type Builder: ComponentMut;
-
-    fn get_properties(&self) -> &Vec<ContentLine>;
-    fn mutable(self) -> Self::Builder;
-
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c ContentLine> {
-        self.get_properties().iter().find(|p| p.name == name)
-    }
-
-    fn get_named_properties<'c>(&'c self, name: &'c str) -> impl Iterator<Item = &'c ContentLine> {
-        self.get_properties().iter().filter(move |p| p.name == name)
-    }
 
     fn builder() -> Self::Builder {
         Default::default()
     }
+
+    fn get_tzids(&self) -> impl Iterator<Item = &str>;
 }
 
 /// A mutable interface for an Ical/Vcard component.
@@ -58,9 +43,7 @@ pub trait ComponentMut: Component + Default {
     }
 
     /// Add the given property.
-    fn add_content_line(&mut self, content_line: ContentLine);
-
-    fn remove_property(&mut self, name: &str);
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError>;
 
     fn build(
         self,
@@ -80,7 +63,7 @@ pub trait ComponentMut: Component + Default {
             match line.name.as_ref() {
                 "END" => break,
                 "BEGIN" => self.add_sub_component(&line.value, line_parser, options)?,
-                _ => self.add_content_line(line),
+                _ => self.add_content_line(line)?,
             };
         }
         Ok(())

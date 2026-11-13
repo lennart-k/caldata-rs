@@ -1,160 +1,74 @@
-use crate::rrule::RRule;
-use crate::types::Tz;
+use crate::component::component;
+use crate::parser::ParserOptions;
 use crate::{
-    component::{Component, ComponentMut},
-    parser::{ContentLine, ParserError, ParserOptions},
+    parser::{ContentLine, ParserError},
     property::{
-        GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalEXDATEProperty,
-        IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty,
-        IcalUIDProperty,
+        IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalEXDATEProperty, IcalEXRULEProperty,
+        IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty, IcalUIDProperty,
     },
 };
-use std::collections::{HashMap, HashSet};
 
-#[derive(Debug, Clone, Default)]
-pub struct IcalJournalBuilder {
-    pub properties: Vec<ContentLine>,
-}
-
-#[derive(Debug, Clone)]
-pub struct IcalJournal {
-    uid: String,
-    pub dtstamp: IcalDTSTAMPProperty,
-    pub dtstart: Option<IcalDTSTARTProperty>,
-    pub properties: Vec<ContentLine>,
-    rdates: Vec<IcalRDATEProperty>,
-    rrules: Vec<RRule>,
-    exdates: Vec<IcalEXDATEProperty>,
-    exrules: Vec<RRule>,
-    pub(crate) recurid: Option<IcalRECURIDProperty>,
-}
+component!(
+    IcalJournal,
+    "VJOURNAL",
+    required_once: {
+        uid: IcalUIDProperty,
+        dtstamp: IcalDTSTAMPProperty
+    },
+    required_many: {
+    },
+    optional_many: {
+        rdate: IcalRDATEProperty,
+        rrule: IcalRRULEProperty,
+        exdate: IcalEXDATEProperty,
+        exrule: IcalEXRULEProperty,
+    },
+    optional_once: {
+        dtstart: IcalDTSTARTProperty,
+        recurid: IcalRECURIDProperty,
+    },
+    components: {},
+    extra_fields: {
+        rruleset: Option<crate::rrule::RRuleSet>
+    },
+);
 
 impl IcalJournalBuilder {
-    pub fn new() -> Self {
-        Self {
-            properties: Vec::new(),
-        }
-    }
-
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        self.properties
-            .iter()
-            .filter_map(|prop| prop.params.get_tzid())
-            .collect()
+    fn build_from_fields(
+        IcalJournalFields {
+            uid,
+            dtstamp,
+            rdate,
+            rrule,
+            exdate,
+            exrule,
+            dtstart,
+            recurid,
+            other_properties,
+        }: IcalJournalFields,
+        _: &ParserOptions,
+    ) -> Result<IcalJournal, ParserError> {
+        Ok(IcalJournal {
+            uid,
+            dtstamp,
+            rdate,
+            rrule,
+            exdate,
+            exrule,
+            dtstart,
+            recurid,
+            other_properties,
+            rruleset: None,
+        })
     }
 }
 
 impl IcalJournal {
     pub fn get_uid(&self) -> &str {
-        &self.uid
+        &self.uid.0
     }
 
-    pub fn has_rruleset(&self) -> bool {
-        !self.rrules.is_empty()
-            || !self.rdates.is_empty()
-            || !self.exrules.is_empty()
-            || !self.exdates.is_empty()
-    }
-}
-
-impl Component for IcalJournalBuilder {
-    const NAMES: &[&str] = &["VJOURNAL"];
-    type Builder = IcalJournalBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        self
-    }
-}
-
-impl Component for IcalJournal {
-    const NAMES: &[&str] = &["VJOURNAL"];
-    type Builder = IcalJournalBuilder;
-
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
-
-    fn mutable(self) -> Self::Builder {
-        IcalJournalBuilder {
-            properties: self.properties,
-        }
-    }
-}
-
-impl ComponentMut for IcalJournalBuilder {
-    type Verified = IcalJournal;
-
-    fn add_content_line(&mut self, content_line: ContentLine) {
-        self.properties.push(content_line);
-    }
-
-    fn remove_property(&mut self, name: &str) {
-        self.properties
-            .retain(|content_line| content_line.name != name);
-    }
-
-    fn build(
-        self,
-        _options: &ParserOptions,
-        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
-    ) -> Result<IcalJournal, ParserError> {
-        // REQUIRED, ONLY ONCE
-        let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;
-        let dtstamp = self.safe_get_required(timezones)?;
-
-        // OPTIONAL, ONLY ONCE: class / created / dtstart / last-mod / organizer / recurid / seq / status / summary / url / rrule
-        let dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
-        let recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
-        if let Some(IcalDTSTARTProperty(dtstart, _)) = &dtstart
-            && let Some(recurid) = &recurid
-        {
-            recurid.validate_dtstart(dtstart)?;
-        }
-
-        // OPTIONAL, MULTIPLE ALLOWED: attach / attendee / categories / comment / contact / description / exdate / related / rdate / rstatus / x-prop / iana-prop
-        let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
-        let exdates = self.safe_get_all::<IcalEXDATEProperty>(timezones)?;
-        let (rrules, exrules) = if let Some(dtstart) = dtstart.as_ref() {
-            let rrule_dtstart = dtstart.0.utc().with_timezone(&Tz::UTC);
-            let rrules = self
-                .safe_get_all::<IcalRRULEProperty>(timezones)?
-                .into_iter()
-                .map(|rrule| rrule.0.validate(rrule_dtstart))
-                .collect::<Result<Vec<_>, _>>()?;
-            let exrules = self
-                .safe_get_all::<IcalEXRULEProperty>(timezones)?
-                .into_iter()
-                .map(|rrule| rrule.0.validate(rrule_dtstart))
-                .collect::<Result<Vec<_>, _>>()?;
-            (rrules, exrules)
-        } else {
-            (vec![], vec![])
-        };
-
-        let verified = IcalJournal {
-            uid,
-            dtstamp,
-            dtstart,
-            rdates,
-            rrules,
-            exdates,
-            exrules,
-            recurid,
-            properties: self.properties,
-        };
-        Ok(verified)
-    }
-}
-
-impl IcalJournal {
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        self.properties
-            .iter()
-            .filter_map(|prop| prop.params.get_tzid())
-            .collect()
+    pub fn get_recurid(&self) -> Option<&IcalRECURIDProperty> {
+        self.recurid.as_ref()
     }
 }

@@ -42,7 +42,7 @@ fn benchmark(c: &mut Criterion) {
                 value: "19700329T020000Z".to_owned(),
                 params: vec![].into(),
             };
-            IcalDTSTARTProperty::parse_prop(&content_line, None).unwrap();
+            IcalDTSTARTProperty::parse_prop(content_line, None).unwrap();
         })
     });
     drop(group);

@@ -1,137 +1,119 @@
 use crate::{
-    ContentLineParser,
     component::{
-        CalendarInnerData, Component, ComponentMut, IcalAlarm, IcalAlarmBuilder,
-        IcalCalendarObject, IcalEvent, IcalEventBuilder, IcalFreeBusy, IcalFreeBusyBuilder,
-        IcalJournal, IcalJournalBuilder, IcalTimeZone, IcalTodo, IcalTodoBuilder, ParserError,
+        Component, ComponentMut, IcalAlarm, IcalAlarmBuilder, IcalEvent, IcalEventBuilder,
+        IcalFreeBusy, IcalFreeBusyBuilder, IcalJournal, IcalJournalBuilder, IcalTimeZone,
+        IcalTimeZoneBuilder, IcalTodo, IcalTodoBuilder, ParserError,
     },
-    parser::{ContentLine, ParserOptions},
-    property::{
-        Calscale, GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty,
-        IcalVersion,
-    },
+    generator::Emitter,
+    parser::{ContentLine, ICalProperty, ParserOptions},
+    property::{IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
 };
-use std::{
-    borrow::Cow,
-    collections::{BTreeMap, HashMap, HashSet},
-};
+use std::collections::{BTreeMap, HashMap, HashSet};
 
-#[derive(Debug, Clone, Default)]
-/// An ICAL calendar.
-pub struct IcalCalendar<
-    const VERIFIED: bool = true,
-    A = IcalAlarm,
-    E = IcalEvent,
-    F = IcalFreeBusy,
-    J = IcalJournal,
-    T = IcalTodo,
-> {
-    pub properties: Vec<ContentLine>,
-    pub events: Vec<E>,
-    pub alarms: Vec<A>,
-    pub todos: Vec<T>,
-    pub journals: Vec<J>,
-    pub free_busys: Vec<F>,
-    pub vtimezones: BTreeMap<String, IcalTimeZone>,
-    pub timezones: HashMap<String, Option<chrono_tz::Tz>>,
+#[derive(Debug, Clone)]
+pub struct IcalCalendar {
+    pub version: IcalVERSIONProperty,
+    pub prodid: IcalPRODIDProperty,
+    pub calscale: Option<IcalCALSCALEProperty>,
+    pub other_properties: Vec<ContentLine>,
+    pub event: Vec<IcalEvent>,
+    pub alarm: Vec<IcalAlarm>,
+    pub todo: Vec<IcalTodo>,
+    pub journal: Vec<IcalJournal>,
+    pub free_busy: Vec<IcalFreeBusy>,
+    pub timezone: BTreeMap<String, IcalTimeZone>,
+    pub chrono_timezones: HashMap<String, Option<chrono_tz::Tz>>,
 }
-pub type IcalCalendarBuilder = IcalCalendar<
-    false,
-    IcalAlarmBuilder,
-    IcalEventBuilder,
-    IcalFreeBusyBuilder,
-    IcalJournalBuilder,
-    IcalTodoBuilder,
->;
 
 impl Component for IcalCalendar {
-    const NAMES: &[&str] = &["VCALENDAR"];
+    const NAME: &str = "VCALENDAR";
+
     type Builder = IcalCalendarBuilder;
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
+    fn get_tzids(&self) -> impl Iterator<Item = &str> {
+        std::iter::empty()
+            .chain(self.event.iter().flat_map(Component::get_tzids))
+            .chain(self.alarm.iter().flat_map(Component::get_tzids))
+            .chain(self.todo.iter().flat_map(Component::get_tzids))
+            .chain(self.journal.iter().flat_map(Component::get_tzids))
+            .chain(self.free_busy.iter().flat_map(Component::get_tzids))
     }
+}
 
-    fn mutable(self) -> Self::Builder {
-        IcalCalendarBuilder {
-            properties: self.properties,
-            events: self.events.into_iter().map(Component::mutable).collect(),
-            alarms: self.alarms.into_iter().map(Component::mutable).collect(),
-            todos: self.todos.into_iter().map(Component::mutable).collect(),
-            journals: self.journals.into_iter().map(Component::mutable).collect(),
-            free_busys: self
-                .free_busys
-                .into_iter()
-                .map(Component::mutable)
-                .collect(),
-            vtimezones: self.vtimezones,
-            timezones: self.timezones,
-        }
-    }
+#[derive(Debug, Clone, Default)]
+pub struct IcalCalendarBuilder {
+    pub content_lines: Vec<ContentLine>,
+    pub event: Vec<IcalEventBuilder>,
+    pub alarm: Vec<IcalAlarmBuilder>,
+    pub todo: Vec<IcalTodoBuilder>,
+    pub journal: Vec<IcalJournalBuilder>,
+    pub free_busy: Vec<IcalFreeBusyBuilder>,
+    pub timezone: BTreeMap<String, IcalTimeZone>,
 }
 
 impl Component for IcalCalendarBuilder {
-    const NAMES: &[&str] = &["VCALENDAR"];
-    type Builder = IcalCalendarBuilder;
+    const NAME: &str = "VCALENDAR";
 
-    fn get_properties(&self) -> &Vec<ContentLine> {
-        &self.properties
-    }
+    type Builder = Self;
 
-    fn mutable(self) -> Self::Builder {
-        self
+    fn get_tzids(&self) -> impl Iterator<Item = &str> {
+        std::iter::empty()
+            .chain(self.event.iter().flat_map(Component::get_tzids))
+            .chain(self.alarm.iter().flat_map(Component::get_tzids))
+            .chain(self.todo.iter().flat_map(Component::get_tzids))
+            .chain(self.journal.iter().flat_map(Component::get_tzids))
+            .chain(self.free_busy.iter().flat_map(Component::get_tzids))
     }
 }
 
 impl ComponentMut for IcalCalendarBuilder {
     type Verified = IcalCalendar;
 
-    fn add_content_line(&mut self, content_line: ContentLine) {
-        self.properties.push(content_line);
+    fn add_content_line(&mut self, content_line: ContentLine) -> Result<(), ParserError> {
+        self.content_lines.push(content_line);
+        Ok(())
     }
 
-    fn remove_property(&mut self, name: &str) {
-        self.properties
-            .retain(|content_line| content_line.name != name);
-    }
-
-    #[inline]
-    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
+    fn add_sub_component<'a, T: Iterator<Item = std::borrow::Cow<'a, [u8]>>>(
         &mut self,
-        value: &str,
-        line_parser: &mut ContentLineParser<'a, I>,
+        name: &str,
+        line_parser: &mut crate::ContentLineParser<'a, T>,
         options: &ParserOptions,
     ) -> Result<(), ParserError> {
-        match value {
-            "VALARM" => {
-                self.alarms
-                    .push(IcalAlarmBuilder::from_parser(line_parser, options)?);
+        match name {
+            IcalEvent::NAME => {
+                let mut comp = IcalEvent::builder();
+                comp.parse(line_parser, options)?;
+                self.event.push(comp);
             }
-            "VEVENT" => {
-                self.events
-                    .push(IcalEventBuilder::from_parser(line_parser, options)?);
+            IcalAlarm::NAME => {
+                let mut comp = IcalAlarm::builder();
+                comp.parse(line_parser, options)?;
+                self.alarm.push(comp);
             }
-            "VTODO" => {
-                self.todos
-                    .push(IcalTodoBuilder::from_parser(line_parser, options)?);
+            IcalTodo::NAME => {
+                let mut comp = IcalTodo::builder();
+                comp.parse(line_parser, options)?;
+                self.todo.push(comp);
             }
-            "VJOURNAL" => {
-                self.journals
-                    .push(IcalJournalBuilder::from_parser(line_parser, options)?);
+            IcalJournal::NAME => {
+                let mut comp = IcalJournal::builder();
+                comp.parse(line_parser, options)?;
+                self.journal.push(comp);
             }
-            "VFREEBUSY" => {
-                self.free_busys
-                    .push(IcalFreeBusyBuilder::from_parser(line_parser, options)?);
+            IcalFreeBusy::NAME => {
+                let mut comp = IcalFreeBusy::builder();
+                comp.parse(line_parser, options)?;
+                self.free_busy.push(comp);
             }
-            "VTIMEZONE" => {
+            IcalTimeZone::NAME => {
                 let timezone =
-                    IcalTimeZone::from_parser(line_parser, options)?.build(options, None)?;
-                self.vtimezones
+                    IcalTimeZoneBuilder::from_parser(line_parser, options)?.build(options, None)?;
+                self.timezone
                     .insert(timezone.get_tzid().to_owned(), timezone);
             }
-            _ => return Err(ParserError::InvalidComponent(value.to_owned())),
-        };
-
+            _ => return Err(ParserError::InvalidComponent(name.to_owned())),
+        }
         Ok(())
     }
 
@@ -140,33 +122,28 @@ impl ComponentMut for IcalCalendarBuilder {
         options: &ParserOptions,
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self::Verified, ParserError> {
-        let _version: IcalVERSIONProperty = self.safe_get_required(None)?;
-        // This should technically be REQUIRED but Apple Calendar doesn't adhere to the spec. :(
-        let _prodid: Option<IcalPRODIDProperty> = self.safe_get_optional(None)?;
-        let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(None)?;
-
-        #[allow(unused_mut)]
         let mut timezones = HashMap::from_iter(
-            self.vtimezones
+            self.timezone
                 .iter()
-                .map(|(tzid, tz)| (tzid.to_owned(), tz.into())),
+                .map(|(name, value)| (name.clone(), value.into())),
         );
 
-        let used_tzids: HashSet<&str> = self
-            .events
-            .iter()
-            .flat_map(|object| object.get_tzids())
-            .chain(self.alarms.iter().flat_map(|object| object.get_tzids()))
-            .chain(self.todos.iter().flat_map(|object| object.get_tzids()))
-            .chain(self.journals.iter().flat_map(|object| object.get_tzids()))
-            .chain(self.free_busys.iter().flat_map(|object| object.get_tzids()))
+        let used_timezones: HashSet<&str> = std::iter::empty()
+            .chain(self.event.iter().flat_map(Component::get_tzids))
+            .chain(self.alarm.iter().flat_map(Component::get_tzids))
+            .chain(self.todo.iter().flat_map(Component::get_tzids))
+            .chain(self.journal.iter().flat_map(Component::get_tzids))
+            .chain(self.free_busy.iter().flat_map(Component::get_tzids))
             .collect();
 
-        let mut vtimezones = self.vtimezones;
+        let mut vtimezones: BTreeMap<String, IcalTimeZone> = self.timezone;
         if options.rfc7809 {
             // Populate our map of chrono timezones with those we can populate ourselves
             use std::str::FromStr;
-            for tzid in used_tzids {
+            for tzid in used_timezones {
+                if vtimezones.contains_key(tzid) {
+                    continue;
+                }
                 if let Ok(tz) = chrono_tz::Tz::from_str(tzid)
                     && let Some(ical_tz) = IcalTimeZone::from_tzid(tzid)
                 {
@@ -176,168 +153,91 @@ impl ComponentMut for IcalCalendarBuilder {
             }
         }
 
+        let mut version: Option<IcalVERSIONProperty> = None;
+        let mut calscale: Option<IcalCALSCALEProperty> = None;
+        let mut prodid: Option<IcalPRODIDProperty> = None;
+        let mut other_properties = Vec::new();
+
+        for content_line in self.content_lines {
+            let property_name = content_line.name.as_str();
+            match property_name {
+                IcalPRODIDProperty::NAME => {
+                    prodid = Some(ICalProperty::parse_prop(content_line, None)?);
+                }
+                IcalCALSCALEProperty::NAME => {
+                    calscale = Some(ICalProperty::parse_prop(content_line, None)?);
+                }
+                IcalVERSIONProperty::NAME => {
+                    version = Some(ICalProperty::parse_prop(content_line, None)?);
+                }
+                _ => other_properties.push(content_line),
+            }
+        }
+
         Ok(IcalCalendar {
-            properties: self.properties,
-            events: self
-                .events
+            prodid: prodid.ok_or(ParserError::MissingProperty(IcalPRODIDProperty::NAME))?,
+            calscale,
+            version: version.ok_or(ParserError::MissingProperty(IcalVERSIONProperty::NAME))?,
+            other_properties,
+            event: self
+                .event
                 .into_iter()
                 .map(|builder| builder.build(options, Some(&timezones)))
                 .collect::<Result<_, _>>()?,
-            alarms: self
-                .alarms
+            alarm: self
+                .alarm
                 .into_iter()
                 .map(|builder| builder.build(options, Some(&timezones)))
                 .collect::<Result<_, _>>()?,
-            todos: self
-                .todos
+            todo: self
+                .todo
                 .into_iter()
                 .map(|builder| builder.build(options, Some(&timezones)))
                 .collect::<Result<_, _>>()?,
-            journals: self
-                .journals
+            journal: self
+                .journal
                 .into_iter()
                 .map(|builder| builder.build(options, Some(&timezones)))
                 .collect::<Result<_, _>>()?,
-            free_busys: self
-                .free_busys
+            free_busy: self
+                .free_busy
                 .into_iter()
                 .map(|builder| builder.build(options, Some(&timezones)))
                 .collect::<Result<_, _>>()?,
-            vtimezones,
-            timezones,
+            timezone: vtimezones,
+            chrono_timezones: timezones,
         })
     }
 }
 
 impl IcalCalendar {
-    pub fn from_objects(
-        prodid: String,
-        objects: Vec<IcalCalendarObject>,
-        additional_properties: Vec<ContentLine>,
-    ) -> Self {
-        let mut cal = IcalCalendar {
-            events: vec![],
-            todos: vec![],
-            journals: vec![],
-            alarms: vec![],
-            free_busys: vec![],
-            properties: vec![
-                IcalVERSIONProperty(IcalVersion::Version2_0, vec![].into()).into(),
-                ContentLine {
-                    name: "PRODID".to_owned(),
-                    value: prodid,
-                    params: Default::default(),
-                },
-                IcalCALSCALEProperty(Calscale::Gregorian, vec![].into()).into(),
-            ],
-            vtimezones: BTreeMap::new(),
-            timezones: HashMap::new(),
-        };
-        cal.properties.extend_from_slice(&additional_properties);
-        for object in objects {
-            object.add_to_calendar(&mut cal);
-        }
-        cal
+    pub fn get_timezones(&self) -> &BTreeMap<String, IcalTimeZone> {
+        &self.timezone
     }
+}
 
-    pub fn into_objects(self) -> Result<Vec<IcalCalendarObject>, ParserError> {
-        let mut out = vec![];
-
-        let mut events: HashMap<String, Vec<IcalEvent>> = HashMap::new();
-        for event in self.events {
-            events
-                .entry(event.get_uid().to_owned())
-                .or_insert(vec![])
-                .push(event);
+impl Emitter for IcalCalendar {
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
+        w.write_str("BEGIN:")?;
+        w.write_str(Self::NAME)?;
+        w.write_str("\r\n")?;
+        self.version.generate(w)?;
+        self.prodid.generate(w)?;
+        self.calscale.generate(w)?;
+        for property in &self.other_properties {
+            property.generate(w)?;
         }
-        for events in events.into_values() {
-            let tzids: HashSet<_> = events
-                .iter()
-                .flat_map(|e| e.get_tzids())
-                .map(ToOwned::to_owned)
-                .collect();
-            let inner = CalendarInnerData::from_events(events)?;
-            out.push(IcalCalendarObject {
-                properties: self.properties.clone(),
-                vtimezones: self
-                    .vtimezones
-                    .iter()
-                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
-                    .map(|(tzid, tz)| (tzid.to_owned(), tz.clone()))
-                    .collect(),
-                timezones: self
-                    .timezones
-                    .iter()
-                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
-                    .map(|(tzid, tz)| (tzid.to_owned(), tz.to_owned()))
-                    .collect(),
-                inner,
-            });
+        for timezone in self.timezone.values() {
+            timezone.generate(w)?;
         }
-
-        let mut todos: HashMap<String, Vec<IcalTodo>> = HashMap::new();
-        for todo in self.todos {
-            todos
-                .entry(todo.get_uid().to_owned())
-                .or_insert(vec![])
-                .push(todo);
-        }
-        for todos in todos.into_values() {
-            let tzids: HashSet<_> = todos
-                .iter()
-                .flat_map(|e| e.get_tzids())
-                .map(ToOwned::to_owned)
-                .collect();
-            let inner = CalendarInnerData::from_todos(todos)?;
-            out.push(IcalCalendarObject {
-                properties: self.properties.clone(),
-                vtimezones: self
-                    .vtimezones
-                    .iter()
-                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
-                    .map(|(tzid, tz)| (tzid.to_owned(), tz.clone()))
-                    .collect(),
-                timezones: self
-                    .timezones
-                    .iter()
-                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
-                    .map(|(tzid, tz)| (tzid.to_owned(), tz.to_owned()))
-                    .collect(),
-                inner,
-            });
-        }
-
-        let mut journals: HashMap<String, Vec<IcalJournal>> = HashMap::new();
-        for journal in self.journals {
-            journals
-                .entry(journal.get_uid().to_owned())
-                .or_insert(vec![])
-                .push(journal);
-        }
-        for journals in journals.into_values() {
-            let tzids: HashSet<_> = journals
-                .iter()
-                .flat_map(|j| j.get_tzids())
-                .map(ToOwned::to_owned)
-                .collect();
-            let inner = CalendarInnerData::from_journals(journals)?;
-            out.push(IcalCalendarObject {
-                properties: self.properties.clone(),
-                vtimezones: self
-                    .vtimezones
-                    .iter()
-                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
-                    .map(|(tzid, tz)| (tzid.to_owned(), tz.clone()))
-                    .collect(),
-                timezones: self
-                    .timezones
-                    .iter()
-                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
-                    .map(|(tzid, tz)| (tzid.to_owned(), tz.to_owned()))
-                    .collect(),
-                inner,
-            });
-        }
-        Ok(out)
+        self.event.generate(w)?;
+        self.alarm.generate(w)?;
+        self.todo.generate(w)?;
+        self.journal.generate(w)?;
+        self.free_busy.generate(w)?;
+        w.write_str("END:")?;
+        w.write_str(Self::NAME)?;
+        w.write_str("\r\n")?;
+        Ok(())
     }
 }
