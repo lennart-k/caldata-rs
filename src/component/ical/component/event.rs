@@ -3,14 +3,14 @@ use chrono::{DateTime, Utc};
 use crate::{
     ParserError,
     component::{Component, IcalAlarm, component},
-    parser::{ContentLine, ICalProperty, ParserOptions},
+    parser::{ContentLine, ParserOptions},
     property::{
         IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDURATIONProperty,
         IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty,
         IcalRRULEProperty, IcalSUMMARYProperty, IcalUIDProperty,
     },
     rrule::RRuleSet,
-    types::{CalDateOrDateTime, Tz},
+    types::{CalDateTime, Tz},
 };
 
 component!(
@@ -57,11 +57,11 @@ impl IcalEvent {
         start: Option<DateTime<Utc>>,
         end: Option<DateTime<Utc>>,
         limit: u16,
-    ) -> Vec<CalDateOrDateTime> {
+    ) -> Vec<CalDateTime> {
         // Procedure:
         // - build RRuleSet (checks that UNTIL matches DTSTART)
         let Some(mut rruleset) = self.rruleset.clone() else {
-            return vec![self.dtstart.0.clone()];
+            return vec![self.dtstart.0.clone().into()];
         };
         if let Some(start) = start {
             rruleset = rruleset.after(start.with_timezone(&Tz::UTC));
@@ -69,12 +69,12 @@ impl IcalEvent {
         if let Some(end) = end {
             rruleset = rruleset.before(end.with_timezone(&Tz::UTC));
         }
-        let is_date = self.dtstart.0.is_date();
-        rruleset.all(limit).dates.into_iter().map(|datetime| {
-            if is_date {
-                datetime.date_naive()
-            }
-        })
+        rruleset
+            .all(limit)
+            .dates
+            .into_iter()
+            .map(CalDateTime::from)
+            .collect()
     }
 }
 
