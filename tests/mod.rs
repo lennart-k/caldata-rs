@@ -9,13 +9,7 @@ macro_rules! set_snapshot_suffix {
 }
 
 pub mod calendar_object {
-    use caldata::{
-        IcalObjectParser, IcalParser,
-        component::{CalendarInnerData, Component},
-        generator::Emitter,
-        types::Tz,
-    };
-    use chrono::{DateTime, Timelike, Utc};
+    use caldata::{IcalObjectParser, IcalParser, component::Component, generator::Emitter};
     use itertools::Itertools;
 
     #[rstest::rstest]
@@ -92,11 +86,9 @@ pub mod rfc7809 {
 }
 
 pub mod parser {
-    use caldata::{IcalObjectParser, IcalParser, component::IcalCalendar, generator::Emitter};
+    use caldata::{IcalCalendar, IcalParser, generator::Emitter};
     use itertools::Itertools;
     use rstest::rstest;
-
-    use crate::utils::str_normalise_prop_order;
 
     #[rstest]
     #[case(0, include_str!("./resources/ical_events.ics"))]
@@ -170,7 +162,7 @@ pub mod parser {
 }
 
 pub mod chrono_tz {
-    use caldata::component::IcalTimeZone;
+    use caldata::IcalTimeZone;
     use caldata::parser::ComponentParser;
     use rstest::rstest;
     const VTIMEZONE_DIFFERENT_TZID_BERLIN: &str = r#"

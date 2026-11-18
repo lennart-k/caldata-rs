@@ -1,8 +1,8 @@
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
-pub use crate::component::ical::component::{IcalCalendar, IcalEvent};
-pub use crate::component::vcard::component::VcardContact;
+pub use crate::component::ical::{IcalCalendar, IcalEvent};
+pub use crate::component::vcard::VcardContact;
 pub use crate::parser::ContentLine;
 
 ///

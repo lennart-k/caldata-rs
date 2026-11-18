@@ -1,5 +1,5 @@
 pub mod ical;
-pub use ical::{IcalObjectParser, IcalParser, component::*};
+pub use ical::{IcalObjectParser, IcalParser};
 pub mod vcard;
 pub use vcard::VcardParser;
 

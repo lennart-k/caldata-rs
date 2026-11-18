@@ -1,8 +1,8 @@
 use crate::component::component;
 use crate::parser::{ContentLine, ParserError, ParserOptions};
 use crate::property::{
-    VcardANNIVERSARYProperty, VcardBDAYProperty, VcardFNProperty,
-    VcardNProperty, VcardUIDProperty, VcardVERSIONProperty,
+    VcardANNIVERSARYProperty, VcardBDAYProperty, VcardFNProperty, VcardNProperty, VcardUIDProperty,
+    VcardVERSIONProperty,
 };
 
 component!(

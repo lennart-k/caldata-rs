@@ -8,7 +8,8 @@ use crate::property::{
 use crate::rrule::RRuleSet;
 use crate::types::Tz;
 use crate::{
-    component::{Component, IcalAlarm},
+    IcalAlarm,
+    component::Component,
     parser::{ContentLine, ParserError},
     property::{
         IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty,

@@ -1,6 +1,6 @@
 use crate::{
-    ParserError,
-    component::{self, Component, IcalTimeZoneTransitionDaylight, IcalTimeZoneTransitionStandard},
+    IcalTimeZoneTransitionDaylight, IcalTimeZoneTransitionStandard, ParserError,
+    component::{self, Component},
     parser::{ContentLine, ParserOptions},
     property::{IcalTZIDProperty, IcalXLICLOCATIONProperty},
 };
@@ -127,7 +127,7 @@ impl From<&IcalTimeZone> for Option<chrono_tz::Tz> {
 mod tests {
     use std::str::FromStr;
 
-    use crate::{ComponentParser, component::IcalTimeZone, generator::Emitter};
+    use crate::{ComponentParser, IcalTimeZone, generator::Emitter};
 
     const EXAMPLE_TIMEZONE: &str = r#"BEGIN:VTIMEZONE
 TZID:America/New_York

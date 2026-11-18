@@ -1,9 +1,8 @@
 use crate::{
-    component::{
-        Component, ComponentMut, IcalAlarm, IcalAlarmBuilder, IcalEvent, IcalEventBuilder,
-        IcalFreeBusy, IcalFreeBusyBuilder, IcalJournal, IcalJournalBuilder, IcalTimeZone,
-        IcalTimeZoneBuilder, IcalTodo, IcalTodoBuilder, ParserError,
-    },
+    IcalAlarm, IcalAlarmBuilder, IcalEvent, IcalEventBuilder, IcalFreeBusy, IcalFreeBusyBuilder,
+    IcalJournal, IcalJournalBuilder, IcalTimeZone, IcalTimeZoneBuilder, IcalTodo, IcalTodoBuilder,
+    ParserError,
+    component::{Component, ComponentMut},
     generator::Emitter,
     parser::{ContentLine, ICalProperty, ParserOptions},
     property::{IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},

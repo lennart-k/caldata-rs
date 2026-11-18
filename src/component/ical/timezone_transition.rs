@@ -189,8 +189,7 @@ mod tests {
     use chrono::Duration;
 
     use crate::{
-        ComponentParser,
-        component::{IcalTimeZoneTransitionDaylight, IcalTimeZoneTransitionStandard},
+        ComponentParser, IcalTimeZoneTransitionDaylight, IcalTimeZoneTransitionStandard,
         generator::Emitter,
         types::{CalDateTime, UtcOffset},
     };

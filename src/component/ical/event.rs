@@ -1,8 +1,8 @@
 use chrono::{DateTime, Utc};
 
 use crate::{
-    ParserError,
-    component::{Component, IcalAlarm, component},
+    IcalAlarm, ParserError,
+    component::{Component, component},
     parser::{ContentLine, ParserOptions},
     property::{
         IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDURATIONProperty,

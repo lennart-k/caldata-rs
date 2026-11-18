@@ -1,9 +1,7 @@
 use crate::{
-    ContentLineParser,
-    component::{
-        Component, ComponentMut, IcalEvent, IcalEventBuilder, IcalJournal, IcalJournalBuilder,
-        IcalTimeZone, IcalTimeZoneBuilder, IcalTodo, IcalTodoBuilder,
-    },
+    ContentLineParser, IcalEvent, IcalEventBuilder, IcalJournal, IcalJournalBuilder, IcalTimeZone,
+    IcalTimeZoneBuilder, IcalTodo, IcalTodoBuilder,
+    component::{Component, ComponentMut},
     generator::Emitter,
     parser::{ContentLine, GetTzid, ICalProperty, ParserError, ParserOptions},
     property::{IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
@@ -457,15 +455,10 @@ impl Emitter for IcalCalendarObject {
 
 #[cfg(test)]
 mod tests {
-    use chrono::{DateTime, Timelike, Utc};
+    use chrono::{DateTime, Utc};
     use itertools::Itertools;
 
-    use crate::{
-        IcalObjectParser,
-        component::{CalendarInnerData, Component},
-        generator::Emitter,
-        types::Tz,
-    };
+    use crate::{IcalObjectParser, component::Component, generator::Emitter};
 
     macro_rules! set_snapshot_suffix {
         ($($expr:expr),*) => {
@@ -476,12 +469,12 @@ mod tests {
     }
 
     #[rstest::rstest]
-    #[case(0, include_str!("../../../../tests/resources/Recurring at 9am, third at 10am.ics"))]
-    #[case(1, include_str!("../../../../tests/resources/recurring_wholeday.ics"))]
-    #[case(2, include_str!("../../../../tests/resources/ical_recurrence_date.ics"))]
-    #[case(3, include_str!("../../../../tests/resources/ical_recurrence_date_2.ics"))]
+    #[case(0, include_str!("../../../tests/resources/Recurring at 9am, third at 10am.ics"))]
+    #[case(1, include_str!("../../../tests/resources/recurring_wholeday.ics"))]
+    #[case(2, include_str!("../../../tests/resources/ical_recurrence_date.ics"))]
+    #[case(3, include_str!("../../../tests/resources/ical_recurrence_date_2.ics"))]
     // Has no RRULE
-    #[case(4, include_str!("../../../../tests/resources/ical_example_1.ics"))]
+    #[case(4, include_str!("../../../tests/resources/ical_example_1.ics"))]
     fn rrule_expansion(#[case] case: usize, #[case] input: &str) {
         set_snapshot_suffix!("{case}");
         let reader = IcalObjectParser::from_slice(input.as_bytes());
@@ -495,7 +488,7 @@ mod tests {
     }
 
     #[rstest::rstest]
-    #[case(include_str!("../../../../tests/resources/ical_recurrence_date_2.ics"))]
+    #[case(include_str!("../../../tests/resources/ical_recurrence_date_2.ics"))]
     fn rrule_expansion_empty(#[case] input: &str) {
         let reader = IcalObjectParser::from_slice(input.as_bytes());
         for res in reader {
