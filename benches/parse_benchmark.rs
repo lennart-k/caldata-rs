@@ -22,7 +22,7 @@ fn benchmark(c: &mut Criterion) {
     });
     group.bench_function("parse CalDate", |b| {
         b.iter(|| {
-            CalDate::parse("19700329", None).unwrap();
+            CalDate::parse("19700329").unwrap();
         })
     });
     group.bench_function("parse CalDateTime UTC", |b| {

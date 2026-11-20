@@ -55,21 +55,21 @@ impl CalDateOrDateTime {
     pub fn date_floor(&self) -> NaiveDate {
         match self {
             Self::DateTime(datetime) => datetime.date_floor(),
-            Self::Date(date) => date.naive_date().to_owned(),
+            Self::Date(date) => date.0,
         }
     }
 
     pub fn date_ceil(&self) -> NaiveDate {
         match self {
             Self::DateTime(datetime) => datetime.date_ceil(),
-            Self::Date(date) => date.naive_date().to_owned(),
+            Self::Date(date) => date.0,
         }
     }
 
     pub fn utc(&self) -> DateTime<Utc> {
         match self {
             Self::DateTime(datetime) => datetime.utc(),
-            Self::Date(date) => date.naive_date().and_time(NaiveTime::default()).and_utc(),
+            Self::Date(date) => date.0.and_time(NaiveTime::default()).and_utc(),
         }
     }
 
