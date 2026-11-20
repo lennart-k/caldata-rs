@@ -66,12 +66,15 @@ impl Emitter for IcalRECURIDProperty {
 
 impl IcalRECURIDProperty {
     pub fn validate_dtstart(&self, dtstart: &CalDateOrDateTime) -> Result<(), ParserError> {
-        if (self.0.is_date() != dtstart.is_date())
-            || (self.0.timezone().is_local() != dtstart.timezone().is_local())
-        {
-            return Err(ParserError::DtstartNotMatchingRecurId);
+        match (&self.0, dtstart) {
+            (CalDateOrDateTime::DateTime(recur_dt), CalDateOrDateTime::DateTime(start_dt))
+                if recur_dt.timezone() != start_dt.timezone() =>
+            {
+                Err(ParserError::DtstartNotMatchingRecurId)
+            }
+            (CalDateOrDateTime::Date(_), CalDateOrDateTime::Date(_)) => Ok(()),
+            _ => Err(ParserError::DtstartNotMatchingRecurId),
         }
-        Ok(())
     }
 }
 

@@ -67,7 +67,7 @@ impl IcalTodoBuilder {
         let rruleset = if let Some(dtstart) = dtstart.as_ref()
             && !(rrule.is_empty() && rdate.is_empty())
         {
-            let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().into();
+            let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().as_datetime_or_midnight();
             Some(
                 RRuleSet::new(rrule_dtstart)
                     .set_rrules(
@@ -87,7 +87,9 @@ impl IcalTodoBuilder {
                             .iter()
                             .flat_map(|IcalRDATEProperty(dates, _)| {
                                 // TODO: Support periods
-                                dates.iter().map(|date| date.clone().start().into())
+                                dates
+                                    .iter()
+                                    .map(|date| date.clone().start().as_datetime_or_midnight())
                             })
                             .collect(),
                     )
@@ -95,7 +97,9 @@ impl IcalTodoBuilder {
                         exdate
                             .iter()
                             .flat_map(|IcalEXDATEProperty(dates, _)| {
-                                dates.iter().map(|date| date.clone().into())
+                                dates
+                                    .iter()
+                                    .map(|date| date.clone().as_datetime_or_midnight())
                             })
                             .collect(),
                     ),

@@ -5,7 +5,7 @@ use crate::{
     generator::Emitter,
     parser::{ContentLine, GetTzid, ICalProperty, ParserError, ParserOptions},
     property::{IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
-    types::CalDateTime,
+    types::{CalDateOrDateTime, CalDateTime, Tz},
 };
 use chrono::{DateTime, Utc};
 use std::{
@@ -66,7 +66,7 @@ impl CalendarInnerData {
         iterator
     }
 
-    pub fn get_first_occurence(&self) -> Option<CalDateTime> {
+    pub fn get_first_occurence(&self) -> Option<DateTime<Tz>> {
         match self {
             Self::Event(main, overrides) => std::iter::once(&main.dtstart.0)
                 .chain(overrides.iter().map(|over| &over.dtstart.0))
@@ -93,7 +93,7 @@ impl CalendarInnerData {
             }
         }
         .cloned()
-        .map(Into::into)
+        .map(CalDateOrDateTime::as_datetime_or_midnight)
     }
 
     pub fn get_last_occurence(&self) -> Option<CalDateTime> {
@@ -365,7 +365,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
                     && let Some(start) = inner.get_first_occurence()
                 {
                     // Just to be safe
-                    let trunc_start = start.utc() - chrono::Duration::days(365);
+                    let trunc_start = start.to_utc() - chrono::Duration::days(365);
                     let tz = tz.clone().truncate(trunc_start);
                     vtimezones.insert(tzid.to_owned(), tz);
                 }

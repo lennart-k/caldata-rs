@@ -1,12 +1,12 @@
 use crate::parser::ContentLine;
-use crate::types::{CalDateTimeError, Tz, Value};
-use chrono::{DateTime, Datelike, NaiveDate, NaiveTime};
+use crate::types::{CalDateTimeError, Value};
+use chrono::{Datelike, NaiveDate};
 use std::collections::HashMap;
 
 pub const LOCAL_DATE: &str = "%Y%m%d";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CalDate(pub NaiveDate, pub Tz);
+pub struct CalDate(pub NaiveDate);
 
 impl PartialOrd for CalDate {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
@@ -23,23 +23,9 @@ impl Ord for CalDate {
 impl CalDate {
     pub fn parse_prop(
         prop: &ContentLine,
-        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self, CalDateTimeError> {
-        let timezone = if let Some(tzid) = prop.params.get_tzid() {
-            if let Some(timezone) = timezones.and_then(|timezones| timezones.get(tzid)) {
-                timezone.to_owned()
-            } else {
-                // TZID refers to timezone that does not exist
-                return Err(CalDateTimeError::InvalidTZID(tzid.to_string()));
-            }
-        } else {
-            // No explicit timezone specified.
-            // This is valid and will be localtime or UTC depending on the value
-            // We will stick to this default as documented in https://github.com/lennart-k/rustical/issues/102
-            None
-        };
-
-        Self::parse(&prop.value, timezone)
+        Self::parse(&prop.value)
     }
 
     #[must_use]
@@ -52,31 +38,16 @@ impl CalDate {
         self.0.format(LOCAL_DATE).to_string()
     }
 
-    #[must_use]
-    pub fn as_datetime(&self) -> DateTime<Tz> {
-        self.0
-            .and_time(NaiveTime::default())
-            .and_local_timezone(self.1.to_owned())
-            .earliest()
-            .expect("Midnight always exists")
-    }
-
-    pub fn parse(value: &str, timezone: Option<chrono_tz::Tz>) -> Result<Self, CalDateTimeError> {
-        let timezone = timezone.map_or(Tz::Local, Tz::Olson);
+    pub fn parse(value: &str) -> Result<Self, CalDateTimeError> {
         if let Ok(date) = NaiveDate::parse_from_str(value, LOCAL_DATE) {
-            return Ok(Self(date, timezone));
+            return Ok(Self(date));
         }
         Err(CalDateTimeError::InvalidDatetimeFormat(value.to_string()))
     }
 
     #[must_use]
-    pub fn timezone(&self) -> &Tz {
-        &self.1
-    }
-
-    #[must_use]
     pub fn succ_opt(&self) -> Option<Self> {
-        Some(Self(self.0.succ_opt()?, self.1))
+        Some(Self(self.0.succ_opt()?))
     }
 }
 
@@ -111,25 +82,25 @@ impl Datelike for CalDate {
         self.0.iso_week()
     }
     fn with_year(&self, year: i32) -> Option<Self> {
-        Some(Self(self.0.with_year(year)?, self.1.to_owned()))
+        Some(Self(self.0.with_year(year)?))
     }
     fn with_month(&self, month: u32) -> Option<Self> {
-        Some(Self(self.0.with_month(month)?, self.1.to_owned()))
+        Some(Self(self.0.with_month(month)?))
     }
     fn with_month0(&self, month0: u32) -> Option<Self> {
-        Some(Self(self.0.with_month0(month0)?, self.1.to_owned()))
+        Some(Self(self.0.with_month0(month0)?))
     }
     fn with_day(&self, day: u32) -> Option<Self> {
-        Some(Self(self.0.with_day(day)?, self.1.to_owned()))
+        Some(Self(self.0.with_day(day)?))
     }
     fn with_day0(&self, day0: u32) -> Option<Self> {
-        Some(Self(self.0.with_day0(day0)?, self.1.to_owned()))
+        Some(Self(self.0.with_day0(day0)?))
     }
     fn with_ordinal(&self, ordinal: u32) -> Option<Self> {
-        Some(Self(self.0.with_ordinal(ordinal)?, self.1.to_owned()))
+        Some(Self(self.0.with_ordinal(ordinal)?))
     }
     fn with_ordinal0(&self, ordinal0: u32) -> Option<Self> {
-        Some(Self(self.0.with_ordinal0(ordinal0)?, self.1.to_owned()))
+        Some(Self(self.0.with_ordinal0(ordinal0)?))
     }
 }
 
@@ -140,31 +111,16 @@ impl Value for CalDate {
     fn value(&self) -> String {
         self.format()
     }
-
-    fn utc_or_local(self) -> Self {
-        let tz = if self.1.is_local() {
-            Tz::Local
-        } else {
-            Tz::utc()
-        };
-        Self(self.0, tz)
-    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::types::{CalDate, Value};
+    use crate::types::CalDate;
 
     #[test]
     fn test_date() {
-        let a = CalDate::parse("20121212", None).unwrap();
-        let b = CalDate::parse("20121213", None).unwrap();
-        let c = CalDate::parse("20121213", Some(chrono_tz::Europe::Berlin)).unwrap();
-        let d = CalDate::parse("20121213", Some(chrono_tz::Europe::Kyiv)).unwrap();
-        // Floating time and fixed time => different results
-        assert_ne!(b.clone().utc_or_local(), c.clone().utc_or_local());
-        // fixed timezones resolve to UTC
-        assert_eq!(c.clone().utc_or_local(), d.utc_or_local());
+        let a = CalDate::parse("20121212").unwrap();
+        let b = CalDate::parse("20121213").unwrap();
         assert!(b > a);
         assert!(b >= a);
     }
