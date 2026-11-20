@@ -1,7 +1,7 @@
+use crate::parser::ContentLine;
 use crate::types::{CalDateTimeError, Tz, Value};
-use crate::{parser::ContentLine, types::CalDateTime};
-use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveTime};
-use std::{collections::HashMap, ops::Add};
+use chrono::{DateTime, Datelike, NaiveDate, NaiveTime};
+use std::collections::HashMap;
 
 pub const LOCAL_DATE: &str = "%Y%m%d";
 
@@ -16,22 +16,7 @@ impl PartialOrd for CalDate {
 
 impl Ord for CalDate {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.as_datetime().cmp(&other.as_datetime())
-    }
-}
-
-impl Add<Duration> for CalDate {
-    type Output = CalDateTime;
-
-    fn add(self, duration: Duration) -> Self::Output {
-        (self
-            .0
-            .and_time(NaiveTime::default())
-            .and_local_timezone(self.1)
-            .earliest()
-            .expect("Local timezone has constant offset")
-            + duration)
-            .into()
+        self.0.cmp(&other.0)
     }
 }
 
@@ -169,7 +154,6 @@ impl Value for CalDate {
 #[cfg(test)]
 mod tests {
     use crate::types::{CalDate, Value};
-    use chrono::Duration;
 
     #[test]
     fn test_date() {
@@ -181,7 +165,6 @@ mod tests {
         assert_ne!(b.clone().utc_or_local(), c.clone().utc_or_local());
         // fixed timezones resolve to UTC
         assert_eq!(c.clone().utc_or_local(), d.utc_or_local());
-        assert_eq!((a.clone() + Duration::days(1)).0, b.as_datetime());
         assert!(b > a);
         assert!(b >= a);
     }
