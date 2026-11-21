@@ -56,4 +56,8 @@ impl VcardContact {
     pub fn get_uid(&self) -> Option<&str> {
         self.uid.as_ref().map(|uid| uid.0.as_str())
     }
+
+    pub fn set_uid(&mut self, uid: Option<String>) {
+        self.uid = uid.map(|uid| VcardUIDProperty(uid, Default::default()));
+    }
 }
