@@ -3,6 +3,7 @@ use crate::{
     component::{self, Component},
     parser::{ContentLine, ParserOptions},
     property::{IcalTZIDProperty, IcalXLICLOCATIONProperty},
+    types::Tz,
 };
 use chrono::{DateTime, Utc};
 use std::{collections::HashMap, sync::OnceLock};
@@ -59,6 +60,18 @@ impl IcalTimeZone {
 
     pub fn get_lic_location(&self) -> Option<&str> {
         self.lic_location.as_ref().map(|prop| prop.0.as_str())
+    }
+
+    pub fn get_dtstart(&self) -> Option<DateTime<Tz>> {
+        self.standard
+            .iter()
+            .map(|transition| transition.dtstart.0.clone().as_datetime_or_midnight())
+            .chain(
+                self.daylight
+                    .iter()
+                    .map(|transition| transition.dtstart.0.clone().as_datetime_or_midnight()),
+            )
+            .min()
     }
 
     pub fn from_tzid(tzid: &str) -> Option<&Self> {
