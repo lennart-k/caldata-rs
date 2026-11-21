@@ -47,7 +47,6 @@ expression: cals
                     Date(
                         CalDate(
                             2025-08-06,
-                            Local,
                         ),
                     ),
                     ContentLineParams(
@@ -71,7 +70,6 @@ expression: cals
                         Date(
                             CalDate(
                                 2025-08-07,
-                                Local,
                             ),
                         ),
                         ContentLineParams(

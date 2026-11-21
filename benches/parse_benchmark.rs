@@ -1,6 +1,6 @@
 use caldata::{
-    IcalParser, LineReader,
-    generator::{Emitter, IcalCalendar},
+    IcalCalendar, IcalParser, LineReader,
+    generator::Emitter,
     parser::{ContentLine, ICalProperty},
     property::IcalDTSTARTProperty,
     types::{CalDate, CalDateTime, PartialDate},

@@ -1,11 +1,6 @@
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
-pub use crate::component::ical::{IcalCalendar, IcalEvent};
-pub use crate::component::vcard::VcardContact;
-pub use crate::parser::ContentLine;
-
-///
 /// Emits the content of the Component in ical-format.
 ///
 pub trait Emitter {

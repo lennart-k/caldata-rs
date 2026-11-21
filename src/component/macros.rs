@@ -37,8 +37,8 @@ macro_rules! component {
 
             #[derive(Debug, Clone, Default)]
             pub struct [< $name Builder >] {
-                content_lines: Vec<ContentLine>,
-                $($comp_field: Vec<<$comp_type as Component>::Builder>),*
+                pub content_lines: Vec<ContentLine>,
+                $(pub $comp_field: Vec<<$comp_type as Component>::Builder>),*
             }
 
             impl $crate::component::Component for [< $name Builder >] {
