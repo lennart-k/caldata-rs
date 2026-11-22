@@ -11,7 +11,7 @@ use crate::{
     types::{CalDate, CalDateOrDateTime, CalDateTime, Tz},
 };
 use chrono::{DateTime, Duration, Utc};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, VecDeque};
 
 component!(
     IcalEvent,
@@ -110,12 +110,10 @@ impl IcalEvent {
         start: Option<DateTime<Utc>>,
         end: Option<DateTime<Utc>>,
         limit: u16,
-    ) -> Vec<DateTime<Tz>> {
+    ) -> Option<Vec<DateTime<Tz>>> {
         // Procedure:
         // - build RRuleSet (checks that UNTIL matches DTSTART)
-        let Some(mut rruleset) = self.rruleset.clone() else {
-            return vec![self.dtstart.0.clone().as_datetime_floor()];
-        };
+        let mut rruleset = self.rruleset.clone()?;
         // When doing datetime comparisons with local time we currently treat it as UTC
         // Since this is nontrivial to treat in rrule we add a day of tolerance to both limits and
         // TODO: do a second filtering pass where we correctly handle local time zones.
@@ -125,13 +123,14 @@ impl IcalEvent {
         if let Some(end) = end {
             rruleset = rruleset.before(end.with_timezone(&Tz::UTC) + Duration::days(1));
         }
-        rruleset.all(limit).dates
+        Some(rruleset.all(limit).dates)
     }
 
     pub fn to_utc_or_local(self) -> Self {
         Self {
             dtstart: self.dtstart.utc_or_local(),
             dtend: self.dtend.map(ICalProperty::utc_or_local),
+            recurid: self.recurid.map(ICalProperty::utc_or_local),
             ..self
         }
     }
@@ -142,17 +141,18 @@ impl IcalEvent {
         end: Option<DateTime<Utc>>,
         limit: u16,
         overrides: Vec<Self>,
-    ) -> Vec<Self> {
+    ) -> VecDeque<Self> {
         let mut overrides: BTreeMap<CalDateOrDateTime, Self> = overrides
             .into_iter()
             .map(|over| (over.recurid.clone(), over))
             .filter_map(|(recurid, over)| recurid.map(|recurid| (recurid.0.clone(), over)))
             .collect();
         let is_date = self.dtstart.0.is_date();
-        let recurrence_set = self
-            .get_recurrence_datetimes(start, end, limit)
-            .into_iter()
-            .map(|datetime| {
+
+        let mut out = VecDeque::new();
+
+        if let Some(recurrences) = self.get_recurrence_datetimes(start, end, limit) {
+            let recurrence_set = recurrences.into_iter().map(|datetime| {
                 if is_date {
                     CalDateOrDateTime::Date(CalDate(datetime.date_naive()))
                 } else {
@@ -160,18 +160,21 @@ impl IcalEvent {
                 }
             });
 
-        let mut out = vec![];
-        // TODO: Support THISANDFUTURE
-        for recurid in recurrence_set {
-            let recurrence = if let Some(over) = overrides.remove(&recurid) {
-                over
-            } else {
-                self.get_recurrence(recurid)
-            };
-            out.push(recurrence.to_utc_or_local());
+            // TODO: Support THISANDFUTURE
+            for recurid in recurrence_set {
+                let recurrence = if let Some(over) = overrides.remove(&recurid) {
+                    over
+                } else {
+                    self.get_recurrence(recurid)
+                };
+                out.push_back(recurrence.to_utc_or_local());
+            }
+        } else {
+            out.push_back(self.clone().to_utc_or_local());
         }
+
         // Add remaining overrides
-        out.extend(overrides.into_values());
+        out.extend(overrides.into_values().map(Self::to_utc_or_local));
         out
     }
 }
@@ -299,12 +302,14 @@ END:VCALENDAR
         assert!(event.dtstart.0.is_date());
         assert_eq!(event.get_effective_duration(), Some(Duration::days(1)));
         insta::assert_debug_snapshot!(event.get_recurrence_datetimes(None, None, 4), @"
-        [
-            2025-01-01T00:00:00Local,
-            2025-01-02T00:00:00Local,
-            2025-01-03T00:00:00Local,
-            2025-01-04T00:00:00Local,
-        ]
+        Some(
+            [
+                2025-01-01T00:00:00Local,
+                2025-01-02T00:00:00Local,
+                2025-01-03T00:00:00Local,
+                2025-01-04T00:00:00Local,
+            ],
+        )
         ");
     }
 
@@ -318,20 +323,22 @@ END:VCALENDAR
         assert!(!event.dtstart.0.is_date());
         assert_eq!(event.get_effective_duration(), Some(Duration::minutes(90)));
         insta::assert_debug_snapshot!(event.get_recurrence_datetimes(None, None, 4), @"
-        [
-            2025-01-01T13:00:00Olson(
-                NZDT,
-            ),
-            2025-01-02T13:00:00Olson(
-                NZDT,
-            ),
-            2025-01-03T13:00:00Olson(
-                NZDT,
-            ),
-            2025-01-04T13:00:00Olson(
-                NZDT,
-            ),
-        ]
+        Some(
+            [
+                2025-01-01T13:00:00Olson(
+                    NZDT,
+                ),
+                2025-01-02T13:00:00Olson(
+                    NZDT,
+                ),
+                2025-01-03T13:00:00Olson(
+                    NZDT,
+                ),
+                2025-01-04T13:00:00Olson(
+                    NZDT,
+                ),
+            ],
+        )
         ");
     }
 }

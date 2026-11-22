@@ -12,7 +12,6 @@ use std::{
     borrow::Cow,
     collections::{BTreeMap, HashMap},
     fmt::Write,
-    hash::Hash,
 };
 
 #[derive(Debug, Clone)]
@@ -239,8 +238,8 @@ impl IcalCalendarObject {
         match self.inner {
             CalendarInnerData::Event(main, overrides) => {
                 let mut events = main.expand_recurrence(start, end, limit, overrides);
-                let last = events.pop()?;
-                let inner = CalendarInnerData::Event(last, events);
+                let first = events.pop_front()?;
+                let inner = CalendarInnerData::Event(first, events.into_iter().collect());
                 Some(Self {
                     inner,
                     timezones: Default::default(),
