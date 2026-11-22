@@ -1,11 +1,15 @@
+use itertools::Itertools;
+
 use crate::{
-    IcalAlarm, IcalAlarmBuilder, IcalEvent, IcalEventBuilder, IcalFreeBusy, IcalFreeBusyBuilder,
-    IcalJournal, IcalJournalBuilder, IcalTimeZone, IcalTimeZoneBuilder, IcalTodo, IcalTodoBuilder,
-    ParserError,
+    CalendarInnerData, IcalAlarm, IcalAlarmBuilder, IcalCalendarObject, IcalEvent,
+    IcalEventBuilder, IcalFreeBusy, IcalFreeBusyBuilder, IcalJournal, IcalJournalBuilder,
+    IcalTimeZone, IcalTimeZoneBuilder, IcalTodo, IcalTodoBuilder, ParserError,
     component::{Component, ComponentMut},
     generator::Emitter,
     parser::{ContentLine, ICalProperty, ParserOptions},
-    property::{IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
+    property::{
+        Calscale, IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty, IcalVersion,
+    },
 };
 use std::collections::{BTreeMap, HashMap, HashSet};
 
@@ -212,6 +216,183 @@ impl ComponentMut for IcalCalendarBuilder {
 impl IcalCalendar {
     pub fn get_timezones(&self) -> &BTreeMap<String, IcalTimeZone> {
         &self.timezone
+    }
+
+    pub fn add_object(&mut self, object: IcalCalendarObject) {
+        for (tzid, tz) in object.vtimezones.into_iter() {
+            match (
+                self.timezone.get(&tzid).and_then(IcalTimeZone::get_dtstart),
+                tz.get_dtstart(),
+            ) {
+                (Some(existing), Some(new)) if new < existing => {
+                    // New VTIMEZONE predates the existing one
+                    self.chrono_timezones.insert(tzid.clone(), (&tz).into());
+                    self.timezone.insert(tzid, tz);
+                }
+                (None, Some(_)) => {
+                    self.chrono_timezones.insert(tzid.clone(), (&tz).into());
+                    self.timezone.insert(tzid, tz);
+                }
+                _ => {}
+            }
+        }
+
+        match object.inner {
+            CalendarInnerData::Event(main, overrides) => {
+                self.event.push(main);
+                self.event.extend(overrides);
+            }
+            CalendarInnerData::Todo(main, overrides) => {
+                self.todo.push(main);
+                self.todo.extend(overrides);
+            }
+            CalendarInnerData::Journal(main, overrides) => {
+                self.journal.push(main);
+                self.journal.extend(overrides);
+            }
+        }
+    }
+
+    pub fn from_objects(
+        prodid: String,
+        objects: Vec<IcalCalendarObject>,
+        other_properties: Vec<ContentLine>,
+    ) -> Self {
+        let mut cal = Self {
+            version: IcalVERSIONProperty(IcalVersion::Version2_0, Default::default()),
+            prodid: IcalPRODIDProperty(prodid, Default::default()),
+            calscale: Some(IcalCALSCALEProperty(
+                Calscale::Gregorian,
+                Default::default(),
+            )),
+            other_properties,
+            event: Vec::new(),
+            alarm: Vec::new(),
+            todo: Vec::new(),
+            journal: Vec::new(),
+            free_busy: Vec::new(),
+            timezone: BTreeMap::new(),
+            chrono_timezones: HashMap::new(),
+        };
+
+        for object in objects {
+            cal.add_object(object);
+        }
+
+        cal
+    }
+
+    pub fn into_objects(self) -> Result<Vec<IcalCalendarObject>, ParserError> {
+        let mut out = Vec::new();
+
+        let event_groups: Vec<Vec<IcalEvent>> = self
+            .event
+            .into_iter()
+            .chunk_by(|event| event.get_uid().to_owned())
+            .into_iter()
+            .map(|(_, events)| events.collect())
+            .collect();
+
+        for events in event_groups {
+            let tzids: HashSet<_> = events
+                .iter()
+                .flat_map(|e| e.get_tzids())
+                .map(ToOwned::to_owned)
+                .collect();
+            let inner = CalendarInnerData::from_events(events)?;
+            out.push(IcalCalendarObject {
+                version: self.version.clone(),
+                calscale: self.calscale.clone(),
+                prodid: self.prodid.clone(),
+                other_properties: Vec::new(),
+                vtimezones: self
+                    .timezone
+                    .iter()
+                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
+                    .map(|(tzid, tz)| (tzid.to_owned(), tz.clone()))
+                    .collect(),
+                timezones: self
+                    .chrono_timezones
+                    .iter()
+                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
+                    .map(|(tzid, tz)| (tzid.to_owned(), tz.to_owned()))
+                    .collect(),
+                inner,
+            });
+        }
+
+        let journal_groups: Vec<Vec<IcalJournal>> = self
+            .journal
+            .into_iter()
+            .chunk_by(|journal| journal.get_uid().to_owned())
+            .into_iter()
+            .map(|(_, journals)| journals.collect())
+            .collect();
+
+        for journals in journal_groups {
+            let tzids: HashSet<_> = journals
+                .iter()
+                .flat_map(|e| e.get_tzids())
+                .map(ToOwned::to_owned)
+                .collect();
+            let inner = CalendarInnerData::from_journals(journals)?;
+            out.push(IcalCalendarObject {
+                version: self.version.clone(),
+                calscale: self.calscale.clone(),
+                prodid: self.prodid.clone(),
+                other_properties: Vec::new(),
+                vtimezones: self
+                    .timezone
+                    .iter()
+                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
+                    .map(|(tzid, tz)| (tzid.to_owned(), tz.clone()))
+                    .collect(),
+                timezones: self
+                    .chrono_timezones
+                    .iter()
+                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
+                    .map(|(tzid, tz)| (tzid.to_owned(), tz.to_owned()))
+                    .collect(),
+                inner,
+            });
+        }
+
+        let todo_groups: Vec<Vec<IcalTodo>> = self
+            .todo
+            .into_iter()
+            .chunk_by(|todo| todo.get_uid().to_owned())
+            .into_iter()
+            .map(|(_, todos)| todos.collect())
+            .collect();
+
+        for todos in todo_groups {
+            let tzids: HashSet<_> = todos
+                .iter()
+                .flat_map(|e| e.get_tzids())
+                .map(ToOwned::to_owned)
+                .collect();
+            let inner = CalendarInnerData::from_todos(todos)?;
+            out.push(IcalCalendarObject {
+                version: self.version.clone(),
+                calscale: self.calscale.clone(),
+                prodid: self.prodid.clone(),
+                other_properties: Vec::new(),
+                vtimezones: self
+                    .timezone
+                    .iter()
+                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
+                    .map(|(tzid, tz)| (tzid.to_owned(), tz.clone()))
+                    .collect(),
+                timezones: self
+                    .chrono_timezones
+                    .iter()
+                    .filter(|(tzid, _tz)| tzids.contains(tzid.as_str()))
+                    .map(|(tzid, tz)| (tzid.to_owned(), tz.to_owned()))
+                    .collect(),
+                inner,
+            });
+        }
+        Ok(out)
     }
 }
 
