@@ -66,13 +66,15 @@ impl Value for PartialDateAndOrTime {
         Some("DATE-AND-OR-TIME")
     }
 
-    fn value(&self) -> String {
-        let mut out = self.date.as_ref().map(Value::value).unwrap_or_default();
-        if let Some(time) = &self.time {
-            out += "T";
-            out += &time.value();
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
+        if let Some(date) = &self.date {
+            date.generate(w)?;
         }
-        out
+        if let Some(time) = &self.time {
+            w.write_char('T')?;
+            time.generate(w)?;
+        }
+        Ok(())
     }
 }
 
@@ -81,8 +83,11 @@ impl Value for PartialDateTime {
         Some("DATE-TIME")
     }
 
-    fn value(&self) -> String {
-        format!("{}T{}", self.date.value(), self.time.value())
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
+        self.date.generate(w)?;
+        w.write_char('T')?;
+        self.time.generate(w)?;
+        Ok(())
     }
 }
 
@@ -109,8 +114,8 @@ mod tests {
     fn test_parse_datetime(#[case] input: &str, #[case] value: PartialDateTime) {
         let parsed = PartialDateTime::parse(input).unwrap();
         assert_eq!(parsed, value);
-        let serialized = parsed.value();
-        assert!(!parsed.value().ends_with("T"));
+        let serialized = parsed.generate_string();
+        assert!(!parsed.generate_string().ends_with("T"));
         let roundtrip = PartialDateTime::parse(&serialized).unwrap();
         assert_eq!(parsed, value);
         assert_eq!(roundtrip, value);
@@ -134,8 +139,8 @@ mod tests {
     fn test_parse_date_and_or_time(#[case] input: &str, #[case] value: PartialDateAndOrTime) {
         let parsed = PartialDateAndOrTime::parse(input).unwrap();
         assert_eq!(parsed, value);
-        let serialized = parsed.value();
-        assert!(!parsed.value().ends_with("T"));
+        let serialized = parsed.generate_string();
+        assert!(!parsed.generate_string().ends_with("T"));
         let roundtrip = PartialDateAndOrTime::parse(&serialized).unwrap();
         assert_eq!(parsed, value);
         assert_eq!(roundtrip, value);

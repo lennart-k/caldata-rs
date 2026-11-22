@@ -73,13 +73,6 @@ impl CalDateOrDateTime {
         }
     }
 
-    pub fn format(&self) -> String {
-        match self {
-            Self::DateTime(datetime) => datetime.format(),
-            Self::Date(date) => date.format(),
-        }
-    }
-
     pub fn value_type(&self) -> &'static str {
         match self {
             Self::DateTime(_) => "DATE-TIME",
@@ -132,10 +125,10 @@ impl Value for CalDateOrDateTime {
         }
     }
 
-    fn value(&self) -> String {
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
         match self {
-            CalDateOrDateTime::DateTime(datetime) => datetime.value(),
-            CalDateOrDateTime::Date(date) => date.value(),
+            CalDateOrDateTime::DateTime(datetime) => datetime.generate(w),
+            CalDateOrDateTime::Date(date) => date.generate(w),
         }
     }
 

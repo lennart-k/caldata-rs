@@ -37,10 +37,10 @@ impl Value for DateTimeOrDuration {
         }
     }
 
-    fn value(&self) -> String {
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
         match self {
-            Self::DateTime(dt) => dt.value(),
-            Self::Duration(dur) => dur.value(),
+            Self::DateTime(dt) => dt.generate(w),
+            Self::Duration(dur) => dur.generate(w),
         }
     }
 }
@@ -90,12 +90,11 @@ impl Value for Period {
         Some("PERIOD")
     }
 
-    fn value(&self) -> String {
-        format!(
-            "{start}/{end}",
-            start = self.0.value(),
-            end = self.1.value()
-        )
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
+        self.0.generate(w)?;
+        w.write_char('/')?;
+        self.1.generate(w)?;
+        Ok(())
     }
 }
 
@@ -144,10 +143,10 @@ impl Value for DateOrDateTimeOrPeriod {
         }
     }
 
-    fn value(&self) -> String {
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
         match self {
-            Self::DateOrDateTime(dodt) => dodt.value(),
-            Self::Period(period) => period.value(),
+            Self::DateOrDateTime(dodt) => dodt.generate(w),
+            Self::Period(period) => period.generate(w),
         }
     }
 }

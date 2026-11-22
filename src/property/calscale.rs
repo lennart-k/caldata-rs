@@ -15,8 +15,8 @@ impl Value for Calscale {
         Some("TEXT")
     }
 
-    fn value(&self) -> String {
-        "GREGORIAN".to_owned()
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
+        w.write_str("GREGORIAN")
     }
 }
 

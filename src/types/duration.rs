@@ -72,52 +72,56 @@ impl Value for Duration {
         Some("DURATION")
     }
 
-    fn value(&self) -> String {
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
         if self.is_zero() {
-            return "PT0S".to_owned();
+            return w.write_str("PT0S");
         }
         let mut abs_duration = self.abs();
-        let mut out = String::new();
         if self < &abs_duration {
-            out.push('-');
+            w.write_char('-')?;
         }
-        out.push('P');
+        w.write_char('P')?;
 
         // Return weeks if duration can be expressed exactly by number of weeks
         let weeks = abs_duration.num_weeks();
         if weeks > 0 && abs_duration == Duration::weeks(weeks) {
-            out.push_str(&format!("{weeks}W"));
-            return out;
+            w.write_str(&weeks.to_string())?;
+            w.write_char('W')?;
+            return Ok(());
         }
 
         let days = abs_duration.num_days();
         if days > 0 {
-            out.push_str(&format!("{days}D"));
+            w.write_str(&days.to_string())?;
+            w.write_char('D')?;
             abs_duration -= Duration::days(days);
         }
         if abs_duration.is_zero() {
-            return out;
+            return Ok(());
         }
 
-        out.push('T');
+        w.write_char('T')?;
 
         let hours = abs_duration.num_hours();
         if hours > 0 {
-            out.push_str(&format!("{hours}H"));
+            w.write_str(&hours.to_string())?;
+            w.write_char('H')?;
             abs_duration -= Duration::hours(hours);
         }
         let minutes = abs_duration.num_minutes();
         if minutes > 0 {
-            out.push_str(&format!("{minutes}M"));
+            w.write_str(&minutes.to_string())?;
+            w.write_char('M')?;
             abs_duration -= Duration::minutes(minutes);
         }
         let seconds = abs_duration.num_seconds();
         if seconds > 0 {
-            out.push_str(&format!("{seconds}S"));
+            w.write_str(&seconds.to_string())?;
+            w.write_char('S')?;
             abs_duration -= Duration::seconds(seconds);
         }
 
-        out
+        Ok(())
     }
 }
 
@@ -157,6 +161,6 @@ mod tests {
     fn test_duration_roundtrip(#[case] value: &str, #[case] ref_duration: Duration) {
         let duration = parse_duration(value).unwrap();
         assert_eq!(duration, ref_duration);
-        assert_eq!(duration.value(), value);
+        assert_eq!(duration.generate_string(), value);
     }
 }

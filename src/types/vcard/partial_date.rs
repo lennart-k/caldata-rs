@@ -105,7 +105,7 @@ impl Value for PartialDate {
         Some("DATE")
     }
 
-    fn value(&self) -> String {
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
         if let Some(year) = &self.year {
             assert!(!(self.month.is_none() && self.day.is_some()));
             let month = self
@@ -113,14 +113,14 @@ impl Value for PartialDate {
                 .map(|month| format!("-{month:02}"))
                 .unwrap_or_default();
             let day = self.day.map(|day| format!("-{day:02}")).unwrap_or_default();
-            format!("{year:04}{month}{day}")
+            w.write_str(&format!("{year:04}{month}{day}"))
         } else {
             let month = self
                 .month
                 .map(|month| format!("{month:02}"))
                 .unwrap_or("-".to_owned());
             let day = self.day.map(|day| format!("{day:02}")).unwrap_or_default();
-            format!("--{month}{day}")
+            w.write_str(&format!("--{month}{day}"))
         }
     }
 }
@@ -152,8 +152,8 @@ mod tests {
     #[case("---12", PartialDate{day: Some(12), ..Default::default()})]
     fn test_parse_date(#[case] input: &str, #[case] value: PartialDate) {
         let parsed = PartialDate::parse(input).unwrap();
-        assert!(!parsed.value().ends_with('-'));
-        let roundtrip = PartialDate::parse(&parsed.value()).unwrap();
+        assert!(!parsed.generate_string().ends_with('-'));
+        let roundtrip = PartialDate::parse(&parsed.generate_string()).unwrap();
         assert_eq!(parsed, value);
         assert_eq!(roundtrip, value);
     }

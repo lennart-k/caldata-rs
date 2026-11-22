@@ -58,7 +58,7 @@ impl Emitter for IcalRECURIDProperty {
             self.1.generate(&mut w)?;
         }
         w.write_char(VALUE_DELIMITER)?;
-        w.write_str(&self.0.value())?;
+        self.0.generate(&mut w)?;
         w.write_str("\r\n")?;
         Ok(())
     }
@@ -91,7 +91,7 @@ impl From<IcalRECURIDProperty> for crate::property::ContentLine {
         Self {
             name: IcalRECURIDProperty::NAME.to_owned(),
             params,
-            value: value.0.format(),
+            value: value.0.generate_string(),
         }
     }
 }

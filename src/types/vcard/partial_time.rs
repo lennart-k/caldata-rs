@@ -124,7 +124,7 @@ impl Value for PartialTime {
         Some("TIME")
     }
 
-    fn value(&self) -> String {
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
         let tz_suffix = if let (Some(0), Some(0)) = (self.offset_hour, self.offset_minute) {
             "Z".to_owned()
         } else if self.offset_hour.is_some() || self.offset_minute.is_some() {
@@ -152,7 +152,7 @@ impl Value for PartialTime {
                 .second
                 .map(|second| format!("{second:02}"))
                 .unwrap_or_default();
-            format!("{hour:02}{minute}{second}{tz_suffix}")
+            w.write_str(&format!("{hour:02}{minute}{second}{tz_suffix}"))
         } else {
             let minute = self
                 .minute
@@ -162,7 +162,7 @@ impl Value for PartialTime {
                 .second
                 .map(|second| format!("{second:02}"))
                 .unwrap_or_default();
-            format!("-{minute}{second}{tz_suffix}")
+            w.write_str(&format!("-{minute}{second}{tz_suffix}"))
         }
     }
 }
@@ -199,8 +199,8 @@ mod tests {
     #[case("15:27:46-05:00", PartialTime {hour: Some(15), minute: Some(27), second: Some(46), offset_hour: Some(-5), offset_minute: Some(0)})]
     fn test_parse_time(#[case] input: &str, #[case] value: PartialTime) {
         let parsed = PartialTime::parse(input).unwrap();
-        assert!(!parsed.value().ends_with('-'));
-        let roundtrip = PartialTime::parse(&parsed.value()).unwrap();
+        assert!(!parsed.generate_string().ends_with('-'));
+        let roundtrip = PartialTime::parse(&parsed.generate_string()).unwrap();
         assert_eq!(parsed, value);
         assert_eq!(roundtrip, value);
     }

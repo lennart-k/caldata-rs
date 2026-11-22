@@ -28,11 +28,6 @@ impl CalDate {
         Self::parse(&prop.value)
     }
 
-    #[must_use]
-    pub fn format(&self) -> String {
-        self.0.format(LOCAL_DATE).to_string()
-    }
-
     pub fn parse(value: &str) -> Result<Self, CalDateTimeError> {
         if let Ok(date) = NaiveDate::parse_from_str(value, LOCAL_DATE) {
             return Ok(Self(date));
@@ -45,8 +40,9 @@ impl Value for CalDate {
     fn value_type(&self) -> Option<&'static str> {
         Some("DATE")
     }
-    fn value(&self) -> String {
-        self.format()
+
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
+        self.0.format(LOCAL_DATE).write_to(w)
     }
 }
 

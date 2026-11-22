@@ -16,19 +16,19 @@ impl Value for UtcOffset {
         Some("UTC-OFFSET")
     }
 
-    fn value(&self) -> String {
-        let sign = if self.0 >= Duration::default() {
-            "+"
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
+        w.write_char(if self.0 >= Duration::default() {
+            '+'
         } else {
-            "-"
-        };
+            '-'
+        })?;
         let total_secs = self.0.num_seconds().unsigned_abs();
         let (hours, mins, secs) = (total_secs / 3600, (total_secs / 60) % 60, total_secs % 60);
-        if secs == 0 {
-            format!("{sign}{hours:02}{mins:02}",)
-        } else {
-            format!("{sign}{hours:02}{mins:02}{secs:02}",)
+        w.write_str(&format!("{hours:02}{mins:02}"))?;
+        if secs != 0 {
+            w.write_str(&format!("{secs:02}"))?;
         }
+        Ok(())
     }
 }
 
@@ -95,7 +95,7 @@ mod tests {
     #[case(Duration::minutes(10), "+0010")]
     #[case(Duration::minutes(-10), "-0010")]
     fn test_format_value(#[case] duration: Duration, #[case] out: &str) {
-        similar_asserts::assert_eq!(out, &UtcOffset(duration).value());
+        similar_asserts::assert_eq!(out, &UtcOffset(duration).generate_string());
     }
 
     #[test]

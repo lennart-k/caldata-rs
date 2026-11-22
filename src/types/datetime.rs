@@ -62,14 +62,6 @@ impl CalDateTime {
         Ok(Self::parse(&prop.value, timezone)?)
     }
 
-    #[must_use]
-    pub fn format(&self) -> String {
-        match self.timezone() {
-            Tz::Olson(chrono_tz::UTC) => self.0.format(UTC_DATE_TIME).to_string(),
-            _ => self.0.format(LOCAL_DATE_TIME).to_string(),
-        }
-    }
-
     pub fn parse(value: &str, timezone: Option<chrono_tz::Tz>) -> Result<Self, CalDateTimeError> {
         let utc = value.ends_with('Z');
         // Remove Z suffix
@@ -186,14 +178,18 @@ impl Value for CalDateTime {
     fn value_type(&self) -> Option<&'static str> {
         Some("DATE-TIME")
     }
-    fn value(&self) -> String {
-        self.format()
-    }
 
     fn utc_or_local(self) -> Self {
         match self.timezone() {
             Tz::Local => self,
             Tz::Olson(_) => Self(self.0.with_timezone(&Tz::utc())),
+        }
+    }
+
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
+        match self.timezone() {
+            Tz::Olson(chrono_tz::UTC) => self.0.format(UTC_DATE_TIME).write_to(w),
+            _ => self.0.format(LOCAL_DATE_TIME).write_to(w),
         }
     }
 }

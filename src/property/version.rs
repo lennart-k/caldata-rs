@@ -16,11 +16,11 @@ impl Value for IcalVersion {
         Some("TEXT")
     }
 
-    fn value(&self) -> String {
-        match self {
-            Self::Version1_0 => "1.0".to_owned(),
-            Self::Version2_0 => "2.0".to_owned(),
-        }
+    fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
+        w.write_str(match self {
+            Self::Version1_0 => "1.0",
+            Self::Version2_0 => "2.0",
+        })
     }
 }
 

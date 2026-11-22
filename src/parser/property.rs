@@ -168,7 +168,7 @@ macro_rules! property {
                     params.generate(&mut w)?;
                 }
                 w.write_char($crate::VALUE_DELIMITER)?;
-                w.write_str(&$crate::types::Value::value(inner))?;
+                $crate::types::Value::generate(inner, &mut w)?;
                 w.write_str("\r\n")?;
                 Ok(())
             }
@@ -190,7 +190,7 @@ macro_rules! property {
                 crate::parser::ContentLine {
                     name: $name.to_owned(),
                     params,
-                    value: crate::types::Value::value(&inner),
+                    value: crate::types::Value::generate_string(&inner),
                 }
             }
         }
