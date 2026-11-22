@@ -192,7 +192,7 @@ impl Value for CalDateTime {
 
     fn utc_or_local(self) -> Self {
         match self.timezone() {
-            Tz::Local => self.clone(),
+            Tz::Local => self,
             Tz::Olson(_) => Self(self.0.with_timezone(&Tz::utc())),
         }
     }

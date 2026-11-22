@@ -1,7 +1,4 @@
-use std::{
-    collections::HashMap,
-    ops::{Add, Sub},
-};
+use std::{collections::HashMap, ops::Sub};
 
 use chrono::{DateTime, Duration, Local, NaiveDate, NaiveTime, Utc};
 use derive_more::From;
@@ -58,28 +55,21 @@ impl CalDateOrDateTime {
     pub fn date_floor(&self) -> NaiveDate {
         match self {
             Self::DateTime(datetime) => datetime.date_floor(),
-            Self::Date(date) => date.naive_date().to_owned(),
+            Self::Date(date) => date.0,
         }
     }
 
     pub fn date_ceil(&self) -> NaiveDate {
         match self {
             Self::DateTime(datetime) => datetime.date_ceil(),
-            Self::Date(date) => date.naive_date().to_owned(),
-        }
-    }
-
-    pub fn timezone(&self) -> Tz {
-        match self {
-            Self::DateTime(datetime) => datetime.timezone(),
-            Self::Date(date) => *date.timezone(),
+            Self::Date(date) => date.0,
         }
     }
 
     pub fn utc(&self) -> DateTime<Utc> {
         match self {
             Self::DateTime(datetime) => datetime.utc(),
-            Self::Date(date) => date.naive_date().and_time(NaiveTime::default()).and_utc(),
+            Self::Date(date) => date.0.and_time(NaiveTime::default()).and_utc(),
         }
     }
 
@@ -96,6 +86,34 @@ impl CalDateOrDateTime {
             Self::Date(_) => "DATE",
         }
     }
+
+    #[must_use]
+    pub fn as_datetime_ceil(self) -> DateTime<Tz> {
+        match self {
+            Self::DateTime(dt) => dt.0,
+            Self::Date(CalDate(date)) => date
+                // Get start of next day
+                .succ_opt()
+                .unwrap_or(date)
+                .and_time(NaiveTime::default())
+                .and_local_timezone(Tz::Local)
+                .earliest()
+                .expect("Midnight should always exist"),
+        }
+    }
+
+    #[must_use]
+    pub fn as_datetime_floor(self) -> DateTime<Tz> {
+        match self {
+            Self::DateTime(dt) => dt.0,
+            Self::Date(date) => date
+                .0
+                .and_time(NaiveTime::default())
+                .and_local_timezone(Tz::Local)
+                .earliest()
+                .expect("Midnight should always exist"),
+        }
+    }
 }
 
 impl Sub<&CalDateOrDateTime> for CalDateOrDateTime {
@@ -103,32 +121,6 @@ impl Sub<&CalDateOrDateTime> for CalDateOrDateTime {
 
     fn sub(self, rhs: &CalDateOrDateTime) -> Self::Output {
         self.utc() - rhs.utc()
-    }
-}
-
-impl From<CalDateOrDateTime> for CalDateTime {
-    fn from(value: CalDateOrDateTime) -> Self {
-        match value {
-            CalDateOrDateTime::DateTime(datetime) => datetime,
-            CalDateOrDateTime::Date(date) => date.as_datetime().into(),
-        }
-    }
-}
-
-impl From<CalDateOrDateTime> for DateTime<Tz> {
-    fn from(value: CalDateOrDateTime) -> Self {
-        match value {
-            CalDateOrDateTime::DateTime(datetime) => datetime.0,
-            CalDateOrDateTime::Date(date) => date.as_datetime(),
-        }
-    }
-}
-
-impl Add<Duration> for CalDateOrDateTime {
-    type Output = CalDateTime;
-
-    fn add(self, duration: Duration) -> Self::Output {
-        CalDateTime::from(self) + duration
     }
 }
 

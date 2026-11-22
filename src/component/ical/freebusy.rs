@@ -1,0 +1,38 @@
+use crate::parser::ParserOptions;
+#[cfg(not(tarpaulin_include))]
+use crate::{
+    component::component,
+    parser::{ContentLine, ParserError},
+    property::IcalUIDProperty,
+};
+
+component!(
+    IcalFreeBusy,
+    "VFREEBUSY",
+    required_once: {
+        uid: IcalUIDProperty,
+    },
+    required_many: {
+    },
+    optional_many: {
+    },
+    optional_once: {
+    },
+    components: {},
+    extra_fields: {},
+);
+
+impl IcalFreeBusyBuilder {
+    fn build_from_fields(
+        IcalFreeBusyFields {
+            uid,
+            other_properties,
+        }: IcalFreeBusyFields,
+        _: &ParserOptions,
+    ) -> Result<IcalFreeBusy, ParserError> {
+        Ok(IcalFreeBusy {
+            uid,
+            other_properties,
+        })
+    }
+}

@@ -67,11 +67,12 @@ impl Value for PartialDateAndOrTime {
     }
 
     fn value(&self) -> String {
-        format!(
-            "{}T{}",
-            self.date.as_ref().map(Value::value).unwrap_or_default(),
-            self.time.as_ref().map(Value::value).unwrap_or_default(),
-        )
+        let mut out = self.date.as_ref().map(Value::value).unwrap_or_default();
+        if let Some(time) = &self.time {
+            out += "T";
+            out += &time.value();
+        }
+        out
     }
 }
 
@@ -108,7 +109,9 @@ mod tests {
     fn test_parse_datetime(#[case] input: &str, #[case] value: PartialDateTime) {
         let parsed = PartialDateTime::parse(input).unwrap();
         assert_eq!(parsed, value);
-        let roundtrip = PartialDateTime::parse(&parsed.value()).unwrap();
+        let serialized = parsed.value();
+        assert!(!parsed.value().ends_with("T"));
+        let roundtrip = PartialDateTime::parse(&serialized).unwrap();
         assert_eq!(parsed, value);
         assert_eq!(roundtrip, value);
     }
@@ -131,7 +134,9 @@ mod tests {
     fn test_parse_date_and_or_time(#[case] input: &str, #[case] value: PartialDateAndOrTime) {
         let parsed = PartialDateAndOrTime::parse(input).unwrap();
         assert_eq!(parsed, value);
-        let roundtrip = PartialDateAndOrTime::parse(&parsed.value()).unwrap();
+        let serialized = parsed.value();
+        assert!(!parsed.value().ends_with("T"));
+        let roundtrip = PartialDateAndOrTime::parse(&serialized).unwrap();
         assert_eq!(parsed, value);
         assert_eq!(roundtrip, value);
     }

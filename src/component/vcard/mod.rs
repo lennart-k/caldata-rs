@@ -28,9 +28,9 @@
 //! }
 //! ```
 
-pub mod component;
+mod component;
 use crate::parser::ComponentParser;
-use component::VcardContact;
+pub use component::*;
 
 #[cfg(test)]
 mod tests;

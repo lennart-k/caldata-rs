@@ -17,7 +17,7 @@ mod tests {
             .next()
             .unwrap()
             .unwrap();
-        let prop = IcalDURATIONProperty::parse_prop(&content_line, None).unwrap();
+        let prop = IcalDURATIONProperty::parse_prop(content_line, None).unwrap();
         similar_asserts::assert_eq!(prop.generate_string(), input);
         let content_line: ContentLine = prop.into();
         similar_asserts::assert_eq!(content_line.generate_string(), input);

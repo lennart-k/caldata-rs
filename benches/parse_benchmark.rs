@@ -1,6 +1,6 @@
 use caldata::{
-    IcalParser, LineReader,
-    generator::{Emitter, IcalCalendar},
+    IcalCalendar, IcalParser, LineReader,
+    generator::Emitter,
     parser::{ContentLine, ICalProperty},
     property::IcalDTSTARTProperty,
     types::{CalDate, CalDateTime, PartialDate},
@@ -22,7 +22,7 @@ fn benchmark(c: &mut Criterion) {
     });
     group.bench_function("parse CalDate", |b| {
         b.iter(|| {
-            CalDate::parse("19700329", None).unwrap();
+            CalDate::parse("19700329").unwrap();
         })
     });
     group.bench_function("parse CalDateTime UTC", |b| {
@@ -42,7 +42,7 @@ fn benchmark(c: &mut Criterion) {
                 value: "19700329T020000Z".to_owned(),
                 params: vec![].into(),
             };
-            IcalDTSTARTProperty::parse_prop(&content_line, None).unwrap();
+            IcalDTSTARTProperty::parse_prop(content_line, None).unwrap();
         })
     });
     drop(group);

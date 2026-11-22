@@ -3,7 +3,12 @@ source: src/component/vcard/tests.rs
 expression: card
 ---
 VcardContact {
-    uid: None,
+    version: VcardVERSIONProperty(
+        "4.0",
+        ContentLineParams(
+            [],
+        ),
+    ),
     full_name: [
         VcardFNProperty(
             "Alice Foobar",
@@ -12,7 +17,8 @@ VcardContact {
             ),
         ),
     ],
-    name: Some(
+    uid: None,
+    n: Some(
         VcardNProperty(
             "Foobar;Alice",
             ContentLineParams(
@@ -20,30 +26,9 @@ VcardContact {
             ),
         ),
     ),
-    birthday: None,
+    bday: None,
     anniversary: None,
-    properties: [
-        ContentLine {
-            name: "VERSION",
-            params: ContentLineParams(
-                [],
-            ),
-            value: "4.0",
-        },
-        ContentLine {
-            name: "FN",
-            params: ContentLineParams(
-                [],
-            ),
-            value: "Alice Foobar",
-        },
-        ContentLine {
-            name: "N",
-            params: ContentLineParams(
-                [],
-            ),
-            value: "Foobar;Alice",
-        },
+    other_properties: [
         ContentLine {
             name: "EMAIL",
             params: ContentLineParams(

@@ -1,6 +1,6 @@
 begin:vcard
 version:4.0
-fn:Alice Foobar
 n:Foobar;Alice
+fn:Alice Foobar
 email;type=internet:alice@example.org
 end:vcard

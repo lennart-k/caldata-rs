@@ -85,16 +85,26 @@ impl<T: ParseProp> ParseProp for Vec<T> {
     }
 }
 
-pub trait ICalProperty: Sized + Emitter {
+pub trait ICalProperty: Sized + Emitter + GetTzid {
     const NAME: &'static str;
     const DEFAULT_TYPE: &'static str;
 
     fn parse_prop(
-        prop: &ContentLine,
+        prop: ContentLine,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self, ParserError>;
 
     fn utc_or_local(self) -> Self;
+}
+
+pub trait GetTzid {
+    fn get_tzid(&self) -> Option<&str>;
+}
+
+impl GetTzid for ContentLine {
+    fn get_tzid(&self) -> Option<&str> {
+        self.params.get_tzid()
+    }
 }
 
 macro_rules! property {
@@ -105,12 +115,12 @@ macro_rules! property {
 
             #[inline]
             fn parse_prop(
-                prop: &crate::parser::ContentLine,
+                prop: crate::parser::ContentLine,
                 timezones: Option<&std::collections::HashMap<String, Option<chrono_tz::Tz>>>,
             ) -> Result<Self, crate::parser::ParserError> {
                 Ok(Self(
-                    crate::parser::ParseProp::parse_prop(prop, timezones, $default_type)?,
-                    prop.params.clone(),
+                    crate::parser::ParseProp::parse_prop(&prop, timezones, $default_type)?,
+                    prop.params,
                 ))
             }
 
@@ -119,6 +129,13 @@ macro_rules! property {
                 let Self(dt, mut params) = self;
                 params.remove("TZID");
                 Self(crate::types::Value::utc_or_local(dt), params)
+            }
+        }
+
+        impl $crate::parser::GetTzid for $prop {
+            #[inline]
+            fn get_tzid(&self) -> Option<&str> {
+                self.1.get_tzid()
             }
         }
 

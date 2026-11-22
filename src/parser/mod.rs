@@ -9,7 +9,7 @@ pub use content_line::{ContentLine, ContentLineError, ContentLineParams, Content
 
 mod property;
 pub(crate) use property::property;
-pub use property::{ICalProperty, ParseProp};
+pub use property::{GetTzid, ICalProperty, ParseProp};
 
 mod component;
 pub use component::ComponentParser;

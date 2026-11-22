@@ -1,12 +1,6 @@
-mod ical;
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
-pub use crate::component::ical::component::{IcalCalendar, IcalEvent};
-pub use crate::component::vcard::component::VcardContact;
-pub use crate::parser::ContentLine;
-
-///
 /// Emits the content of the Component in ical-format.
 ///
 pub trait Emitter {
@@ -26,6 +20,15 @@ impl<K, T: Emitter> Emitter for BTreeMap<K, T> {
     fn generate<W: Write>(&self, w: &mut W) -> std::fmt::Result {
         for component in self.values() {
             component.generate(w)?;
+        }
+        Ok(())
+    }
+}
+
+impl<T: Emitter> Emitter for Option<T> {
+    fn generate<W: Write>(&self, w: &mut W) -> std::fmt::Result {
+        if let Some(val) = self {
+            val.generate(w)?;
         }
         Ok(())
     }
