@@ -88,7 +88,22 @@ impl CalDateOrDateTime {
     }
 
     #[must_use]
-    pub fn as_datetime_or_midnight(self) -> DateTime<Tz> {
+    pub fn as_datetime_ceil(self) -> DateTime<Tz> {
+        match self {
+            Self::DateTime(dt) => dt.0,
+            Self::Date(CalDate(date)) => date
+                // Get start of next day
+                .succ_opt()
+                .unwrap_or(date)
+                .and_time(NaiveTime::default())
+                .and_local_timezone(Tz::Local)
+                .earliest()
+                .expect("Midnight should always exist"),
+        }
+    }
+
+    #[must_use]
+    pub fn as_datetime_floor(self) -> DateTime<Tz> {
         match self {
             Self::DateTime(dt) => dt.0,
             Self::Date(date) => date

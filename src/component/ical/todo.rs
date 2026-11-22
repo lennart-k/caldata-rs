@@ -67,7 +67,7 @@ impl IcalTodoBuilder {
         let rruleset = if let Some(dtstart) = dtstart.as_ref()
             && !(rrule.is_empty() && rdate.is_empty())
         {
-            let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().as_datetime_or_midnight();
+            let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().as_datetime_floor();
             Some(
                 RRuleSet::new(rrule_dtstart)
                     .set_rrules(
@@ -89,7 +89,7 @@ impl IcalTodoBuilder {
                                 // TODO: Support periods
                                 dates
                                     .iter()
-                                    .map(|date| date.clone().start().as_datetime_or_midnight())
+                                    .map(|date| date.clone().start().as_datetime_floor())
                             })
                             .collect(),
                     )
@@ -97,9 +97,7 @@ impl IcalTodoBuilder {
                         exdate
                             .iter()
                             .flat_map(|IcalEXDATEProperty(dates, _)| {
-                                dates
-                                    .iter()
-                                    .map(|date| date.clone().as_datetime_or_midnight())
+                                dates.iter().map(|date| date.clone().as_datetime_floor())
                             })
                             .collect(),
                     ),
@@ -133,5 +131,22 @@ impl IcalTodo {
 
     pub fn get_recurid(&self) -> Option<&IcalRECURIDProperty> {
         self.recurid.as_ref()
+    }
+
+    pub fn get_last_occurence(&self) -> Option<DateTime<Tz>> {
+        if self.rruleset.is_some() {
+            // Non-trivial to handle
+            return None;
+        }
+        if let Some(due) = &self.due {
+            return Some(due.0.clone().as_datetime_ceil());
+        }
+
+        if let Some(duration) = &self.duration
+            && let Some(dtstart) = &self.dtstart
+        {
+            return Some(dtstart.0.clone().as_datetime_ceil() + duration.0);
+        }
+        None
     }
 }

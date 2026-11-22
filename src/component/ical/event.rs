@@ -1,7 +1,7 @@
 use crate::{
     IcalAlarm, ParserError,
     component::{Component, component},
-    parser::{ContentLine, ParserOptions},
+    parser::{ContentLine, ICalProperty, ParserOptions},
     property::{
         IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty, IcalDURATIONProperty,
         IcalEXDATEProperty, IcalEXRULEProperty, IcalRDATEProperty, IcalRECURIDProperty,
@@ -62,6 +62,21 @@ impl IcalEvent {
         None
     }
 
+    pub fn get_last_occurence(&self) -> Option<DateTime<Tz>> {
+        if self.rruleset.is_some() {
+            // Non-trivial to handle
+            return None;
+        }
+        if let Some(dtend) = &self.dtend {
+            return Some(dtend.0.clone().as_datetime_ceil());
+        }
+
+        if let Some(duration) = &self.duration {
+            return Some(self.dtstart.0.clone().as_datetime_ceil() + duration.0);
+        }
+        None
+    }
+
     pub fn get_recurrence(&self, dtstart: CalDateOrDateTime) -> Self {
         Self {
             uid: self.uid.clone(),
@@ -99,7 +114,7 @@ impl IcalEvent {
         // Procedure:
         // - build RRuleSet (checks that UNTIL matches DTSTART)
         let Some(mut rruleset) = self.rruleset.clone() else {
-            return vec![self.dtstart.0.clone().as_datetime_or_midnight()];
+            return vec![self.dtstart.0.clone().as_datetime_floor()];
         };
         // When doing datetime comparisons with local time we currently treat it as UTC
         // Since this is nontrivial to treat in rrule we add a day of tolerance to both limits and
@@ -111,6 +126,14 @@ impl IcalEvent {
             rruleset = rruleset.before(end.with_timezone(&Tz::UTC) + Duration::days(1));
         }
         rruleset.all(limit).dates
+    }
+
+    pub fn to_utc_or_local(self) -> Self {
+        Self {
+            dtstart: self.dtstart.utc_or_local(),
+            dtend: self.dtend.map(ICalProperty::utc_or_local),
+            ..self
+        }
     }
 
     pub fn expand_recurrence(
@@ -140,11 +163,12 @@ impl IcalEvent {
         let mut out = vec![];
         // TODO: Support THISANDFUTURE
         for recurid in recurrence_set {
-            if let Some(over) = overrides.remove(&recurid) {
-                out.push(over);
+            let recurrence = if let Some(over) = overrides.remove(&recurid) {
+                over
             } else {
-                out.push(self.get_recurrence(recurid))
-            }
+                self.get_recurrence(recurid)
+            };
+            out.push(recurrence.to_utc_or_local());
         }
         // Add remaining overrides
         out.extend(overrides.into_values());
@@ -172,7 +196,7 @@ impl IcalEventBuilder {
         _: &ParserOptions,
     ) -> Result<IcalEvent, ParserError> {
         let rruleset = if !(rrule.is_empty() && rdate.is_empty()) {
-            let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().as_datetime_or_midnight();
+            let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().as_datetime_floor();
             Some(
                 RRuleSet::new(rrule_dtstart)
                     .set_rrules(
@@ -194,7 +218,7 @@ impl IcalEventBuilder {
                                 // TODO: Support periods
                                 dates
                                     .iter()
-                                    .map(|date| date.clone().start().as_datetime_or_midnight())
+                                    .map(|date| date.clone().start().as_datetime_floor())
                             })
                             .collect(),
                     )
@@ -202,9 +226,7 @@ impl IcalEventBuilder {
                         exdate
                             .iter()
                             .flat_map(|IcalEXDATEProperty(dates, _)| {
-                                dates
-                                    .iter()
-                                    .map(|date| date.clone().as_datetime_or_midnight())
+                                dates.iter().map(|date| date.clone().as_datetime_floor())
                             })
                             .collect(),
                     ),

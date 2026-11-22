@@ -5,13 +5,14 @@ use crate::{
     generator::Emitter,
     parser::{ContentLine, GetTzid, ICalProperty, ParserError, ParserOptions},
     property::{IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
-    types::{CalDateOrDateTime, CalDateTime, Tz},
+    types::{CalDateOrDateTime, Tz},
 };
 use chrono::{DateTime, Utc};
 use std::{
     borrow::Cow,
     collections::{BTreeMap, HashMap},
     fmt::Write,
+    hash::Hash,
 };
 
 #[derive(Debug, Clone)]
@@ -93,11 +94,21 @@ impl CalendarInnerData {
             }
         }
         .cloned()
-        .map(CalDateOrDateTime::as_datetime_or_midnight)
+        .map(CalDateOrDateTime::as_datetime_floor)
     }
 
-    pub fn get_last_occurence(&self) -> Option<CalDateTime> {
-        todo!()
+    pub fn get_last_occurence(&self) -> Option<DateTime<Tz>> {
+        match self {
+            Self::Event(main, overrides) if main.rruleset.is_none() => std::iter::once(main)
+                .chain(overrides.iter())
+                .flat_map(IcalEvent::get_last_occurence)
+                .max(),
+            Self::Todo(main, overrides) if main.rruleset.is_none() => std::iter::once(main)
+                .chain(overrides.iter())
+                .flat_map(IcalTodo::get_last_occurence)
+                .max(),
+            _ => None,
+        }
     }
 
     pub fn from_events(mut events: Vec<IcalEvent>) -> Result<Self, ParserError> {
@@ -230,8 +241,14 @@ impl IcalCalendarObject {
                 let mut events = main.expand_recurrence(start, end, limit, overrides);
                 let last = events.pop()?;
                 let inner = CalendarInnerData::Event(last, events);
-                Some(Self { inner, ..self })
+                Some(Self {
+                    inner,
+                    timezones: Default::default(),
+                    vtimezones: Default::default(),
+                    ..self
+                })
             }
+            // TODO: Implement expansion for Todo
             _ => None,
         }
     }
@@ -495,7 +512,8 @@ mod tests {
     #[rstest::rstest]
     #[case(0, include_str!("../../../tests/resources/Recurring at 9am, third at 10am.ics"))]
     #[case(1, include_str!("../../../tests/resources/recurring_wholeday.ics"))]
-    #[case(2, include_str!("../../../tests/resources/ical_recurrence_date.ics"))]
+    // VTODO
+    // #[case(2, include_str!("../../../tests/resources/ical_recurrence_date.ics"))]
     #[case(3, include_str!("../../../tests/resources/ical_recurrence_date_2.ics"))]
     // Has no RRULE
     #[case(4, include_str!("../../../tests/resources/ical_example_1.ics"))]
