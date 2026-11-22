@@ -21,8 +21,8 @@ macro_rules! component {
                 // Optional at most once
                 $(pub $opt_once_field: Option<$opt_once_type>,)*
                 pub other_properties: Vec<ContentLine>,
-                $($comp_field: Vec<$comp_type>,)*
-                $($extra_field: $extra_field_type,)*
+                $(pub $comp_field: Vec<$comp_type>,)*
+                $(pub $extra_field: $extra_field_type,)*
             }
 
             #[derive(Debug)]
@@ -62,6 +62,18 @@ macro_rules! component {
                         $(.chain(self.$opt_once_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
                         $(.chain(self.$opt_many_field.iter().flat_map($crate::parser::GetTzid::get_tzid)))*
                         $(.chain(self.$comp_field.iter().flat_map($crate::component::Component::get_tzids)))*
+                }
+            }
+
+            impl $crate::component::GetContentLines for $name {
+                fn get_named_content_line(&self, name: &str) -> Vec<::std::borrow::Cow<'_, ContentLine>> {
+                    match name {
+                        $(<$req_once_type as $crate::parser::ICalProperty>::NAME => vec![::std::borrow::Cow::Owned(self.$req_once_field.clone().into())],)*
+                        $(<$req_many_type as $crate::parser::ICalProperty>::NAME => self.$req_many_field.iter().map(|prop| ::std::borrow::Cow::Owned(prop.clone().into())).collect(),)*
+                        $(<$opt_once_type as $crate::parser::ICalProperty>::NAME => self.$opt_once_field.iter().map(|prop| ::std::borrow::Cow::Owned(prop.clone().into())).collect(),)*
+                        $(<$opt_many_type as $crate::parser::ICalProperty>::NAME => self.$opt_many_field.iter().map(|prop| ::std::borrow::Cow::Owned(prop.clone().into())).collect(),)*
+                        _ => self.other_properties.iter().filter(|prop| prop.name == name).map(::std::borrow::Cow::Borrowed).collect()
+                    }
                 }
             }
 

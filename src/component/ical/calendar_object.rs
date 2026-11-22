@@ -1,7 +1,7 @@
 use crate::{
     ContentLineParser, IcalEvent, IcalEventBuilder, IcalJournal, IcalJournalBuilder, IcalTimeZone,
     IcalTimeZoneBuilder, IcalTodo, IcalTodoBuilder,
-    component::{Component, ComponentMut},
+    component::{Component, ComponentMut, GetContentLines},
     generator::Emitter,
     parser::{ContentLine, GetTzid, ICalProperty, ParserError, ParserOptions},
     property::{IcalCALSCALEProperty, IcalPRODIDProperty, IcalVERSIONProperty},
@@ -196,9 +196,9 @@ pub struct IcalCalendarObject {
     pub(crate) inner: CalendarInnerData,
     pub(crate) vtimezones: BTreeMap<String, IcalTimeZone>,
     pub(crate) timezones: HashMap<String, Option<chrono_tz::Tz>>,
-    version: IcalVERSIONProperty,
-    prodid: IcalPRODIDProperty,
-    calscale: Option<IcalCALSCALEProperty>,
+    pub(crate) version: IcalVERSIONProperty,
+    pub(crate) prodid: IcalPRODIDProperty,
+    pub(crate) calscale: Option<IcalCALSCALEProperty>,
     pub other_properties: Vec<ContentLine>,
 }
 
@@ -233,6 +233,21 @@ impl IcalCalendarObject {
                 Some(Self { inner, ..self })
             }
             _ => None,
+        }
+    }
+}
+
+impl GetContentLines for IcalCalendarObject {
+    fn get_named_content_line(&self, name: &str) -> Vec<Cow<'_, ContentLine>> {
+        match name {
+            IcalVERSIONProperty::NAME => vec![Cow::Owned(self.version.clone().into())],
+            IcalPRODIDProperty::NAME => vec![Cow::Owned(self.prodid.clone().into())],
+            _ => self
+                .other_properties
+                .iter()
+                .filter(|prop| prop.name == name)
+                .map(Cow::Borrowed)
+                .collect(),
         }
     }
 }

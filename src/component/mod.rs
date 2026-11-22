@@ -78,3 +78,7 @@ pub trait ComponentMut: Component + Default {
         Ok(out)
     }
 }
+
+pub trait GetContentLines {
+    fn get_named_content_line(&self, name: &str) -> Vec<Cow<'_, ContentLine>>;
+}
