@@ -111,6 +111,7 @@ macro_rules! component {
                     self,
                     #[allow(unused_variables)]
                     options: &$crate::parser::ParserOptions,
+                    #[allow(unused_variables)]
                     timezones: Option<&::std::collections::HashMap<String, Option<::chrono_tz::Tz>>>,
                 ) -> Result<Self::Verified, $crate::ParserError> {
                     $(let mut [< req_once_ $req_once_field >] = None;)*

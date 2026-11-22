@@ -4,7 +4,6 @@ edition = "2024"
 readme = "./README.md"
 repository = "https://github.com/lennart-k/caldata-rs"
 documentation = "https://docs.rs/caldata"
-homepage = "https://github.com/lennart-k/caldata-rs"
 license-file = "./LICENSE"
 keywords = ["ical", "vcard", "parser"]
 
@@ -16,7 +15,6 @@ description = "Ical/Vcard parser for Rust"
 name = "caldata"
 keywords.workspace = true
 license-file.workspace = true
-homepage.workspace = true
 documentation.workspace = true
 readme.workspace = true
 repository.workspace = true
@@ -46,14 +44,9 @@ derive_more = { version = "2.1", features = [
 phf = { version = "0.14", features = ["macros"] }
 vtimezones-rs = { version = "0.3" }
 log = "0.4"
-strum = { version = "0.28", features = ["derive"] }
 paste = "1.0"
 
 [workspace.dependencies]
-syn = "3.0"
-quote = "1.0"
-proc-macro2 = "1.0"
-darling = "0.24"
 itertools = "0.15"
 
 [dev-dependencies]
