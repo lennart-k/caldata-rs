@@ -203,12 +203,12 @@ impl CalendarInnerDataBuilder {
 #[derive(Debug, Clone)]
 /// An ICAL calendar object.
 pub struct IcalCalendarObject {
-    pub(crate) inner: CalendarInnerData,
-    pub(crate) vtimezones: BTreeMap<String, IcalTimeZone>,
-    pub(crate) timezones: HashMap<String, Option<chrono_tz::Tz>>,
-    pub(crate) version: IcalVERSIONProperty,
-    pub(crate) prodid: IcalPRODIDProperty,
-    pub(crate) calscale: Option<IcalCALSCALEProperty>,
+    pub inner: CalendarInnerData,
+    pub vtimezones: BTreeMap<String, IcalTimeZone>,
+    pub timezones: HashMap<String, Option<chrono_tz::Tz>>,
+    pub version: IcalVERSIONProperty,
+    pub prodid: IcalPRODIDProperty,
+    pub calscale: Option<IcalCALSCALEProperty>,
     pub other_properties: Vec<ContentLine>,
 }
 

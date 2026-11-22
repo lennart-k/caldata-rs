@@ -86,9 +86,11 @@ pub mod rfc7809 {
 }
 
 pub mod parser {
-    use caldata::{IcalCalendar, IcalParser, generator::Emitter};
+    use caldata::{IcalCalendar, IcalObjectParser, IcalParser, generator::Emitter};
     use itertools::Itertools;
     use rstest::rstest;
+
+    use crate::utils::str_normalise_prop_order;
 
     #[rstest]
     #[case(0, include_str!("./resources/ical_events.ics"))]
@@ -118,47 +120,50 @@ pub mod parser {
         similar_asserts::assert_eq!(ical, cals.iter().map(Emitter::generate_string).join(""));
     }
 
-    // #[test]
-    // fn ical_export() {
-    //     let input1 = include_str!("./resources/ical_events.ics");
-    //     let input2 = include_str!("./resources/ical_example_1.ics");
-    //     let input3 = include_str!("./resources/ical_example_rrule.ics");
-    //     let cal1 = IcalObjectParser::from_slice(input1.as_bytes())
-    //         .expect_one()
-    //         .unwrap();
-    //     let cal2 = IcalObjectParser::from_slice(input2.as_bytes())
-    //         .expect_one()
-    //         .unwrap();
-    //     let cal3 = IcalObjectParser::from_slice(input3.as_bytes())
-    //         .expect_one()
-    //         .unwrap();
-    //     let export = IcalCalendar::from_objects(
-    //         "caldata-rs test".to_owned(),
-    //         vec![cal1.to_owned(), cal2.to_owned(), cal3.to_owned()],
-    //         vec![],
-    //     )
-    //     .generate_string();
-    //     insta::assert_snapshot!(export);
-    //     // Ensure that exported calendar is valid
-    //     let roundtrip_cal = IcalParser::from_slice(export.as_bytes())
-    //         .expect_one()
-    //         .unwrap();
-    //
-    //     let mut reference = vec![cal1, cal2, cal3];
-    //     let mut reimported = roundtrip_cal.into_objects().unwrap();
-    //     reference.sort_by_key(|o| o.get_uid().to_owned());
-    //     reimported.sort_by_key(|o| o.get_uid().to_owned());
-    //     assert_eq!(reimported.len(), reference.len());
-    //     for (mut reference, mut reimported) in reference.into_iter().zip(reimported) {
-    //         // PRODID gets overwritten
-    //         reference.properties = vec![];
-    //         reimported.properties = vec![];
-    //         similar_asserts::assert_eq!(
-    //             str_normalise_prop_order(&reference.generate_string()),
-    //             str_normalise_prop_order(&reimported.generate_string())
-    //         );
-    //     }
-    // }
+    #[test]
+    fn ical_export() {
+        let input1 = include_str!("./resources/ical_events.ics");
+        let input2 = include_str!("./resources/ical_example_1.ics");
+        let input3 = include_str!("./resources/ical_example_rrule.ics");
+        let cal1 = IcalObjectParser::from_slice(input1.as_bytes())
+            .expect_one()
+            .unwrap();
+        let cal2 = IcalObjectParser::from_slice(input2.as_bytes())
+            .expect_one()
+            .unwrap();
+        let cal3 = IcalObjectParser::from_slice(input3.as_bytes())
+            .expect_one()
+            .unwrap();
+        let export = IcalCalendar::from_objects(
+            "caldata-rs test".to_owned(),
+            vec![cal1.to_owned(), cal2.to_owned(), cal3.to_owned()],
+            vec![],
+        )
+        .generate_string();
+        insta::assert_snapshot!(export);
+        // Ensure that exported calendar is valid
+        let roundtrip_cal = IcalParser::from_slice(export.as_bytes())
+            .expect_one()
+            .unwrap();
+
+        let mut reference = vec![cal1, cal2, cal3];
+        let mut reimported = roundtrip_cal.into_objects().unwrap();
+        reference.sort_by_key(|o| o.get_uid().to_owned());
+        reimported.sort_by_key(|o| o.get_uid().to_owned());
+        assert_eq!(reimported.len(), reference.len());
+        for (mut reference, mut reimported) in reference.into_iter().zip(reimported) {
+            // PRODID gets overwritten
+            reimported.prodid = reference.prodid.clone();
+            reimported.other_properties = vec![];
+            reference.other_properties = vec![];
+            reimported.calscale = None;
+            reference.calscale = None;
+            similar_asserts::assert_eq!(
+                str_normalise_prop_order(&reference.generate_string()),
+                str_normalise_prop_order(&reimported.generate_string())
+            );
+        }
+    }
 }
 
 pub mod chrono_tz {
