@@ -5,7 +5,7 @@ use std::collections::HashMap;
 
 pub const LOCAL_DATE: &str = "%Y%m%d";
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct CalDate(pub NaiveDate);
 
 impl PartialOrd for CalDate {

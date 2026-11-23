@@ -57,7 +57,7 @@ impl IcalEvent {
             return Some(duration.0);
         }
         if let Some(dtend) = &self.dtend {
-            return Some(dtend.0.clone() - &self.dtstart.0);
+            return Some(dtend.0 - &self.dtstart.0);
         }
         None
     }
@@ -68,11 +68,11 @@ impl IcalEvent {
             return None;
         }
         if let Some(dtend) = &self.dtend {
-            return Some(dtend.0.clone().as_datetime_ceil());
+            return Some(dtend.0.as_datetime_ceil());
         }
 
         if let Some(duration) = &self.duration {
-            return Some(self.dtstart.0.clone().as_datetime_ceil() + duration.0);
+            return Some(self.dtstart.0.as_datetime_ceil() + duration.0);
         }
         None
     }
@@ -82,7 +82,7 @@ impl IcalEvent {
             uid: self.uid.clone(),
             dtstamp: self.dtstamp.clone(),
             // TODO: make sure that timezone information is there
-            dtstart: IcalDTSTARTProperty(dtstart.clone(), Default::default()),
+            dtstart: IcalDTSTARTProperty(dtstart, Default::default()),
             rdate: vec![],
             rrule: vec![],
             exdate: vec![],
@@ -92,7 +92,7 @@ impl IcalEvent {
                 .map(|duration| IcalDURATIONProperty(duration, Default::default())),
             dtend: None,
             recurid: Some(IcalRECURIDProperty(
-                dtstart.clone(),
+                dtstart,
                 Default::default(),
                 crate::property::RecurIdRange::This,
             )),
@@ -145,7 +145,7 @@ impl IcalEvent {
         let mut overrides: BTreeMap<CalDateOrDateTime, Self> = overrides
             .into_iter()
             .map(|over| (over.recurid.clone(), over))
-            .filter_map(|(recurid, over)| recurid.map(|recurid| (recurid.0.clone(), over)))
+            .filter_map(|(recurid, over)| recurid.map(|recurid| (recurid.0, over)))
             .collect();
         let is_date = self.dtstart.0.is_date();
 
@@ -199,7 +199,7 @@ impl IcalEventBuilder {
         _: &ParserOptions,
     ) -> Result<IcalEvent, ParserError> {
         let rruleset = if !(rrule.is_empty() && rdate.is_empty()) {
-            let rrule_dtstart: DateTime<Tz> = dtstart.0.clone().as_datetime_floor();
+            let rrule_dtstart: DateTime<Tz> = dtstart.0.as_datetime_floor();
             Some(
                 RRuleSet::new(rrule_dtstart)
                     .set_rrules(
@@ -229,7 +229,7 @@ impl IcalEventBuilder {
                         exdate
                             .iter()
                             .flat_map(|IcalEXDATEProperty(dates, _)| {
-                                dates.iter().map(|date| date.clone().as_datetime_floor())
+                                dates.iter().map(|date| (*date).as_datetime_floor())
                             })
                             .collect(),
                     ),

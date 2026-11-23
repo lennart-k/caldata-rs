@@ -9,7 +9,7 @@ use crate::{
     types::{CalDate, CalDateTime, Tz, Value},
 };
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, From)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, From)]
 pub enum CalDateOrDateTime {
     DateTime(CalDateTime),
     Date(CalDate),

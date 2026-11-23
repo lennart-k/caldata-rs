@@ -8,7 +8,7 @@ use crate::{
 };
 use chrono::Duration;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct UtcOffset(pub(crate) Duration);
 
 impl Value for UtcOffset {

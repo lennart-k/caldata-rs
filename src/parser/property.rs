@@ -119,16 +119,16 @@ macro_rules! property {
                 timezones: Option<&std::collections::HashMap<String, Option<chrono_tz::Tz>>>,
             ) -> Result<Self, crate::parser::ParserError> {
                 Ok(Self(
-                    crate::parser::ParseProp::parse_prop(&prop, timezones, $default_type)?,
+                    crate::parser::ParseProp::parse_prop(&prop, timezones, Self::DEFAULT_TYPE)?,
                     prop.params,
                 ))
             }
 
             #[inline]
             fn utc_or_local(self) -> Self {
-                let Self(dt, mut params) = self;
+                let Self(val, mut params) = self;
                 params.remove("TZID");
-                Self(crate::types::Value::utc_or_local(dt), params)
+                Self(crate::types::Value::utc_or_local(val), params)
             }
         }
 

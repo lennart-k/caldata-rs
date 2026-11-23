@@ -7,7 +7,7 @@ use crate::{
     types::{CalDateOrDateTime, CalDateTime, CalDateTimeError, Value, parse_duration},
 };
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum DateTimeOrDuration {
     DateTime(CalDateTime),
     Duration(Duration),
@@ -45,7 +45,7 @@ impl Value for DateTimeOrDuration {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Period(CalDateTime, DateTimeOrDuration);
 
 impl Period {

@@ -25,7 +25,7 @@ fn re_date() -> &'static [regex::Regex] {
     })
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub struct PartialDate {
     pub(crate) year: Option<i32>,
     pub(crate) month: Option<u32>,

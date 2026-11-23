@@ -65,11 +65,11 @@ impl IcalTimeZone {
     pub fn get_dtstart(&self) -> Option<DateTime<Tz>> {
         self.standard
             .iter()
-            .map(|transition| transition.dtstart.0.clone().as_datetime_floor())
+            .map(|transition| transition.dtstart.0.as_datetime_floor())
             .chain(
                 self.daylight
                     .iter()
-                    .map(|transition| transition.dtstart.0.clone().as_datetime_floor()),
+                    .map(|transition| transition.dtstart.0.as_datetime_floor()),
             )
             .min()
     }

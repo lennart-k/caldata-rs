@@ -7,7 +7,7 @@ use std::{collections::HashMap, ops::Add};
 const LOCAL_DATE_TIME: &str = "%Y%m%dT%H%M%S";
 const UTC_DATE_TIME: &str = "%Y%m%dT%H%M%SZ";
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 // Form 1, example: 19980118T230000 -> Local
 // Form 2, example: 19980119T070000Z -> UTC
 // Form 3, example: TZID=America/New_York:19980119T020000 -> Olson

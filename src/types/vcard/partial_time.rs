@@ -30,7 +30,7 @@ fn re_time() -> &'static [regex::Regex] {
 /// minute:second
 /// minute
 /// second
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub struct PartialTime {
     pub(crate) hour: Option<u8>,
     pub(crate) minute: Option<u8>,
