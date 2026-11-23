@@ -495,10 +495,12 @@ impl Emitter for IcalCalendarObject {
 
 #[cfg(test)]
 mod tests {
-    use chrono::{DateTime, Utc};
+    use chrono::{DateTime, Timelike, Utc};
     use itertools::Itertools;
 
-    use crate::{IcalObjectParser, component::Component, generator::Emitter};
+    use crate::{
+        CalendarInnerData, IcalObjectParser, component::Component, generator::Emitter, types::Tz,
+    };
 
     macro_rules! set_snapshot_suffix {
         ($($expr:expr),*) => {
@@ -539,24 +541,25 @@ mod tests {
         }
     }
 
-    /*
     /// Expand a reccurent event across winter and summer time
     /// This will fail if we wrongly expand in UTC
     #[rstest::rstest]
     fn rrule_expansion_timezones() {
-        let input = include_str!("../../../../tests/resources/ical_recurrence_winter_summer.ics");
+        let input = include_str!("../../../tests/resources/ical_recurrence_winter_summer.ics");
         let obj = IcalObjectParser::from_slice(input.as_bytes())
             .expect_one()
             .unwrap();
-        let CalendarInnerData::Event(event, _) = obj.get_inner() else {
+        let expanded = obj.expand_recurrence(None, None, 10).unwrap();
+        let events = if let CalendarInnerData::Event(main, mut overrides) = expanded.inner {
+            overrides.push(main);
+            overrides
+        } else {
             panic!()
         };
-        let expanded = event.expand_recurrence(None, None, &[]);
-        for recurrence in expanded {
-            let datetime: DateTime<Tz> = recurrence.dtstart.0.clone().into();
+        for event in events {
+            let datetime: DateTime<Tz> = event.dtstart.0.as_datetime_floor();
             let datetime_local = datetime.with_timezone(&Tz::Olson(chrono_tz::Tz::Europe__Berlin));
             assert_eq!(datetime_local.hour(), 9);
         }
     }
-    */
 }
