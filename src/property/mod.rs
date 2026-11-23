@@ -27,12 +27,6 @@ pub use version::*;
 
 property!("UID", "TEXT", IcalUIDProperty, String);
 
-impl From<String> for IcalUIDProperty {
-    fn from(value: String) -> Self {
-        Self(value, Default::default())
-    }
-}
-
 property!("SUMMARY", "TEXT", IcalSUMMARYProperty, String);
 
 property!(

@@ -1,9 +1,11 @@
 use crate::parser::ContentLine;
 use crate::types::{CalDateTimeError, Value};
 use chrono::NaiveDate;
+use chrono::format::StrftimeItems;
 use std::collections::HashMap;
 
-pub const LOCAL_DATE: &str = "%Y%m%d";
+const LOCAL_DATE: &str = "%Y%m%d";
+const LOCAL_DATE_ITEMS: StrftimeItems = StrftimeItems::new(LOCAL_DATE);
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct CalDate(pub NaiveDate);
@@ -42,7 +44,7 @@ impl Value for CalDate {
     }
 
     fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
-        self.0.format(LOCAL_DATE).write_to(w)
+        self.0.format_with_items(LOCAL_DATE_ITEMS).write_to(w)
     }
 }
 

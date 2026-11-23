@@ -168,9 +168,7 @@ macro_rules! component {
 
             impl $crate::generator::Emitter for $name {
                 fn generate<W: ::std::fmt::Write>(&self, w: &mut W) -> ::std::fmt::Result {
-                    w.write_str("BEGIN:")?;
-                    w.write_str(<Self as $crate::component::Component>::NAME)?;
-                    w.write_str("\r\n")?;
+                    w.write_str(concat!("BEGIN:", $comp_name, "\r\n"))?;
                     $(self.$req_once_field.generate(w)?;)*
                     $(self.$opt_once_field.generate(w)?;)*
                     $(self.$req_many_field.generate(w)?;)*
@@ -179,9 +177,7 @@ macro_rules! component {
                         property.generate(w)?;
                     }
                     $(self.$comp_field.generate(w)?;)*
-                    w.write_str("END:")?;
-                    w.write_str(<Self as $crate::component::Component>::NAME)?;
-                    w.write_str("\r\n")?;
+                    w.write_str(concat!("END:", $comp_name, "\r\n"))?;
                     Ok(())
                 }
             }

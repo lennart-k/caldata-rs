@@ -51,7 +51,7 @@ pub struct LineWriter<'w, W: Write> {
 }
 
 impl<'w, W: Write> LineWriter<'w, W> {
-    pub fn new(writer: &'w mut W) -> Self {
+    pub const fn new(writer: &'w mut W) -> Self {
         Self {
             writer,
             current_line_len: 0,

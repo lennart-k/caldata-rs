@@ -1,11 +1,14 @@
 use crate::parser::{ContentLine, ParserError};
 use crate::types::CalDateTimeError;
 use crate::types::{Tz, Value};
+use chrono::format::StrftimeItems;
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, Utc};
 use std::{collections::HashMap, ops::Add};
 
 const LOCAL_DATE_TIME: &str = "%Y%m%dT%H%M%S";
+const LOCAL_DATE_TIME_ITEMS: StrftimeItems = StrftimeItems::new(LOCAL_DATE_TIME);
 const UTC_DATE_TIME: &str = "%Y%m%dT%H%M%SZ";
+const UTC_DATE_TIME_ITEMS: StrftimeItems = StrftimeItems::new(UTC_DATE_TIME);
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 // Form 1, example: 19980118T230000 -> Local
@@ -188,8 +191,8 @@ impl Value for CalDateTime {
 
     fn generate<W: std::fmt::Write>(&self, w: &mut W) -> std::fmt::Result {
         match self.timezone() {
-            Tz::Olson(chrono_tz::UTC) => self.0.format(UTC_DATE_TIME).write_to(w),
-            _ => self.0.format(LOCAL_DATE_TIME).write_to(w),
+            Tz::Olson(chrono_tz::UTC) => self.0.format_with_items(UTC_DATE_TIME_ITEMS).write_to(w),
+            _ => self.0.format_with_items(LOCAL_DATE_TIME_ITEMS).write_to(w),
         }
     }
 }

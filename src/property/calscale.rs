@@ -26,9 +26,10 @@ impl ParseProp for Calscale {
         _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
-        match prop.value.to_uppercase().as_str() {
-            "GREGORIAN" => Ok(Self::Gregorian),
-            _ => Err(ParserError::InvalidCalscale),
+        if prop.value.eq_ignore_ascii_case("GREGORIAN") {
+            Ok(Self::Gregorian)
+        } else {
+            Err(ParserError::InvalidCalscale)
         }
     }
 }
