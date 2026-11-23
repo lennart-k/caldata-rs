@@ -33,7 +33,7 @@ impl ICalProperty for IcalRECURIDProperty {
             None => RecurIdRange::This,
             _ => return Err(ParserError::InvalidPropertyType(prop.generate_string())),
         };
-        Ok(Self(dt, prop.params.clone(), range))
+        Ok(Self(dt, prop.params, range))
     }
 
     fn utc_or_local(self) -> Self {
