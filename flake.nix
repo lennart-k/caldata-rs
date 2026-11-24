@@ -27,6 +27,7 @@
             cargo-about
             cargo-deny
             cargo-expand
+            cargo-insta
           ];
         };
       }

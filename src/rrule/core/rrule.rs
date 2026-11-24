@@ -181,7 +181,8 @@ impl Display for NWeekday {
     /// use caldata::rrule::NWeekday;
     ///
     /// assert_eq!(format!("{}", NWeekday::Every(Weekday::Mon)), "MO");
-    /// assert_eq!(format!("{}", NWeekday::Nth(1, Weekday::Mon)), "MO");
+    /// // LK: https://github.com/lennart-k/rustical/issues/312
+    /// assert_eq!(format!("{}", NWeekday::Nth(1, Weekday::Mon)), "1MO");
     /// assert_eq!(format!("{}", NWeekday::Nth(2, Weekday::Mon)), "2MO");
     /// ```
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -189,9 +190,7 @@ impl Display for NWeekday {
             Self::Every(wd) => weekday_to_str(*wd),
             Self::Nth(number, wd) => {
                 let mut wd_str = weekday_to_str(*wd);
-                if *number != 1 {
-                    wd_str = format!("{}{}", number, wd_str);
-                };
+                wd_str = format!("{}{}", number, wd_str);
                 wd_str
             }
         };
